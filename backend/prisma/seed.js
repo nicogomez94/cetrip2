@@ -103,6 +103,49 @@ async function main() {
   });
 
   // ─── QUIÉNES SOMOS ───────────────────────────────────────────────────────────
+  const sectionBienvenida = await prisma.section.upsert({
+    where: { slug: 'home-bienvenida' },
+    update: {},
+    create: {
+      slug: 'home-bienvenida',
+      title: 'Bienvenidos a CETRIP',
+      description: 'Presentación institucional en la página de inicio',
+      page: 'home',
+      order: 2,
+      isActive: true,
+    },
+  });
+
+  await prisma.block.createMany({
+    skipDuplicates: true,
+    data: [
+      {
+        sectionId: sectionBienvenida.id,
+        type: 'TEXT',
+        content:
+          'En CETRIP acompañamos el desarrollo de niños, niñas y adolescentes a través de un abordaje interdisciplinario centrado en la persona y su entorno. Nuestro objetivo es favorecer la participación, el aprendizaje, la comunicación y el bienestar emocional, trabajando de manera articulada con las familias y las instituciones educativas.',
+        order: 1,
+        isActive: true,
+      },
+      {
+        sectionId: sectionBienvenida.id,
+        type: 'TEXT',
+        content:
+          'Nuestro equipo está conformado por profesionales especializados en distintas áreas del desarrollo infantil, que trabajan de manera coordinada para ofrecer evaluaciones, tratamientos y acompañamientos adaptados a las necesidades de cada persona.',
+        order: 2,
+        isActive: true,
+      },
+      {
+        sectionId: sectionBienvenida.id,
+        type: 'TEXT',
+        content:
+          'En CETRIP creemos en la importancia del trabajo conjunto entre profesionales, familias y escuela para favorecer el desarrollo integral y la inclusión en la vida cotidiana.',
+        order: 3,
+        isActive: true,
+      },
+    ],
+  });
+
   const sectionQuienes = await prisma.section.upsert({
     where: { slug: 'quienes-somos-principal' },
     update: {},

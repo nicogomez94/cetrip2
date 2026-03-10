@@ -18,7 +18,7 @@ function Navbar() {
     <header className="navbar">
       <div className="navbar__container">
         <Link to="/" className="navbar__logo" onClick={() => setOpen(false)}>
-          <span className="navbar__logo-icon">🌱</span>
+          <img src="/sinnombre.png" alt="CETRIP" className="navbar__logo-img" />
           <span className="navbar__logo-text">
             <strong>CETRIP</strong>
             <small>Centro de Rehabilitación Infantil</small>

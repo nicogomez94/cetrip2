@@ -14,7 +14,7 @@ function Home() {
     setLoading(true);
     setError(null);
     try {
-      const [heroRes, infoRes] = await Promise.all([
+      const [heroRes] = await Promise.all([
         api.get('/public/sections/home'),
       ]);
       setSections(heroRes.data.data || []);
@@ -34,6 +34,8 @@ function Home() {
 
   const heroSection = sections.find((s) => s.slug === 'home-hero');
   const heroBlock = heroSection?.blocks?.[0];
+  const bienvenidaSection = sections.find((s) => s.slug === 'home-bienvenida');
+  const bienvenidaBlocks = bienvenidaSection?.blocks?.filter((b) => b.isActive) || [];
   const infoSection = sections.find((s) => s.slug === 'home-info');
   const infoBlocks = infoSection?.blocks || [];
 
@@ -89,27 +91,31 @@ function Home() {
         </section>
       )}
 
-      {/* Stats */}
-      <section className="home-stats">
+      {/* Bienvenida */}
+      <section className="home-bienvenida">
         <div className="container">
-          <div className="stats-grid">
-            <div className="stat-card">
-              <span className="stat-card__number">+15</span>
-              <span className="stat-card__label">Años de trayectoria</span>
-            </div>
-            <div className="stat-card">
-              <span className="stat-card__number">+500</span>
-              <span className="stat-card__label">Niños atendidos</span>
-            </div>
-            <div className="stat-card">
-              <span className="stat-card__number">6</span>
-              <span className="stat-card__label">Especialidades</span>
-            </div>
-            <div className="stat-card">
-              <span className="stat-card__number">100%</span>
-              <span className="stat-card__label">Dedicación</span>
-            </div>
-          </div>
+          <h1 className="bienvenida__title">
+            {bienvenidaSection?.title || 'Bienvenidos a CETRIP'}
+          </h1>
+          {bienvenidaBlocks.length > 0 ? (
+            bienvenidaBlocks.map((block) => (
+              <p key={block.id} className="bienvenida__text">
+                {block.content}
+              </p>
+            ))
+          ) : (
+            <>
+              <p className="bienvenida__text">
+                En CETRIP acompañamos el desarrollo de niños, niñas y adolescentes a través de un abordaje interdisciplinario centrado en la persona y su entorno. Nuestro objetivo es favorecer la participación, el aprendizaje, la comunicación y el bienestar emocional, trabajando de manera articulada con las familias y las instituciones educativas.
+              </p>
+              <p className="bienvenida__text">
+                Nuestro equipo está conformado por profesionales especializados en distintas áreas del desarrollo infantil, que trabajan de manera coordinada para ofrecer evaluaciones, tratamientos y acompañamientos adaptados a las necesidades de cada persona.
+              </p>
+              <p className="bienvenida__text">
+                En CETRIP creemos en la importancia del trabajo conjunto entre profesionales, familias y escuela para favorecer el desarrollo integral y la inclusión en la vida cotidiana.
+              </p>
+            </>
+          )}
         </div>
       </section>
 
