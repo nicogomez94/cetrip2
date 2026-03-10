@@ -40,8 +40,8 @@
 }
 
 .public-site .navbar__logo-img {
-  width: 38px;
-  height: 38px;
+    width: 68px;
+    height: 64px;
   border-radius: 12px;
   object-fit: contain;
 }
