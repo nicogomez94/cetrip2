@@ -84,6 +84,16 @@ function AdminBlocks() {
     setShowForm(true);
   };
 
+  const handleSearchChange = (e) => {
+    const value = e.target.value;
+    setSearch(value);
+    if (value.trim()) {
+      setShowForm(false);
+      setEditing(null);
+      setFormError(null);
+    }
+  };
+
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setForm((prev) => ({ ...prev, [name]: type === 'checkbox' ? checked : value }));
@@ -190,7 +200,7 @@ function AdminBlocks() {
             type="search"
             placeholder="Buscar por título, tipo o sección…"
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={handleSearchChange}
           />
           <button className="btn btn--primary" onClick={handleNew}>
             + Nuevo bloque

@@ -70,6 +70,16 @@ function AdminSections() {
     setShowForm(true);
   };
 
+  const handleSearchChange = (e) => {
+    const value = e.target.value;
+    setSearch(value);
+    if (value.trim()) {
+      setShowForm(false);
+      setEditing(null);
+      setFormError(null);
+    }
+  };
+
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setForm((prev) => ({ ...prev, [name]: type === 'checkbox' ? checked : value }));
@@ -151,7 +161,7 @@ function AdminSections() {
             type="search"
             placeholder="Buscar por título, slug o descripción…"
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={handleSearchChange}
           />
           <button className="btn btn--primary" onClick={handleNew}>
             + Nueva sección

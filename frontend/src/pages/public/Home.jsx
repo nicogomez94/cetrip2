@@ -174,6 +174,7 @@ function Home() {
               <Link to="/contacto" className="btn btn--primary btn--lg">
                 Contactanos
               </Link>
+            &nbsp;
               <Link to="/admision" className="btn btn--outline-white btn--lg">
                 Ver proceso de admisión
               </Link>
