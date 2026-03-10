@@ -1,7 +1,7 @@
 services:
   - type: web
     name: cetrip-api
-    env: node
+    runtime: node
     rootDir: backend
     plan: free
     buildCommand: npm ci && npx prisma generate
@@ -31,7 +31,8 @@ services:
       - key: DEBUG
         value: "false"
 
-  - type: static
+  - type: web
+    runtime: static
     name: cetrip-frontend
     rootDir: frontend
     buildCommand: npm ci && npm run build
