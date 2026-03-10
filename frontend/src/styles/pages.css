@@ -6,6 +6,7 @@
 }
 
 .public-site .page-banner {
+  display: none;/*TODO*/
   margin-top: 8px;
   padding: 3.3rem var(--container-padding);
   text-align: center;
