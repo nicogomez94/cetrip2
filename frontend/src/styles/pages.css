@@ -1,0 +1,204 @@
+/* ─── Page wrapper ───────────────────────────────────────────────────────────── */
+.page-wrapper {
+  min-height: calc(100vh - var(--navbar-height));
+}
+
+/* ─── Page banner ────────────────────────────────────────────────────────────── */
+.page-banner {
+  padding: 4rem var(--container-padding);
+  text-align: center;
+  background: linear-gradient(135deg, var(--color-bg-dark), #16213e);
+  color: #fff;
+}
+
+.page-banner h1 {
+  font-size: clamp(2rem, 5vw, 3rem);
+  color: #fff;
+  margin-bottom: 0.5rem;
+}
+
+.page-banner p {
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 1.1rem;
+}
+
+.page-banner--quienes {
+  background: linear-gradient(135deg, #1a1a2e 0%, #1b6ca8 100%);
+}
+
+.page-banner--admision {
+  background: linear-gradient(135deg, #1a2e1a 0%, #27ae60 100%);
+}
+
+.page-banner--servicios {
+  background: linear-gradient(135deg, #2e1a1a 0%, #e74c3c 100%);
+}
+
+.page-banner--contacto {
+  background: linear-gradient(135deg, #1a1a2e 0%, #8e44ad 100%);
+}
+
+/* ─── Page sections ──────────────────────────────────────────────────────────── */
+.page-section {
+  padding: 4rem 0;
+}
+
+.page-section:nth-child(even) {
+  background-color: var(--color-bg-white);
+}
+
+.section-lead {
+  color: var(--color-text-muted);
+  font-size: 1.05rem;
+  max-width: 640px;
+  margin-inline: auto;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.section-blocks {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* Cards dentro de page */
+.section-blocks .page-card,
+.section-blocks .feature-card {
+  flex: none;
+}
+
+/* Grid automático si hay múltiples CARD en la misma sección */
+.section-blocks:has(.page-card:nth-child(2)) {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+.section-blocks:has(.feature-card:nth-child(2)) {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+/* ─── Inner hero ─────────────────────────────────────────────────────────────── */
+.inner-hero {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2.5rem;
+  align-items: center;
+}
+
+.inner-hero__img {
+  border-radius: var(--radius-lg);
+  width: 100%;
+  max-height: 400px;
+  object-fit: cover;
+}
+
+.inner-hero__body {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.inner-hero__body h2 {
+  font-size: 1.8rem;
+}
+
+.inner-hero__subtitle {
+  color: var(--color-primary);
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+/* ─── Contacto ───────────────────────────────────────────────────────────────── */
+.contacto-section {
+  padding: 4rem 0;
+}
+
+.contacto-grid {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 3rem;
+  align-items: start;
+}
+
+.contacto-info h2 {
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+  color: var(--color-bg-dark);
+}
+
+.contacto-item {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+  align-items: flex-start;
+}
+
+.contacto-item__icon {
+  font-size: 1.3rem;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.contacto-item strong {
+  display: block;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--color-text-muted);
+  margin-bottom: 0.15rem;
+}
+
+.contacto-item p {
+  color: var(--color-text);
+  font-size: 0.95rem;
+}
+
+.contacto-form-wrapper {
+  background: var(--color-bg-white);
+  border-radius: var(--radius-lg);
+  padding: 2.5rem;
+  box-shadow: var(--shadow-md);
+}
+
+.contacto-form-wrapper h2 {
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+/* Form success */
+.form-success {
+  text-align: center;
+  padding: 3rem 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.form-success__icon {
+  font-size: 3rem;
+}
+
+.form-success h3 {
+  font-size: 1.5rem;
+  color: var(--color-success);
+}
+
+/* ─── Responsive ────────────────────────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .inner-hero {
+    grid-template-columns: 1fr;
+  }
+
+  .contacto-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .contacto-form-wrapper {
+    padding: 1.5rem;
+  }
+}

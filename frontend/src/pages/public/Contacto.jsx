@@ -1,0 +1,233 @@
+import { useState } from 'react';
+import api from '../../services/api';
+import '../../styles/pages.css';
+import '../../styles/forms.css';
+
+const DEBUG = import.meta.env.VITE_DEBUG === 'true';
+
+const DEBUG_DATA = {
+  name: 'María González',
+  email: 'maria@example.com',
+  phone: '11-4567-8901',
+  subject: 'Consulta sobre turnos',
+  message: 'Hola, quisiera consultar sobre la disponibilidad para kinesiología para mi hijo de 5 años. Muchas gracias.',
+};
+
+const INITIAL_FORM = DEBUG
+  ? DEBUG_DATA
+  : { name: '', email: '', phone: '', subject: '', message: '' };
+
+function Contacto() {
+  const [form, setForm] = useState(INITIAL_FORM);
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [errors, setErrors] = useState({});
+  const [serverError, setServerError] = useState(null);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
+    if (errors[name]) setErrors((prev) => ({ ...prev, [name]: null }));
+  };
+
+  const validate = () => {
+    const errs = {};
+    if (!form.name.trim()) errs.name = 'El nombre es requerido.';
+    if (!form.email.trim()) {
+      errs.email = 'El email es requerido.';
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
+      errs.email = 'El email no es válido.';
+    }
+    if (!form.subject.trim()) errs.subject = 'El asunto es requerido.';
+    if (!form.message.trim()) {
+      errs.message = 'El mensaje es requerido.';
+    } else if (form.message.trim().length < 10) {
+      errs.message = 'El mensaje debe tener al menos 10 caracteres.';
+    }
+    return errs;
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const errs = validate();
+    if (Object.keys(errs).length > 0) {
+      setErrors(errs);
+      return;
+    }
+
+    setLoading(true);
+    setServerError(null);
+    try {
+      await api.post('/public/contact', form);
+      setSuccess(true);
+      setForm(INITIAL_FORM);
+    } catch (err) {
+      const apiErrors = err.response?.data?.errors;
+      if (apiErrors) {
+        const mapped = {};
+        apiErrors.forEach((e) => (mapped[e.field] = e.message));
+        setErrors(mapped);
+      } else {
+        setServerError(err.response?.data?.message || 'Error al enviar el mensaje. Intente nuevamente.');
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="page-wrapper">
+      <div className="page-banner page-banner--contacto">
+        <div className="container">
+          <h1>Contacto</h1>
+          <p>Escribinos y te respondemos a la brevedad</p>
+        </div>
+      </div>
+
+      <section className="contacto-section">
+        <div className="container">
+          <div className="contacto-grid">
+            {/* Info */}
+            <div className="contacto-info">
+              <h2>Información de contacto</h2>
+              <div className="contacto-item">
+                <span className="contacto-item__icon">📍</span>
+                <div>
+                  <strong>Dirección</strong>
+                  <p>Av. Ejemplo 1234, Buenos Aires</p>
+                </div>
+              </div>
+              <div className="contacto-item">
+                <span className="contacto-item__icon">📞</span>
+                <div>
+                  <strong>Teléfono</strong>
+                  <p>(011) 4567-8901</p>
+                </div>
+              </div>
+              <div className="contacto-item">
+                <span className="contacto-item__icon">✉️</span>
+                <div>
+                  <strong>Email</strong>
+                  <p>info@cetrip.com</p>
+                </div>
+              </div>
+              <div className="contacto-item">
+                <span className="contacto-item__icon">🕐</span>
+                <div>
+                  <strong>Horario de atención</strong>
+                  <p>Lunes a Viernes: 8:00 – 18:00</p>
+                </div>
+              </div>
+
+              {DEBUG && (
+                <div className="debug-badge">🛠 MODO DEBUG – formulario autocompletado</div>
+              )}
+            </div>
+
+            {/* Formulario */}
+            <div className="contacto-form-wrapper">
+              {success ? (
+                <div className="form-success">
+                  <span className="form-success__icon">✅</span>
+                  <h3>¡Mensaje enviado!</h3>
+                  <p>Gracias por contactarnos. Te responderemos a la brevedad.</p>
+                  <button
+                    className="btn btn--primary"
+                    onClick={() => { setSuccess(false); setForm(INITIAL_FORM); }}
+                  >
+                    Enviar otro mensaje
+                  </button>
+                </div>
+              ) : (
+                <form className="form" onSubmit={handleSubmit} noValidate>
+                  <h2>Envianos un mensaje</h2>
+
+                  {serverError && (
+                    <div className="form-alert form-alert--error">{serverError}</div>
+                  )}
+
+                  <div className="form-row">
+                    <div className={`form-group ${errors.name ? 'form-group--error' : ''}`}>
+                      <label htmlFor="name">Nombre completo *</label>
+                      <input
+                        type="text"
+                        id="name"
+                        name="name"
+                        value={form.name}
+                        onChange={handleChange}
+                        placeholder="Tu nombre"
+                        autoComplete="name"
+                      />
+                      {errors.name && <span className="form-error">{errors.name}</span>}
+                    </div>
+
+                    <div className={`form-group ${errors.email ? 'form-group--error' : ''}`}>
+                      <label htmlFor="email">Email *</label>
+                      <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        value={form.email}
+                        onChange={handleChange}
+                        placeholder="tu@email.com"
+                        autoComplete="email"
+                      />
+                      {errors.email && <span className="form-error">{errors.email}</span>}
+                    </div>
+                  </div>
+
+                  <div className="form-row">
+                    <div className="form-group">
+                      <label htmlFor="phone">Teléfono (opcional)</label>
+                      <input
+                        type="tel"
+                        id="phone"
+                        name="phone"
+                        value={form.phone}
+                        onChange={handleChange}
+                        placeholder="11-XXXX-XXXX"
+                        autoComplete="tel"
+                      />
+                    </div>
+
+                    <div className={`form-group ${errors.subject ? 'form-group--error' : ''}`}>
+                      <label htmlFor="subject">Asunto *</label>
+                      <input
+                        type="text"
+                        id="subject"
+                        name="subject"
+                        value={form.subject}
+                        onChange={handleChange}
+                        placeholder="¿En qué podemos ayudarte?"
+                      />
+                      {errors.subject && <span className="form-error">{errors.subject}</span>}
+                    </div>
+                  </div>
+
+                  <div className={`form-group ${errors.message ? 'form-group--error' : ''}`}>
+                    <label htmlFor="message">Mensaje *</label>
+                    <textarea
+                      id="message"
+                      name="message"
+                      rows={5}
+                      value={form.message}
+                      onChange={handleChange}
+                      placeholder="Describí tu consulta..."
+                    />
+                    {errors.message && <span className="form-error">{errors.message}</span>}
+                  </div>
+
+                  <button type="submit" className="btn btn--primary btn--lg" disabled={loading}>
+                    {loading ? 'Enviando...' : 'Enviar mensaje'}
+                  </button>
+                </form>
+              )}
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+}
+
+export default Contacto;

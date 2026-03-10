@@ -1,0 +1,207 @@
+/* ─── Home general ───────────────────────────────────────────────────────────── */
+.home {
+  overflow: hidden;
+}
+
+/* ─── Hero ───────────────────────────────────────────────────────────────────── */
+.hero {
+  position: relative;
+  min-height: calc(100vh - var(--navbar-height));
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  background-color: var(--color-bg-dark);
+}
+
+.hero--default {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #1b6ca8 100%);
+}
+
+.hero__bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.hero__overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to right,
+    rgba(26, 26, 46, 0.92) 0%,
+    rgba(26, 26, 46, 0.7) 50%,
+    rgba(26, 26, 46, 0.3) 100%
+  );
+}
+
+.hero__content {
+  position: relative;
+  z-index: 1;
+  max-width: var(--container-max);
+  margin-inline: auto;
+  padding: 5rem var(--container-padding) 4rem;
+  max-width: 700px;
+  width: 100%;
+  align-self: center;
+  margin-left: max(var(--container-padding), calc((100vw - var(--container-max)) / 2));
+}
+
+.hero__eyebrow {
+  display: inline-block;
+  background-color: var(--color-secondary);
+  color: #fff;
+  padding: 0.3rem 1rem;
+  border-radius: var(--radius-full);
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.hero__title {
+  color: #fff;
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 800;
+  line-height: 1.1;
+  margin-bottom: 1rem;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+.hero__subtitle {
+  color: rgba(255, 255, 255, 0.85);
+  font-size: clamp(1.1rem, 2.5vw, 1.35rem);
+  font-weight: 400;
+  margin-bottom: 1rem;
+  line-height: 1.5;
+}
+
+.hero__text {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 1rem;
+  line-height: 1.7;
+  margin-bottom: 2rem;
+  max-width: 560px;
+}
+
+.hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+/* ─── Stats ─────────────────────────────────────────────────────────────────── */
+.home-stats {
+  background-color: var(--color-primary);
+  padding: 2.5rem 0;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+}
+
+.stat-card {
+  text-align: center;
+  color: #fff;
+  padding: 1rem;
+}
+
+.stat-card__number {
+  display: block;
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 800;
+  line-height: 1;
+  margin-bottom: 0.25rem;
+}
+
+.stat-card__label {
+  font-size: 0.875rem;
+  opacity: 0.85;
+}
+
+/* ─── Home info section ─────────────────────────────────────────────────────── */
+.home-info {
+  padding: 5rem 0;
+  background-color: var(--color-bg);
+}
+
+.home-dynamic-section {
+  padding: 4rem 0;
+}
+
+.home-dynamic-section:nth-child(even) {
+  background-color: var(--color-bg-white);
+}
+
+.dynamic-blocks {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* ─── CTA section ───────────────────────────────────────────────────────────── */
+.home-cta {
+  background-color: var(--color-primary-light);
+  padding: 5rem 0;
+}
+
+.cta-box {
+  text-align: center;
+  max-width: 680px;
+  margin-inline: auto;
+}
+
+.cta-box h2 {
+  font-size: clamp(1.75rem, 3.5vw, 2.5rem);
+  margin-bottom: 1rem;
+}
+
+.cta-box p {
+  color: var(--color-text-muted);
+  font-size: 1.1rem;
+  margin-bottom: 2rem;
+  line-height: 1.7;
+}
+
+.cta-box__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+}
+
+/* ─── Responsive ────────────────────────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .hero__content {
+    margin-left: 0;
+    padding: 3rem var(--container-padding) 3rem;
+    max-width: 100%;
+  }
+
+  .hero__actions {
+    flex-direction: column;
+  }
+
+  .hero__actions .btn {
+    width: 100%;
+    text-align: center;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .cta-box__actions {
+    flex-direction: column;
+  }
+}
