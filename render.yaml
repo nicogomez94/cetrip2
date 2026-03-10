@@ -1,0 +1,45 @@
+services:
+  - type: web
+    name: cetrip-api
+    env: node
+    rootDir: backend
+    plan: free
+    buildCommand: npm ci && npx prisma generate
+    preDeployCommand: sh -c "echo 'CREATE SCHEMA IF NOT EXISTS cetrip;' | npx prisma db execute --stdin --url \"$DATABASE_URL\" && npx prisma db push && npm run db:bootstrap-admin"
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: "10000"
+      - key: DATABASE_URL
+        value: postgresql://bsdc_user:tHAIZrPB2zaTXPLr7srJYyLw8c9Wpub0@dpg-d6ktoufafjfc73emvbtg-a/bsdc?schema=cetrip
+      - key: JWT_SECRET
+        value: 9eb67d1730f68f2a5cf3fca95c42eec4
+      - key: JWT_EXPIRES_IN
+        value: 7d
+      - key: ADMIN_EMAIL
+        value: admin@cetrip.com
+      - key: ADMIN_NAME
+        value: Administrador CETRIP
+      - key: ADMIN_PASSWORD
+        value: admin123
+      - key: FRONTEND_URL
+        value: https://cetrip-frontend.onrender.com
+      - key: BACKEND_URL
+        value: https://cetrip-api.onrender.com
+      - key: DEBUG
+        value: "false"
+
+  - type: static
+    name: cetrip-frontend
+    rootDir: frontend
+    buildCommand: npm ci && npm run build
+    staticPublishPath: dist
+    envVars:
+      - key: VITE_API_URL
+        value: https://cetrip-api.onrender.com/api
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
