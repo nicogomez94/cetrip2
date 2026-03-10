@@ -18,11 +18,11 @@ import AdminMessages from './pages/admin/AdminMessages';
 
 function PublicLayout({ children }) {
   return (
-    <>
+    <div className="public-site">
       <Navbar />
       <main className="main-content">{children}</main>
       <Footer />
-    </>
+    </div>
   );
 }
 

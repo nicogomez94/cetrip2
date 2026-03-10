@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Quicksand:wght@600;700;800&display=swap');
+
 /* ─── Variables ────────────────────────────────────────────────────────────── */
 :root {
   --color-primary: #1b6ca8;
@@ -473,4 +475,186 @@ h1, h2, h3, h4, h5, h6 {
   color: var(--color-text-muted);
   padding: 2rem;
   font-style: italic;
+}
+
+/* Public theme */
+.public-site {
+  --public-bg: #fffaf6;
+  --public-surface: #ffffff;
+  --public-peach: #fff2ea;
+  --public-soft-pink: #fdeceb;
+  --public-line: #f0dfd6;
+  --public-text: #313a46;
+  --public-muted: #8692a1;
+  --public-accent: #6fb6ea;
+  --public-accent-strong: #2f9add;
+  --public-ink: #1f3d58;
+  --public-shadow: 0 22px 52px rgba(76, 58, 34, 0.11);
+
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  font-family: 'Nunito', system-ui, -apple-system, sans-serif;
+  color: var(--public-text);
+  background:
+    radial-gradient(circle at 8% 10%, #fff7f2 0, #fff7f2 140px, transparent 141px),
+    radial-gradient(circle at 92% 88%, #fef4ee 0, #fef4ee 180px, transparent 181px),
+    var(--public-bg);
+  position: relative;
+  overflow: clip;
+}
+
+.public-site::before,
+.public-site::after {
+  content: '';
+  position: fixed;
+  z-index: 0;
+  border-radius: 999px;
+  filter: blur(4px);
+  pointer-events: none;
+}
+
+.public-site::before {
+  width: 280px;
+  height: 280px;
+  top: -80px;
+  left: -100px;
+  background: radial-gradient(circle at 30% 35%, #ffe9d8, #ffcba6);
+  animation: blobFloat 9s ease-in-out infinite;
+}
+
+.public-site::after {
+  width: 340px;
+  height: 340px;
+  right: -120px;
+  bottom: -100px;
+  background: radial-gradient(circle at 60% 30%, #d8efff, #b6ddf7);
+  animation: blobFloat 11s ease-in-out infinite reverse;
+}
+
+.public-site .main-content {
+  flex: 1;
+  padding-top: 92px;
+  position: relative;
+  z-index: 1;
+}
+
+.public-site .container {
+  max-width: 1120px;
+}
+
+.public-site h1,
+.public-site h2,
+.public-site h3,
+.public-site h4,
+.public-site h5,
+.public-site h6 {
+  color: var(--public-text);
+}
+
+.public-site .section-header p {
+  color: var(--public-muted);
+}
+
+.public-site .btn {
+  border-radius: 12px;
+  font-weight: 700;
+  transition: transform 0.24s ease, box-shadow 0.24s ease, background-color var(--transition), border-color var(--transition), color var(--transition);
+}
+
+.public-site .btn--primary {
+  background: var(--public-accent);
+  border-color: var(--public-accent);
+  box-shadow: 0 16px 32px rgba(88, 173, 220, 0.35);
+}
+
+.public-site .btn--primary:hover:not(:disabled) {
+  background: var(--public-accent-strong);
+  border-color: var(--public-accent-strong);
+  transform: translateY(-4px);
+  box-shadow: 0 22px 40px rgba(88, 173, 220, 0.5);
+}
+
+.public-site .btn--outline {
+  color: var(--public-accent-strong);
+  border-color: #8ac8ed;
+  background: #f8fbff;
+}
+
+.public-site .btn--outline:hover:not(:disabled) {
+  background: #edf6ff;
+  border-color: #6fb6ea;
+}
+
+.public-site .btn--outline-white {
+  color: #1f3d58;
+  border-color: #b8d9ef;
+  background: #eff7ff;
+}
+
+.public-site .btn--outline-white:hover:not(:disabled) {
+  background: #e3f1ff;
+}
+
+.public-site .btn--ghost {
+  color: var(--public-ink);
+  border-color: #d9e9f5;
+  background: rgba(239, 247, 255, 0.85);
+  backdrop-filter: blur(3px);
+}
+
+.public-site .btn--ghost:hover:not(:disabled) {
+  background: rgba(227, 241, 255, 0.9);
+}
+
+.public-site .feature-card,
+.public-site .page-card {
+  background: var(--public-surface);
+  border: 1px solid var(--public-line);
+  border-radius: 16px;
+  box-shadow: 0 8px 22px rgba(64, 80, 98, 0.1);
+}
+
+.public-site .feature-card:hover,
+.public-site .page-card:hover {
+  box-shadow: 0 16px 32px rgba(41, 56, 77, 0.16);
+  transform: translateY(-6px);
+}
+
+.public-site .feature-card__img,
+.public-site .page-card__img {
+  border-bottom: 1px solid #f4e7df;
+}
+
+.public-site .feature-card__title,
+.public-site .page-card__title,
+.public-site .block-text__title {
+  color: #1f3d58;
+}
+
+.public-site .feature-card__text,
+.public-site .page-card__text,
+.public-site .block-text__content {
+  color: #647080;
+}
+
+.public-site .block-image img {
+  border-radius: 14px;
+  margin: 0.4rem 0 0;
+}
+
+.public-site .block-cta {
+  background: #f8fbff;
+  border-left: 4px solid #8ac8ed;
+  border-radius: 12px;
+  color: #4e6177;
+}
+
+@keyframes blobFloat {
+  0%, 100% {
+    transform: translateY(0) translateX(0) scale(1);
+  }
+  50% {
+    transform: translateY(18px) translateX(14px) scale(1.08);
+  }
 }
