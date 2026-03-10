@@ -4,8 +4,7 @@ services:
     runtime: node
     rootDir: backend
     plan: free
-    buildCommand: npm ci && npx prisma generate
-    preDeployCommand: sh -c "echo 'CREATE SCHEMA IF NOT EXISTS cetrip;' | npx prisma db execute --stdin --url \"$DATABASE_URL\" && npx prisma db push && npm run db:bootstrap-admin"
+    buildCommand: sh -c "npm ci && npx prisma generate && echo 'CREATE SCHEMA IF NOT EXISTS cetrip;' | npx prisma db execute --stdin --url \"$DATABASE_URL\" && npx prisma db push && npm run db:bootstrap-admin && if [ \"$RUN_FULL_SEED\" = \"true\" ]; then npm run db:seed; else echo 'Skipping full seed'; fi"
     startCommand: npm start
     envVars:
       - key: NODE_ENV
@@ -30,6 +29,8 @@ services:
         value: https://cetrip-api.onrender.com
       - key: DEBUG
         value: "false"
+      - key: RUN_FULL_SEED
+        value: "true"
 
   - type: web
     runtime: static
