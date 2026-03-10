@@ -23,6 +23,7 @@ function AdminSections() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [filterPage, setFilterPage] = useState('');
+  const [search, setSearch] = useState('');
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState(EMPTY_FORM);
   const [editing, setEditing] = useState(null); // section id
@@ -119,6 +120,17 @@ function AdminSections() {
     }
   };
 
+  const filteredSections = search.trim()
+    ? sections.filter((s) => {
+        const q = search.toLowerCase();
+        return (
+          s.title?.toLowerCase().includes(q) ||
+          s.slug?.toLowerCase().includes(q) ||
+          s.description?.toLowerCase().includes(q)
+        );
+      })
+    : sections;
+
   return (
     <AdminLayout title="Secciones">
       <div className="admin-page">
@@ -127,13 +139,20 @@ function AdminSections() {
           <select
             className="admin-select"
             value={filterPage}
-            onChange={(e) => setFilterPage(e.target.value)}
+            onChange={(e) => { setFilterPage(e.target.value); setSearch(''); }}
           >
             <option value="">Todas las páginas</option>
             {PAGES.map((p) => (
               <option key={p} value={p}>{p}</option>
             ))}
           </select>
+          <input
+            className="admin-search"
+            type="search"
+            placeholder="Buscar por título, slug o descripción…"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
           <button className="btn btn--primary" onClick={handleNew}>
             + Nueva sección
           </button>
@@ -209,12 +228,14 @@ function AdminSections() {
                 </tr>
               </thead>
               <tbody>
-                {sections.length === 0 ? (
+                {filteredSections.length === 0 ? (
                   <tr>
-                    <td colSpan={7} className="empty-state">No hay secciones.</td>
+                    <td colSpan={7} className="empty-state">
+                      {search ? 'No hay resultados para la búsqueda.' : 'No hay secciones.'}
+                    </td>
                   </tr>
                 ) : (
-                  sections.map((s) => (
+                  filteredSections.map((s) => (
                     <tr key={s.id}>
                       <td><span className="badge badge--page">{s.page}</span></td>
                       <td>{s.title}</td>

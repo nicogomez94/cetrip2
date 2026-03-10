@@ -28,6 +28,7 @@ function AdminBlocks() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [filterSection, setFilterSection] = useState('');
+  const [search, setSearch] = useState('');
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState(EMPTY_FORM);
   const [editing, setEditing] = useState(null);
@@ -156,6 +157,18 @@ function AdminBlocks() {
   const needsContent = ['TEXT', 'HERO', 'CARD', 'CTA'].includes(form.type);
   const needsLink = ['HERO', 'CARD', 'CTA'].includes(form.type);
 
+  const filteredBlocks = search.trim()
+    ? blocks.filter((b) => {
+        const q = search.toLowerCase();
+        return (
+          b.title?.toLowerCase().includes(q) ||
+          b.type?.toLowerCase().includes(q) ||
+          b.section?.title?.toLowerCase().includes(q) ||
+          b.section?.page?.toLowerCase().includes(q)
+        );
+      })
+    : blocks;
+
   return (
     <AdminLayout title="Bloques de Contenido">
       <div className="admin-page">
@@ -163,7 +176,7 @@ function AdminBlocks() {
           <select
             className="admin-select"
             value={filterSection}
-            onChange={(e) => setFilterSection(e.target.value)}
+            onChange={(e) => { setFilterSection(e.target.value); setSearch(''); }}
           >
             <option value="">Todas las secciones</option>
             {sections.map((s) => (
@@ -172,6 +185,13 @@ function AdminBlocks() {
               </option>
             ))}
           </select>
+          <input
+            className="admin-search"
+            type="search"
+            placeholder="Buscar por título, tipo o sección…"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
           <button className="btn btn--primary" onClick={handleNew}>
             + Nuevo bloque
           </button>
@@ -292,12 +312,14 @@ function AdminBlocks() {
                 </tr>
               </thead>
               <tbody>
-                {blocks.length === 0 ? (
+                {filteredBlocks.length === 0 ? (
                   <tr>
-                    <td colSpan={6} className="empty-state">No hay bloques.</td>
+                    <td colSpan={6} className="empty-state">
+                      {search ? 'No hay resultados para la búsqueda.' : 'No hay bloques.'}
+                    </td>
                   </tr>
                 ) : (
-                  blocks.map((b) => (
+                  filteredBlocks.map((b) => (
                     <tr key={b.id}>
                       <td><span className="badge badge--type">{b.type}</span></td>
                       <td>{b.section?.title || '-'} <small className="text-muted">[{b.section?.page}]</small></td>
