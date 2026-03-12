@@ -44,13 +44,16 @@ app.use('/api/public', publicRoutes);
 app.use('/api/admin', adminRoutes);
 
 // ─── Health check ────────────────────────────────────────────────────────────
-app.get('/api/health', (req, res) => {
+const healthHandler = (req, res) => {
   res.json({
     status: 'ok',
     timestamp: new Date().toISOString(),
     debug: process.env.DEBUG === 'true',
   });
-});
+};
+
+app.get('/health', healthHandler);
+app.get('/api/health', healthHandler);
 
 // ─── 404 y manejo de errores ─────────────────────────────────────────────────
 app.use(notFound);
