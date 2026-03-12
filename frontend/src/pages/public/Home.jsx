@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import api from '../../services/api';
 import Loader from '../../components/common/Loader';
 import ErrorMessage from '../../components/common/ErrorMessage';
+import RichTextContent from '../../components/common/RichTextContent';
 import '../../styles/home.css';
 
 function Home() {
@@ -58,7 +59,7 @@ function Home() {
             <p className="hero__eyebrow">Rehabilitación Infantil</p>
             <h1 className="hero__title">{heroBlock.title}</h1>
             <p className="hero__subtitle">{heroBlock.subtitle}</p>
-            <p className="hero__text">{heroBlock.content}</p>
+            <RichTextContent content={heroBlock.content} className="hero__text rich-text-content" />
             <div className="hero__actions">
               {heroBlock.linkUrl && (
                 <Link to={heroBlock.linkUrl} className="btn btn--primary btn--lg">
@@ -99,9 +100,11 @@ function Home() {
           </h1>
           {bienvenidaBlocks.length > 0 ? (
             bienvenidaBlocks.map((block) => (
-              <p key={block.id} className="bienvenida__text">
-                {block.content}
-              </p>
+              <RichTextContent
+                key={block.id}
+                content={block.content}
+                className="bienvenida__text rich-text-content"
+              />
             ))
           ) : (
             <>
@@ -135,7 +138,10 @@ function Home() {
                   )}
                   <div className="feature-card__body">
                     {block.title && <h3 className="feature-card__title">{block.title}</h3>}
-                    {block.content && <p className="feature-card__text">{block.content}</p>}
+                    <RichTextContent
+                      content={block.content}
+                      className="feature-card__text rich-text-content"
+                    />
                   </div>
                 </div>
               ))}
@@ -192,7 +198,7 @@ function renderBlock(block) {
       return (
         <div key={block.id} className="block-text">
           {block.title && <h3>{block.title}</h3>}
-          {block.content && <p>{block.content}</p>}
+          <RichTextContent content={block.content} className="rich-text-content" />
         </div>
       );
     case 'IMAGE':
@@ -226,7 +232,7 @@ function renderBlock(block) {
           )}
           <div className="feature-card__body">
             {block.title && <h3 className="feature-card__title">{block.title}</h3>}
-            {block.content && <p className="feature-card__text">{block.content}</p>}
+            <RichTextContent content={block.content} className="feature-card__text rich-text-content" />
           </div>
         </div>
       );

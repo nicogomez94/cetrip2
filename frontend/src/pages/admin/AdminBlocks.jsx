@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import AdminLayout from '../../components/admin/AdminLayout';
+import RichTextEditor from '../../components/admin/RichTextEditor';
 import Loader from '../../components/common/Loader';
 import ErrorMessage from '../../components/common/ErrorMessage';
 import api from '../../services/api';
@@ -244,7 +245,12 @@ function AdminBlocks() {
               {needsContent && (
                 <div className="form-group">
                   <label>Contenido / Texto</label>
-                  <textarea name="content" value={form.content} onChange={handleChange} rows={4} />
+                  <RichTextEditor
+                    value={form.content}
+                    onChange={(content) => {
+                      setForm((prev) => ({ ...prev, content }));
+                    }}
+                  />
                 </div>
               )}
               {needsImage && (

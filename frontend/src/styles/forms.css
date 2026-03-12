@@ -144,6 +144,86 @@
   border: 1px solid var(--color-border);
 }
 
+/* Rich text editor */
+.rte {
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  background-color: #fff;
+}
+
+.rte:focus-within {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(27, 108, 168, 0.15);
+}
+
+.rte-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  padding: 0.55rem;
+  border-bottom: 1px solid var(--color-border);
+  background: #f8fafc;
+}
+
+.rte-toolbar__btn {
+  border: 1px solid #d9e2ee;
+  background: #fff;
+  color: var(--color-text);
+  border-radius: 6px;
+  padding: 0.3rem 0.5rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  min-width: 2.1rem;
+}
+
+.rte-toolbar__btn:hover:not(:disabled) {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.rte-toolbar__btn.is-active {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: #fff;
+}
+
+.rte-toolbar__btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.rte-content {
+  min-height: 180px;
+  padding: 0.85rem 1rem;
+  outline: none;
+}
+
+.rte-content > *:first-child {
+  margin-top: 0;
+}
+
+.rte-content > *:last-child {
+  margin-bottom: 0;
+}
+
+.rte-content ul,
+.rte-content ol {
+  padding-left: 1.2rem;
+}
+
+.rte-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+
+.rte-content a {
+  color: var(--color-primary);
+  text-decoration: underline;
+}
+
 /* ─── Login page ─────────────────────────────────────────────────────────────── */
 .login-page {
   min-height: 100vh;

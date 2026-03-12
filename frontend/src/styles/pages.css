@@ -77,6 +77,30 @@
   gap: 1.4rem;
 }
 
+.public-site .rich-text-content > *:first-child {
+  margin-top: 0;
+}
+
+.public-site .rich-text-content > *:last-child {
+  margin-bottom: 0;
+}
+
+.public-site .rich-text-content ul,
+.public-site .rich-text-content ol {
+  padding-left: 1.25rem;
+}
+
+.public-site .rich-text-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 10px;
+}
+
+.public-site .rich-text-content a {
+  color: #2f9add;
+  text-decoration: underline;
+}
+
 .public-site .section-blocks .page-card,
 .public-site .section-blocks .feature-card {
   flex: none;

@@ -81,6 +81,11 @@
   max-width: 520px;
 }
 
+.public-site .home .hero__text.rich-text-content p {
+  color: inherit;
+  margin: 0 0 0.9rem;
+}
+
 .public-site .home .hero__actions {
   display: flex;
   flex-wrap: wrap;
@@ -118,6 +123,11 @@
   line-height: 1.78;
   margin: 0 0 18px;
   max-width: 820px;
+}
+
+.public-site .bienvenida__text.rich-text-content p {
+  color: inherit;
+  margin: 0 0 1rem;
 }
 
 .public-site .bienvenida__text:last-child {

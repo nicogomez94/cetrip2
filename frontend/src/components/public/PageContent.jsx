@@ -2,9 +2,10 @@ import { useEffect, useState } from 'react';
 import api from '../../services/api';
 import Loader from '../../components/common/Loader';
 import ErrorMessage from '../../components/common/ErrorMessage';
+import RichTextContent from '../common/RichTextContent';
 import '../../styles/pages.css';
 
-function PageContent({ page, fallbackTitle }) {
+function PageContent({ page }) {
   const [sections, setSections] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -59,7 +60,7 @@ function renderBlock(block) {
           <div className="inner-hero__body">
             {block.title && <h2>{block.title}</h2>}
             {block.subtitle && <p className="inner-hero__subtitle">{block.subtitle}</p>}
-            {block.content && <p>{block.content}</p>}
+            <RichTextContent content={block.content} className="rich-text-content" />
             {block.linkUrl && (
               <a href={block.linkUrl} className="btn btn--primary">
                 {block.linkText || 'Ver más'}
@@ -72,7 +73,7 @@ function renderBlock(block) {
       return (
         <div key={block.id} className="block-text">
           {block.title && <h3 className="block-text__title">{block.title}</h3>}
-          {block.content && <p className="block-text__content">{block.content}</p>}
+          <RichTextContent content={block.content} className="block-text__content rich-text-content" />
         </div>
       );
     case 'IMAGE':
@@ -108,7 +109,7 @@ function renderBlock(block) {
           )}
           <div className="page-card__body">
             {block.title && <h3 className="page-card__title">{block.title}</h3>}
-            {block.content && <p className="page-card__text">{block.content}</p>}
+            <RichTextContent content={block.content} className="page-card__text rich-text-content" />
             {block.linkUrl && (
               <a href={block.linkUrl} className="btn btn--outline">
                 {block.linkText || 'Ver más'}
@@ -121,7 +122,7 @@ function renderBlock(block) {
       return (
         <div key={block.id} className="block-cta">
           {block.title && <h3>{block.title}</h3>}
-          {block.content && <p>{block.content}</p>}
+          <RichTextContent content={block.content} className="rich-text-content" />
           {block.linkUrl && (
             <a href={block.linkUrl} className="btn btn--primary">
               {block.linkText || 'Más información'}
