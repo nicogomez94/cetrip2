@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import '../../styles/navbar.css';
 
@@ -13,6 +13,17 @@ const NAV_LINKS = [
 function Navbar() {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!open) return undefined;
+
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    return () => {
+      document.body.style.overflow = prevOverflow;
+    };
+  }, [open]);
 
   return (
     <header className="navbar">
