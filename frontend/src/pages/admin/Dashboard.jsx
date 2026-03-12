@@ -112,6 +112,9 @@ function Dashboard() {
           <div className="dash-quick-links">
             <h3>Acciones rápidas</h3>
             <div className="quick-links-grid">
+              <Link to="/admin/home" className="quick-link">
+                <span>🏠</span> Editar Home
+              </Link>
               <Link to="/admin/secciones" className="quick-link">
                 <span>🗂️</span> Gestionar secciones
               </Link>

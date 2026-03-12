@@ -5,6 +5,7 @@ import '../../styles/admin.css';
 
 const MENU = [
   { to: '/admin', label: 'Dashboard', icon: '📊', end: true },
+  { to: '/admin/home', label: 'Home (texto)', icon: '🏠' },
   { to: '/admin/secciones', label: 'Secciones', icon: '🗂️' },
   { to: '/admin/bloques', label: 'Bloques', icon: '🧩' },
   { to: '/admin/mensajes', label: 'Mensajes', icon: '✉️' },

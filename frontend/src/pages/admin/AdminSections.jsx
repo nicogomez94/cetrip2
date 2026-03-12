@@ -2,18 +2,17 @@ import { useEffect, useState } from 'react';
 import AdminLayout from '../../components/admin/AdminLayout';
 import Loader from '../../components/common/Loader';
 import ErrorMessage from '../../components/common/ErrorMessage';
-import useApi from '../../hooks/useApi';
 import api from '../../services/api';
 import '../../styles/admin.css';
 import '../../styles/forms.css';
 
-const PAGES = ['home', 'quienes-somos', 'admision', 'servicios', 'contacto'];
+const PAGES = ['quienes-somos', 'admision', 'servicios', 'contacto'];
 
 const EMPTY_FORM = {
   slug: '',
   title: '',
   description: '',
-  page: 'home',
+  page: 'quienes-somos',
   order: '0',
   isActive: true,
 };
@@ -36,7 +35,8 @@ function AdminSections() {
     try {
       const params = filterPage ? `?page=${filterPage}` : '';
       const res = await api.get(`/admin/sections${params}`);
-      setSections(res.data.data || []);
+      const nonHomeSections = (res.data.data || []).filter((section) => section.page !== 'home');
+      setSections(nonHomeSections);
     } catch {
       setError('No se pudieron cargar las secciones.');
     } finally {

@@ -45,8 +45,15 @@ function AdminBlocks() {
         api.get(filterSection ? `/admin/blocks?sectionId=${filterSection}` : '/admin/blocks'),
         api.get('/admin/sections'),
       ]);
-      setBlocks(blocksRes.data.data || []);
-      setSections(sectionsRes.data.data || []);
+      const nonHomeSections = (sectionsRes.data.data || []).filter((section) => section.page !== 'home');
+      const allowedSectionIds = new Set(nonHomeSections.map((section) => section.id));
+      const nonHomeBlocks = (blocksRes.data.data || []).filter((block) => {
+        if (block.section?.page) return block.section.page !== 'home';
+        return allowedSectionIds.has(block.sectionId);
+      });
+
+      setBlocks(nonHomeBlocks);
+      setSections(nonHomeSections);
     } catch {
       setError('No se pudo cargar el contenido.');
     } finally {

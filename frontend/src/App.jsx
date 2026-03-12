@@ -12,16 +12,17 @@ import Contacto from './pages/public/Contacto';
 
 import Login from './pages/admin/Login';
 import Dashboard from './pages/admin/Dashboard';
+import AdminHome from './pages/admin/AdminHome';
 import AdminSections from './pages/admin/AdminSections';
 import AdminBlocks from './pages/admin/AdminBlocks';
 import AdminMessages from './pages/admin/AdminMessages';
 
-function PublicLayout({ children }) {
+function PublicLayout({ children, showFooter = true }) {
   return (
     <div className="public-site">
       <Navbar />
       <main className="main-content">{children}</main>
-      <Footer />
+      {showFooter && <Footer />}
     </div>
   );
 }
@@ -31,13 +32,14 @@ function App() {
     <BrowserRouter>
       <AuthProvider>
         <Routes>
-          <Route path="/" element={<PublicLayout><Home /></PublicLayout>} />
+          <Route path="/" element={<PublicLayout showFooter={false}><Home /></PublicLayout>} />
           <Route path="/quienes-somos" element={<PublicLayout><QuienesSomos /></PublicLayout>} />
           <Route path="/admision" element={<PublicLayout><Admision /></PublicLayout>} />
           <Route path="/servicios" element={<PublicLayout><Servicios /></PublicLayout>} />
           <Route path="/contacto" element={<PublicLayout><Contacto /></PublicLayout>} />
           <Route path="/admin/login" element={<Login />} />
           <Route path="/admin" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+          <Route path="/admin/home" element={<ProtectedRoute><AdminHome /></ProtectedRoute>} />
           <Route path="/admin/secciones" element={<ProtectedRoute><AdminSections /></ProtectedRoute>} />
           <Route path="/admin/bloques" element={<ProtectedRoute><AdminBlocks /></ProtectedRoute>} />
           <Route path="/admin/mensajes" element={<ProtectedRoute><AdminMessages /></ProtectedRoute>} />
