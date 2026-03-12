@@ -1,16 +1,80 @@
-import PageContent from '../../components/public/PageContent';
+import { useMemo } from 'react';
+import { Link } from 'react-router-dom';
+import Loader from '../../components/common/Loader';
+import ErrorMessage from '../../components/common/ErrorMessage';
+import RichTextContent from '../../components/common/RichTextContent';
+import usePublicSections from '../../hooks/usePublicSections';
+import { mapServiciosPage } from '../../utils/publicPageMappers';
 import '../../styles/pages.css';
 
 function Servicios() {
+  const { sections, loading, error, refetch } = usePublicSections('servicios');
+  const pageData = useMemo(() => mapServiciosPage(sections), [sections]);
+
+  if (loading) return <Loader text="Cargando servicios..." />;
+  if (error) return <ErrorMessage message={error} onRetry={refetch} />;
+
   return (
-    <div className="page-wrapper">
-      <div className="page-banner page-banner--servicios">
+    <div className="page-wrapper services-page">
+      <section className="page-banner page-banner--servicios">
         <div className="container">
-          <h1>Nuestros Servicios</h1>
-          <p>Atención integral e interdisciplinaria para el desarrollo de tu hijo</p>
+          <h1>{pageData.bannerTitle}</h1>
+          <p>{pageData.bannerSubtitle}</p>
         </div>
-      </div>
-      <PageContent page="servicios" />
+      </section>
+
+      <section className="services-intro">
+        <div className="container">
+          <h2>{pageData.introTitle}</h2>
+          <RichTextContent content={pageData.introBody} className="rich-text-content" />
+        </div>
+      </section>
+
+      <section className="services-list">
+        <div className="container">
+          <div className="services-grid">
+            {pageData.services.map((service, index) => (
+              <article key={service.id || `${service.title}-${index}`} className="service-card">
+                {service.imageUrl && (
+                  <div className="service-card__media">
+                    <img src={service.imageUrl} alt={service.title} />
+                  </div>
+                )}
+                <div className="service-card__body">
+                  <h3>{service.title}</h3>
+                  <RichTextContent content={service.content} className="rich-text-content" />
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="workflow">
+        <div className="container">
+          <h2>{pageData.workflowTitle}</h2>
+          <div className="workflow-grid">
+            {pageData.workflow.map((step, index) => (
+              <article key={step.title} className="workflow-step">
+                <span className="workflow-step__index">{index + 1}</span>
+                <h3>{step.title}</h3>
+                <p>{step.content}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="page-cta">
+        <div className="container page-cta__content">
+          <h3>¿Querés que evaluemos tu caso?</h3>
+          <p>Podemos orientarte sobre el tratamiento más adecuado para tu hijo o hija.</p>
+          <div className="page-cta__actions">
+            <Link to="/admision" className="btn btn--primary">Ver admisión</Link>
+            <Link to="/contacto" className="btn btn--outline">Contactarnos</Link>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }
