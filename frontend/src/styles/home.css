@@ -1,7 +1,7 @@
 .public-site .home {
   max-width: 1120px;
-  margin: 0 auto;
-  overflow: hidden;
+  margin: 30px auto;
+  /* overflow: hidden; */
   padding: 8px 16px 28px;
 }
 
@@ -104,7 +104,7 @@
   position: absolute;
   left: 0;
   right: 0;
-  top: -30px;
+  top: -29px;
   height: 30px;
   background: #fff2ea;
   border-top-left-radius: 45% 100%;
