@@ -241,7 +241,7 @@ function AdminHome() {
 
   if (loading) {
     return (
-      <AdminLayout title="Home (solo texto)">
+      <AdminLayout title="Home">
         <Loader />
       </AdminLayout>
     );
@@ -249,14 +249,14 @@ function AdminHome() {
 
   if (error) {
     return (
-      <AdminLayout title="Home (solo texto)">
+      <AdminLayout title="Home">
         <ErrorMessage message={error} onRetry={fetchHome} />
       </AdminLayout>
     );
   }
 
   return (
-    <AdminLayout title="Home (solo texto)">
+    <AdminLayout title="Home">
       <div className="admin-page">
         {formError && <div className="form-alert form-alert--error">{formError}</div>}
         {saved && <div className="form-alert form-alert--success">Cambios guardados.</div>}

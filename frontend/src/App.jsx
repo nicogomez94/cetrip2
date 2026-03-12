@@ -13,8 +13,10 @@ import Contacto from './pages/public/Contacto';
 import Login from './pages/admin/Login';
 import Dashboard from './pages/admin/Dashboard';
 import AdminHome from './pages/admin/AdminHome';
-import AdminSections from './pages/admin/AdminSections';
-import AdminBlocks from './pages/admin/AdminBlocks';
+import AdminQuienesSomos from './pages/admin/AdminQuienesSomos';
+import AdminServicios from './pages/admin/AdminServicios';
+import AdminAdmision from './pages/admin/AdminAdmision';
+import AdminContacto from './pages/admin/AdminContacto';
 import AdminMessages from './pages/admin/AdminMessages';
 
 function PublicLayout({ children, showFooter = true }) {
@@ -40,8 +42,10 @@ function App() {
           <Route path="/admin/login" element={<Login />} />
           <Route path="/admin" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
           <Route path="/admin/home" element={<ProtectedRoute><AdminHome /></ProtectedRoute>} />
-          <Route path="/admin/secciones" element={<ProtectedRoute><AdminSections /></ProtectedRoute>} />
-          <Route path="/admin/bloques" element={<ProtectedRoute><AdminBlocks /></ProtectedRoute>} />
+          <Route path="/admin/quienes-somos" element={<ProtectedRoute><AdminQuienesSomos /></ProtectedRoute>} />
+          <Route path="/admin/servicios" element={<ProtectedRoute><AdminServicios /></ProtectedRoute>} />
+          <Route path="/admin/admision" element={<ProtectedRoute><AdminAdmision /></ProtectedRoute>} />
+          <Route path="/admin/contacto" element={<ProtectedRoute><AdminContacto /></ProtectedRoute>} />
           <Route path="/admin/mensajes" element={<ProtectedRoute><AdminMessages /></ProtectedRoute>} />
         </Routes>
       </AuthProvider>

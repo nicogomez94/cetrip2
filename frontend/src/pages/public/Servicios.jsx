@@ -67,8 +67,8 @@ function Servicios() {
 
       <section className="page-cta">
         <div className="container page-cta__content">
-          <h3>¿Querés que evaluemos tu caso?</h3>
-          <p>Podemos orientarte sobre el tratamiento más adecuado para tu hijo o hija.</p>
+          <h3>{pageData.ctaTitle}</h3>
+          <p>{pageData.ctaText}</p>
           <div className="page-cta__actions">
             <Link to="/admision" className="btn btn--primary">Ver admisión</Link>
             <Link to="/contacto" className="btn btn--outline">Contactarnos</Link>

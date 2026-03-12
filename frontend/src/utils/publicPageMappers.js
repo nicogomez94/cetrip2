@@ -33,6 +33,11 @@ const flattenBlocks = (sections = []) =>
 const getBlocksByType = (sections, type) =>
   flattenBlocks(sections).filter((block) => block.type === type);
 
+const getSectionBySlug = (sections = [], slug) => sections.find((section) => section.slug === slug);
+
+const getBlocksBySectionSlug = (sections = [], slug) =>
+  sortByOrder(getSectionBySlug(sections, slug)?.blocks || []);
+
 const pickImage = (blocks = [], fallbackUrl) => {
   const withImage = blocks.find((block) => trimOrEmpty(block.imageUrl));
   return withImage?.imageUrl || fallbackUrl;
@@ -96,7 +101,7 @@ export function mapQuienesPage(sections = []) {
     content: fallbackText(identitySource[index]?.content, fallbackItem.content),
   }));
 
-  return {
+  const legacy = {
     bannerTitle: fallbackText(mainSection?.title, defaults.bannerTitle),
     bannerSubtitle: fallbackText(mainSection?.description, defaults.bannerSubtitle),
     introEyebrow: defaults.introEyebrow,
@@ -106,6 +111,37 @@ export function mapQuienesPage(sections = []) {
     identity,
     trustTitle: defaults.trustTitle,
     trustBody: defaults.trustBody,
+  };
+
+  const structuredBanner = getSectionBySlug(sections, 'quienes-banner');
+  const structuredIntro = getSectionBySlug(sections, 'quienes-intro');
+  const structuredIntroBlocks = getBlocksBySectionSlug(sections, 'quienes-intro');
+  const structuredIdentityBlocks = getBlocksBySectionSlug(sections, 'quienes-identidad').filter(
+    (block) => block.type === 'CARD' || block.type === 'TEXT'
+  );
+  const structuredTrust = getSectionBySlug(sections, 'quienes-trust');
+  const structuredTrustBlocks = getBlocksBySectionSlug(sections, 'quienes-trust').filter(
+    (block) => block.type === 'TEXT'
+  );
+
+  const introText = structuredIntroBlocks.find((block) => block.type === 'TEXT');
+  const introImage = structuredIntroBlocks.find((block) => block.type === 'IMAGE');
+
+  const structuredIdentity = legacy.identity.map((item, index) => ({
+    title: fallbackText(structuredIdentityBlocks[index]?.title, item.title),
+    content: fallbackText(structuredIdentityBlocks[index]?.content, item.content),
+  }));
+
+  return {
+    bannerTitle: fallbackText(structuredBanner?.title, legacy.bannerTitle),
+    bannerSubtitle: fallbackText(structuredBanner?.description, legacy.bannerSubtitle),
+    introEyebrow: fallbackText(structuredIntro?.description, legacy.introEyebrow),
+    introTitle: fallbackText(structuredIntro?.title, legacy.introTitle),
+    introBody: fallbackText(introText?.content, legacy.introBody),
+    mainImage: fallbackText(introImage?.imageUrl, legacy.mainImage),
+    identity: structuredIdentity,
+    trustTitle: fallbackText(structuredTrust?.title, legacy.trustTitle),
+    trustBody: fallbackText(structuredTrustBlocks[0]?.content, legacy.trustBody),
   };
 }
 
@@ -133,8 +169,7 @@ export function mapServiciosPage(sections = []) {
   }));
 
   const services = mappedServices.length > 0 ? mappedServices : defaults.services;
-
-  return {
+  const legacy = {
     bannerTitle: fallbackText(introSection?.title, defaults.bannerTitle),
     bannerSubtitle: fallbackText(introSection?.description, defaults.bannerSubtitle),
     introTitle: defaults.introTitle,
@@ -142,6 +177,46 @@ export function mapServiciosPage(sections = []) {
     services,
     workflowTitle: defaults.workflowTitle,
     workflow: defaults.workflow,
+    ctaTitle: defaults.cta.title,
+    ctaText: defaults.cta.text,
+  };
+
+  const structuredBanner = getSectionBySlug(sections, 'servicios-banner');
+  const structuredIntro = getSectionBySlug(sections, 'servicios-intro');
+  const structuredIntroText = getBlocksBySectionSlug(sections, 'servicios-intro').find(
+    (block) => block.type === 'TEXT'
+  );
+  const structuredServices = getBlocksBySectionSlug(sections, 'servicios-lista')
+    .filter((block) => block.type === 'CARD')
+    .map((block, index) => ({
+      id: block.id || `structured-service-${index}`,
+      title: fallbackText(block.title, legacy.services[index]?.title || 'Servicio'),
+      content: fallbackText(block.content, legacy.services[index]?.content || ''),
+      imageUrl: fallbackText(
+        block.imageUrl,
+        resolveServiceImage(block.title, index, legacy.services[index]?.imageUrl)
+      ),
+    }));
+  const structuredWorkflowSection = getSectionBySlug(sections, 'servicios-workflow');
+  const structuredWorkflowBlocks = getBlocksBySectionSlug(sections, 'servicios-workflow').filter(
+    (block) => block.type === 'CARD' || block.type === 'TEXT'
+  );
+  const structuredWorkflow = legacy.workflow.map((item, index) => ({
+    title: fallbackText(structuredWorkflowBlocks[index]?.title, item.title),
+    content: fallbackText(structuredWorkflowBlocks[index]?.content, item.content),
+  }));
+  const structuredCta = getSectionBySlug(sections, 'servicios-cta');
+
+  return {
+    bannerTitle: fallbackText(structuredBanner?.title, legacy.bannerTitle),
+    bannerSubtitle: fallbackText(structuredBanner?.description, legacy.bannerSubtitle),
+    introTitle: fallbackText(structuredIntro?.title, legacy.introTitle),
+    introBody: fallbackText(structuredIntroText?.content, legacy.introBody),
+    services: structuredServices.length > 0 ? structuredServices : legacy.services,
+    workflowTitle: fallbackText(structuredWorkflowSection?.title, legacy.workflowTitle),
+    workflow: structuredWorkflow,
+    ctaTitle: fallbackText(structuredCta?.title, legacy.ctaTitle),
+    ctaText: fallbackText(structuredCta?.description, legacy.ctaText),
   };
 }
 
@@ -165,8 +240,7 @@ export function mapAdmisionPage(sections = []) {
   }));
 
   const steps = mappedSteps.length > 0 ? mappedSteps : defaults.steps;
-
-  return {
+  const legacy = {
     bannerTitle: fallbackText(mainSection?.title, defaults.bannerTitle),
     bannerSubtitle: fallbackText(mainSection?.description, defaults.bannerSubtitle),
     introTitle: defaults.introTitle,
@@ -176,6 +250,53 @@ export function mapAdmisionPage(sections = []) {
     requirements: defaults.requirements,
     faqTitle: defaults.faqTitle,
     faq: defaults.faq,
+    ctaTitle: defaults.cta.title,
+    ctaText: defaults.cta.text,
+  };
+
+  const structuredBanner = getSectionBySlug(sections, 'admision-banner');
+  const structuredIntro = getSectionBySlug(sections, 'admision-intro');
+  const structuredIntroText = getBlocksBySectionSlug(sections, 'admision-intro').find(
+    (block) => block.type === 'TEXT'
+  );
+  const structuredSteps = getBlocksBySectionSlug(sections, 'admision-steps')
+    .filter((block) => block.type === 'CARD')
+    .map((block, index) => ({
+      id: block.id || `structured-step-${index}`,
+      title: fallbackText(block.title, legacy.steps[index]?.title || `Paso ${index + 1}`),
+      content: fallbackText(block.content, legacy.steps[index]?.content || ''),
+    }));
+  const structuredRequirementsSection = getSectionBySlug(sections, 'admision-requisitos');
+  const structuredRequirementsBlocks = getBlocksBySectionSlug(sections, 'admision-requisitos').filter(
+    (block) => block.type === 'TEXT'
+  );
+  const structuredFaqSection = getSectionBySlug(sections, 'admision-faq');
+  const structuredFaqBlocks = getBlocksBySectionSlug(sections, 'admision-faq').filter(
+    (block) => block.type === 'CARD'
+  );
+  const structuredCta = getSectionBySlug(sections, 'admision-cta');
+
+  return {
+    bannerTitle: fallbackText(structuredBanner?.title, legacy.bannerTitle),
+    bannerSubtitle: fallbackText(structuredBanner?.description, legacy.bannerSubtitle),
+    introTitle: fallbackText(structuredIntro?.title, legacy.introTitle),
+    introBody: fallbackText(structuredIntroText?.content, legacy.introBody),
+    steps: structuredSteps.length > 0 ? structuredSteps : legacy.steps,
+    requirementsTitle: fallbackText(structuredRequirementsSection?.title, legacy.requirementsTitle),
+    requirements:
+      structuredRequirementsBlocks.length > 0
+        ? structuredRequirementsBlocks.map((block) => fallbackText(block.content, ''))
+        : legacy.requirements,
+    faqTitle: fallbackText(structuredFaqSection?.title, legacy.faqTitle),
+    faq:
+      structuredFaqBlocks.length > 0
+        ? structuredFaqBlocks.map((block, index) => ({
+            question: fallbackText(block.title, legacy.faq[index]?.question || ''),
+            answer: fallbackText(block.content, legacy.faq[index]?.answer || ''),
+          }))
+        : legacy.faq,
+    ctaTitle: fallbackText(structuredCta?.title, legacy.ctaTitle),
+    ctaText: fallbackText(structuredCta?.description, legacy.ctaText),
   };
 }
 
@@ -193,7 +314,7 @@ export function mapContactoPage(sections = []) {
     return fallbackText(match?.content || match?.title, fallback);
   };
 
-  return {
+  const legacy = {
     bannerTitle: fallbackText(mainSection?.title, defaults.bannerTitle),
     bannerSubtitle: fallbackText(mainSection?.description, defaults.bannerSubtitle),
     infoTitle: defaults.infoTitle,
@@ -202,5 +323,26 @@ export function mapContactoPage(sections = []) {
     phone: pickInfoByKeyword(['telefono', 'whatsapp'], defaults.phone),
     email: pickInfoByKeyword(['email', 'correo'], defaults.email),
     schedule: pickInfoByKeyword(['horario', 'atencion'], defaults.schedule),
+  };
+
+  const structuredBanner = getSectionBySlug(sections, 'contacto-banner');
+  const structuredInfoSection = getSectionBySlug(sections, 'contacto-info');
+  const structuredInfoBlocks = getBlocksBySectionSlug(sections, 'contacto-info').filter(
+    (block) => block.type === 'TEXT'
+  );
+  const valueByKey = (key, fallback) => {
+    const match = structuredInfoBlocks.find((block) => block.title === key);
+    return fallbackText(match?.content, fallback);
+  };
+
+  return {
+    bannerTitle: fallbackText(structuredBanner?.title, legacy.bannerTitle),
+    bannerSubtitle: fallbackText(structuredBanner?.description, legacy.bannerSubtitle),
+    infoTitle: fallbackText(structuredInfoSection?.title, legacy.infoTitle),
+    infoSubtitle: fallbackText(structuredInfoSection?.description, legacy.infoSubtitle),
+    address: valueByKey('address', legacy.address),
+    phone: valueByKey('phone', legacy.phone),
+    email: valueByKey('email', legacy.email),
+    schedule: valueByKey('schedule', legacy.schedule),
   };
 }

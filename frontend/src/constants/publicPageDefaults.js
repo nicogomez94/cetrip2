@@ -69,6 +69,10 @@ export const SERVICIOS_DEFAULTS = {
       content: 'Acompañamos el proceso con devoluciones periódicas y ajustes de estrategia.',
     },
   ],
+  cta: {
+    title: '¿Querés que evaluemos tu caso?',
+    text: 'Podemos orientarte sobre el tratamiento más adecuado para tu hijo o hija.',
+  },
 };
 
 export const ADMISION_DEFAULTS = {
@@ -119,6 +123,10 @@ export const ADMISION_DEFAULTS = {
         'Depende de la disponibilidad horaria y del plan indicado, pero priorizamos iniciar lo antes posible.',
     },
   ],
+  cta: {
+    title: '¿Listos para empezar?',
+    text: 'Escribinos y coordinamos la primera entrevista para orientar el proceso.',
+  },
 };
 
 export const CONTACTO_DEFAULTS = {

@@ -5,9 +5,11 @@ import '../../styles/admin.css';
 
 const MENU = [
   { to: '/admin', label: 'Dashboard', icon: '📊', end: true },
-  { to: '/admin/home', label: 'Home (texto)', icon: '🏠' },
-  { to: '/admin/secciones', label: 'Secciones', icon: '🗂️' },
-  { to: '/admin/bloques', label: 'Bloques', icon: '🧩' },
+  { to: '/admin/home', label: 'Home', icon: '🏠' },
+  { to: '/admin/quienes-somos', label: 'Quiénes Somos', icon: '🧭' },
+  { to: '/admin/servicios', label: 'Servicios', icon: '🩺' },
+  { to: '/admin/admision', label: 'Admisión', icon: '🗓️' },
+  { to: '/admin/contacto', label: 'Contacto', icon: '📞' },
   { to: '/admin/mensajes', label: 'Mensajes', icon: '✉️' },
 ];
 

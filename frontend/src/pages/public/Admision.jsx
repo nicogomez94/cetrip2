@@ -74,8 +74,8 @@ function Admision() {
 
       <section className="page-cta">
         <div className="container page-cta__content">
-          <h3>¿Listos para empezar?</h3>
-          <p>Escribinos y coordinamos la primera entrevista para orientar el proceso.</p>
+          <h3>{pageData.ctaTitle}</h3>
+          <p>{pageData.ctaText}</p>
           <div className="page-cta__actions">
             <Link to="/contacto" className="btn btn--primary">Iniciar contacto</Link>
             <Link to="/servicios" className="btn btn--outline">Ver servicios</Link>

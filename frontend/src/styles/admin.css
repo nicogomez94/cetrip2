@@ -322,6 +322,73 @@
   gap: 1.75rem;
 }
 
+.dash-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.dash-summary-card {
+  background: #fff;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 1rem 1.2rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.dash-summary-card__label {
+  color: var(--color-text-muted);
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.dash-summary-card__value {
+  margin-top: 0.35rem;
+  font-size: 1.9rem;
+  font-weight: 800;
+  color: var(--color-primary);
+  line-height: 1;
+}
+
+.page-status-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 0.9rem;
+}
+
+.page-status-card {
+  background: #fff;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 1rem;
+  box-shadow: var(--shadow-sm);
+  color: inherit;
+  text-decoration: none;
+  transition: transform var(--transition), box-shadow var(--transition);
+}
+
+.page-status-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  text-decoration: none;
+}
+
+.page-status-card__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.page-status-card__icon {
+  font-size: 1.35rem;
+}
+
+.page-status-card h3 {
+  font-size: 1rem;
+}
+
 .dash-stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -465,6 +532,35 @@
 .quick-link:hover {
   background-color: #d0e8f8;
   text-decoration: none;
+}
+
+/* ─── Repetible editor ─────────────────────────────────────────────────────── */
+.repeatable-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.repeatable-item {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 0.9rem;
+  background: #fafcfe;
+}
+
+.repeatable-item__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.6rem;
+}
+
+.repeatable-item__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
 }
 
 /* ─── Messages panel ────────────────────────────────────────────────────────── */
@@ -652,6 +748,10 @@
 
   .dash-stats-grid {
     grid-template-columns: repeat(2, 1fr);
+  }
+
+  .dash-summary-grid {
+    grid-template-columns: 1fr;
   }
 }
 
