@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/common/ProtectedRoute';
 import Navbar from './components/common/Navbar';
@@ -11,7 +11,6 @@ import Servicios from './pages/public/Servicios';
 import Contacto from './pages/public/Contacto';
 
 import Login from './pages/admin/Login';
-import Dashboard from './pages/admin/Dashboard';
 import AdminHome from './pages/admin/AdminHome';
 import AdminQuienesSomos from './pages/admin/AdminQuienesSomos';
 import AdminServicios from './pages/admin/AdminServicios';
@@ -40,7 +39,7 @@ function App() {
           <Route path="/servicios" element={<PublicLayout><Servicios /></PublicLayout>} />
           <Route path="/contacto" element={<PublicLayout><Contacto /></PublicLayout>} />
           <Route path="/admin/login" element={<Login />} />
-          <Route path="/admin" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+          <Route path="/admin" element={<ProtectedRoute><Navigate to="/admin/home" replace /></ProtectedRoute>} />
           <Route path="/admin/home" element={<ProtectedRoute><AdminHome /></ProtectedRoute>} />
           <Route path="/admin/quienes-somos" element={<ProtectedRoute><AdminQuienesSomos /></ProtectedRoute>} />
           <Route path="/admin/servicios" element={<ProtectedRoute><AdminServicios /></ProtectedRoute>} />

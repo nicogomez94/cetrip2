@@ -4,7 +4,6 @@ import { useAuth } from '../../context/AuthContext';
 import '../../styles/admin.css';
 
 const MENU = [
-  { to: '/admin', label: 'Dashboard', icon: '📊', end: true },
   { to: '/admin/home', label: 'Home', icon: '🏠' },
   { to: '/admin/quienes-somos', label: 'Quiénes Somos', icon: '🧭' },
   { to: '/admin/servicios', label: 'Servicios', icon: '🩺' },
