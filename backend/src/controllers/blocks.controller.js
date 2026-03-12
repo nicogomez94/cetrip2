@@ -58,6 +58,20 @@ const create = async (req, res, next) => {
     });
     if (!sectionExists) return next(new AppError('La sección especificada no existe.', 404));
 
+    const parsedOrder = parseInt(order) || 0;
+    const duplicateByOrder = await prisma.block.findFirst({
+      where: {
+        sectionId: parseInt(sectionId),
+        order: parsedOrder,
+      },
+      select: { id: true },
+    });
+    if (duplicateByOrder) {
+      return next(
+        new AppError('Ya existe un bloque con ese orden en esta sección. Elegí otro orden.', 409)
+      );
+    }
+
     const block = await prisma.block.create({
       data: {
         sectionId: parseInt(sectionId),
@@ -69,7 +83,7 @@ const create = async (req, res, next) => {
         videoUrl: videoUrl?.trim(),
         linkUrl: linkUrl?.trim(),
         linkText: linkText?.trim(),
-        order: parseInt(order) || 0,
+        order: parsedOrder,
         isActive: isActive !== undefined ? Boolean(isActive) : true,
       },
     });
@@ -100,6 +114,9 @@ const update = async (req, res, next) => {
       return next(new AppError(`Tipo inválido. Válidos: ${VALID_TYPES.join(', ')}`, 400));
     }
 
+    const current = await prisma.block.findUnique({ where: { id } });
+    if (!current) return next(new AppError('Bloque no encontrado.', 404));
+
     const data = {};
     if (sectionId !== undefined) data.sectionId = parseInt(sectionId);
     if (type !== undefined) data.type = type;
@@ -112,6 +129,22 @@ const update = async (req, res, next) => {
     if (linkText !== undefined) data.linkText = linkText.trim();
     if (order !== undefined) data.order = parseInt(order);
     if (isActive !== undefined) data.isActive = Boolean(isActive);
+
+    const targetSectionId = data.sectionId ?? current.sectionId;
+    const targetOrder = data.order ?? current.order;
+    const duplicateByOrder = await prisma.block.findFirst({
+      where: {
+        sectionId: targetSectionId,
+        order: targetOrder,
+        id: { not: id },
+      },
+      select: { id: true },
+    });
+    if (duplicateByOrder) {
+      return next(
+        new AppError('Ya existe un bloque con ese orden en esta sección. Elegí otro orden.', 409)
+      );
+    }
 
     const block = await prisma.block.update({ where: { id }, data });
     res.json({ success: true, data: block });

@@ -1,0 +1,1 @@
+SELECT COUNT(*) AS duplicate_groups FROM (SELECT \"sectionId\", \"order\" FROM \"blocks\" GROUP BY \"sectionId\", \"order\" HAVING COUNT(*)  t; 
