@@ -12,7 +12,7 @@ services:
       - key: PORT
         value: "10000"
       - key: DATABASE_URL
-        value: postgresql://bsdc_user:tHAIZrPB2zaTXPLr7srJYyLw8c9Wpub0@dpg-d6ktoufafjfc73emvbtg-a/bsdc?schema=cetrip
+        value: postgresql://basefree_user:5qKWDSyE5T9svRX1BwlRUabLM7IcU5L9@dpg-d6sqp1ia214c73c704qg-a/basefree?schema=cetrip
       - key: JWT_SECRET
         value: 9eb67d1730f68f2a5cf3fca95c42eec4
       - key: JWT_EXPIRES_IN
