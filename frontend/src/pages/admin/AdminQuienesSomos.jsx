@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import AdminLayout from '../../components/admin/AdminLayout';
+import RichTextEditor from '../../components/admin/RichTextEditor';
 import Loader from '../../components/common/Loader';
 import ErrorMessage from '../../components/common/ErrorMessage';
 import { QUIENES_DEFAULTS } from '../../constants/publicPageDefaults';
@@ -85,6 +86,11 @@ function AdminQuienesSomos() {
 
   const handleChange = (event) => {
     const { name, value } = event.target;
+    setSaved(false);
+    setForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleRichTextChange = (name, value) => {
     setSaved(false);
     setForm((prev) => ({ ...prev, [name]: value }));
   };
@@ -224,7 +230,10 @@ function AdminQuienesSomos() {
             </div>
             <div className="form-group">
               <label>Texto</label>
-              <textarea name="introBody" rows={4} value={form.introBody} onChange={handleChange} />
+              <RichTextEditor
+                value={form.introBody}
+                onChange={(value) => handleRichTextChange('introBody', value)}
+              />
             </div>
             <div className="form-group">
               <label>Imagen principal (URL)</label>
@@ -250,7 +259,10 @@ function AdminQuienesSomos() {
             </div>
             <div className="form-group">
               <label>Bloque 1 - Texto</label>
-              <textarea name="identity1Content" rows={3} value={form.identity1Content} onChange={handleChange} />
+              <RichTextEditor
+                value={form.identity1Content}
+                onChange={(value) => handleRichTextChange('identity1Content', value)}
+              />
             </div>
             <div className="form-group">
               <label>Bloque 2 - Título</label>
@@ -258,7 +270,10 @@ function AdminQuienesSomos() {
             </div>
             <div className="form-group">
               <label>Bloque 2 - Texto</label>
-              <textarea name="identity2Content" rows={3} value={form.identity2Content} onChange={handleChange} />
+              <RichTextEditor
+                value={form.identity2Content}
+                onChange={(value) => handleRichTextChange('identity2Content', value)}
+              />
             </div>
             <div className="form-group">
               <label>Bloque 3 - Título</label>
@@ -266,7 +281,10 @@ function AdminQuienesSomos() {
             </div>
             <div className="form-group">
               <label>Bloque 3 - Texto</label>
-              <textarea name="identity3Content" rows={3} value={form.identity3Content} onChange={handleChange} />
+              <RichTextEditor
+                value={form.identity3Content}
+                onChange={(value) => handleRichTextChange('identity3Content', value)}
+              />
             </div>
 
             <h3>Franja de confianza (CTA)</h3>
@@ -276,7 +294,10 @@ function AdminQuienesSomos() {
             </div>
             <div className="form-group">
               <label>Texto</label>
-              <textarea name="trustBody" rows={3} value={form.trustBody} onChange={handleChange} />
+              <RichTextEditor
+                value={form.trustBody}
+                onChange={(value) => handleRichTextChange('trustBody', value)}
+              />
             </div>
 
             <div className="form-actions">

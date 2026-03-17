@@ -364,7 +364,8 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* ─── Video wrapper ─────────────────────────────────────────────────────────── */
-.video-wrapper {
+.video-wrapper,
+.rich-video {
   position: relative;
   width: 100%;
   padding-top: 56.25%;
@@ -373,7 +374,8 @@ h1, h2, h3, h4, h5, h6 {
   overflow: hidden;
 }
 
-.video-wrapper iframe {
+.video-wrapper iframe,
+.rich-video iframe {
   position: absolute;
   inset: 0;
   width: 100%;

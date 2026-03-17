@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { EditorContent, useEditor } from '@tiptap/react';
+import { mergeAttributes, Node } from '@tiptap/core';
 import StarterKit from '@tiptap/starter-kit';
 import Underline from '@tiptap/extension-underline';
 import Link from '@tiptap/extension-link';
@@ -21,6 +22,138 @@ const normalizeToHtml = (value) => {
   if (HTML_TAG_REGEX.test(value)) return value;
   return `<p>${escapeHtml(value).replace(/\n/g, '<br />')}</p>`;
 };
+
+const toYoutubeEmbedUrl = (parsedUrl) => {
+  const host = parsedUrl.hostname.replace(/^www\./, '');
+  if (host === 'youtu.be') {
+    const videoId = parsedUrl.pathname.split('/').filter(Boolean)[0];
+    if (!videoId) return null;
+    return `https://www.youtube.com/embed/${videoId}`;
+  }
+
+  if (host === 'youtube.com' || host === 'm.youtube.com') {
+    if (parsedUrl.pathname === '/watch') {
+      const videoId = parsedUrl.searchParams.get('v');
+      if (!videoId) return null;
+      return `https://www.youtube.com/embed/${videoId}`;
+    }
+
+    if (parsedUrl.pathname.startsWith('/shorts/')) {
+      const videoId = parsedUrl.pathname.split('/')[2];
+      if (!videoId) return null;
+      return `https://www.youtube.com/embed/${videoId}`;
+    }
+
+    if (parsedUrl.pathname.startsWith('/embed/')) {
+      const videoId = parsedUrl.pathname.split('/')[2];
+      if (!videoId) return null;
+      return `https://www.youtube.com/embed/${videoId}`;
+    }
+  }
+
+  return null;
+};
+
+const toVimeoEmbedUrl = (parsedUrl) => {
+  const host = parsedUrl.hostname.replace(/^www\./, '');
+  if (host === 'vimeo.com') {
+    const videoId = parsedUrl.pathname.split('/').filter(Boolean)[0];
+    if (!videoId || Number.isNaN(Number(videoId))) return null;
+    return `https://player.vimeo.com/video/${videoId}`;
+  }
+
+  if (host === 'player.vimeo.com' && parsedUrl.pathname.startsWith('/video/')) {
+    return `https://player.vimeo.com${parsedUrl.pathname}`;
+  }
+
+  return null;
+};
+
+const normalizeVideoEmbedUrl = (rawUrl) => {
+  try {
+    const parsedUrl = new URL(rawUrl);
+    if (!['http:', 'https:'].includes(parsedUrl.protocol)) return null;
+
+    const youtubeEmbed = toYoutubeEmbedUrl(parsedUrl);
+    if (youtubeEmbed) return youtubeEmbed;
+
+    const vimeoEmbed = toVimeoEmbedUrl(parsedUrl);
+    if (vimeoEmbed) return vimeoEmbed;
+
+    return rawUrl;
+  } catch {
+    return null;
+  }
+};
+
+const VideoEmbed = Node.create({
+  name: 'videoEmbed',
+  group: 'block',
+  atom: true,
+  draggable: true,
+  selectable: true,
+
+  addAttributes() {
+    return {
+      src: {
+        default: null,
+      },
+      title: {
+        default: 'Video embebido',
+      },
+    };
+  },
+
+  parseHTML() {
+    return [
+      {
+        tag: 'div[data-video-embed]',
+        getAttrs: (element) => {
+          const iframe = element.querySelector('iframe');
+          return {
+            src: iframe?.getAttribute('src') || null,
+            title: iframe?.getAttribute('title') || 'Video embebido',
+          };
+        },
+      },
+    ];
+  },
+
+  renderHTML({ HTMLAttributes }) {
+    return [
+      'div',
+      mergeAttributes({
+        class: 'rich-video',
+        'data-video-embed': 'true',
+      }),
+      [
+        'iframe',
+        {
+          src: HTMLAttributes.src,
+          title: HTMLAttributes.title || 'Video embebido',
+          frameborder: '0',
+          allow:
+            'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share',
+          allowfullscreen: 'true',
+          loading: 'lazy',
+          referrerpolicy: 'strict-origin-when-cross-origin',
+        },
+      ],
+    ];
+  },
+
+  addCommands() {
+    return {
+      setVideoEmbed:
+        (attributes) =>
+        ({ commands }) =>
+          commands.insertContent({
+            type: this.name,
+            attrs: attributes,
+          }),
+    };
+  },
+});
 
 function ToolbarButton({ editor, title, active = false, disabled = false, onClick, children }) {
   return (
@@ -49,6 +182,7 @@ function RichTextEditor({ value, onChange }) {
         defaultProtocol: 'https',
       }),
       Image,
+      VideoEmbed,
       TextAlign.configure({
         types: ['heading', 'paragraph'],
       }),
@@ -90,6 +224,20 @@ function RichTextEditor({ value, onChange }) {
     const src = window.prompt('Ingresá la URL de la imagen');
     if (!src || !src.trim()) return;
     editor.chain().focus().setImage({ src: src.trim() }).run();
+  };
+
+  const setVideo = () => {
+    if (!editor) return;
+    const rawUrl = window.prompt('Ingresá la URL del video (YouTube, Vimeo o embed directo)');
+    if (!rawUrl || !rawUrl.trim()) return;
+
+    const src = normalizeVideoEmbedUrl(rawUrl.trim());
+    if (!src) {
+      window.alert('La URL del video no es válida.');
+      return;
+    }
+
+    editor.chain().focus().setVideoEmbed({ src }).run();
   };
 
   return (
@@ -169,6 +317,14 @@ function RichTextEditor({ value, onChange }) {
         </ToolbarButton>
         <ToolbarButton editor={editor} title="Imagen" onClick={setImage}>
           Img
+        </ToolbarButton>
+        <ToolbarButton
+          editor={editor}
+          title="Video"
+          active={editor?.isActive('videoEmbed')}
+          onClick={setVideo}
+        >
+          Vid
         </ToolbarButton>
         <ToolbarButton
           editor={editor}

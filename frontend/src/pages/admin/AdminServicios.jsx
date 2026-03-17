@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import AdminLayout from '../../components/admin/AdminLayout';
+import RichTextEditor from '../../components/admin/RichTextEditor';
 import Loader from '../../components/common/Loader';
 import ErrorMessage from '../../components/common/ErrorMessage';
 import { SERVICIOS_DEFAULTS } from '../../constants/publicPageDefaults';
@@ -110,6 +111,11 @@ function AdminServicios() {
 
   const handleFormChange = (event) => {
     const { name, value } = event.target;
+    setSaved(false);
+    setForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleRichTextChange = (name, value) => {
     setSaved(false);
     setForm((prev) => ({ ...prev, [name]: value }));
   };
@@ -292,7 +298,10 @@ function AdminServicios() {
             </div>
             <div className="form-group">
               <label>Texto</label>
-              <textarea name="introBody" rows={4} value={form.introBody} onChange={handleFormChange} />
+              <RichTextEditor
+                value={form.introBody}
+                onChange={(value) => handleRichTextChange('introBody', value)}
+              />
             </div>
 
             <h3>Lista de servicios ({services.length}/{MAX_SERVICES})</h3>
@@ -338,10 +347,9 @@ function AdminServicios() {
                   </div>
                   <div className="form-group">
                     <label>Texto</label>
-                    <textarea
-                      rows={3}
+                    <RichTextEditor
                       value={service.content}
-                      onChange={(event) => handleServiceChange(index, 'content', event.target.value)}
+                      onChange={(value) => handleServiceChange(index, 'content', value)}
                     />
                   </div>
                   <div className="form-group">
@@ -388,7 +396,10 @@ function AdminServicios() {
             </div>
             <div className="form-group">
               <label>Paso 1 - Texto</label>
-              <textarea name="workflow1Content" rows={3} value={form.workflow1Content} onChange={handleFormChange} />
+              <RichTextEditor
+                value={form.workflow1Content}
+                onChange={(value) => handleRichTextChange('workflow1Content', value)}
+              />
             </div>
             <div className="form-group">
               <label>Paso 2 - Título</label>
@@ -396,7 +407,10 @@ function AdminServicios() {
             </div>
             <div className="form-group">
               <label>Paso 2 - Texto</label>
-              <textarea name="workflow2Content" rows={3} value={form.workflow2Content} onChange={handleFormChange} />
+              <RichTextEditor
+                value={form.workflow2Content}
+                onChange={(value) => handleRichTextChange('workflow2Content', value)}
+              />
             </div>
             <div className="form-group">
               <label>Paso 3 - Título</label>
@@ -404,7 +418,10 @@ function AdminServicios() {
             </div>
             <div className="form-group">
               <label>Paso 3 - Texto</label>
-              <textarea name="workflow3Content" rows={3} value={form.workflow3Content} onChange={handleFormChange} />
+              <RichTextEditor
+                value={form.workflow3Content}
+                onChange={(value) => handleRichTextChange('workflow3Content', value)}
+              />
             </div>
 
             <h3>CTA final</h3>
@@ -414,7 +431,10 @@ function AdminServicios() {
             </div>
             <div className="form-group">
               <label>Texto</label>
-              <textarea name="ctaText" rows={3} value={form.ctaText} onChange={handleFormChange} />
+              <RichTextEditor
+                value={form.ctaText}
+                onChange={(value) => handleRichTextChange('ctaText', value)}
+              />
             </div>
 
             <div className="form-actions">

@@ -75,7 +75,7 @@ function Admision() {
       <section className="page-cta">
         <div className="container page-cta__content">
           <h3>{pageData.ctaTitle}</h3>
-          <p>{pageData.ctaText}</p>
+          <RichTextContent content={pageData.ctaText} className="rich-text-content" />
           <div className="page-cta__actions">
             <Link to="/contacto" className="btn btn--primary">Iniciar contacto</Link>
             <Link to="/servicios" className="btn btn--outline">Ver servicios</Link>

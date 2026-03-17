@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import AdminLayout from '../../components/admin/AdminLayout';
+import RichTextEditor from '../../components/admin/RichTextEditor';
 import Loader from '../../components/common/Loader';
 import ErrorMessage from '../../components/common/ErrorMessage';
 import { ADMISION_DEFAULTS } from '../../constants/publicPageDefaults';
@@ -132,6 +133,11 @@ function AdminAdmision() {
 
   const handleFormChange = (event) => {
     const { name, value } = event.target;
+    setSaved(false);
+    setForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleRichTextChange = (name, value) => {
     setSaved(false);
     setForm((prev) => ({ ...prev, [name]: value }));
   };
@@ -305,7 +311,10 @@ function AdminAdmision() {
             </div>
             <div className="form-group">
               <label>Texto</label>
-              <textarea name="introBody" rows={4} value={form.introBody} onChange={handleFormChange} />
+              <RichTextEditor
+                value={form.introBody}
+                onChange={(value) => handleRichTextChange('introBody', value)}
+              />
             </div>
 
             <h3>Pasos del proceso ({steps.length}/{MAX_STEPS})</h3>
@@ -350,10 +359,9 @@ function AdminAdmision() {
                   </div>
                   <div className="form-group">
                     <label>Texto</label>
-                    <textarea
-                      rows={3}
+                    <RichTextEditor
                       value={step.content}
-                      onChange={(event) => handleStepChange(index, 'content', event.target.value)}
+                      onChange={(value) => handleStepChange(index, 'content', value)}
                     />
                   </div>
                 </div>
@@ -427,7 +435,7 @@ function AdminAdmision() {
             </div>
             <div className="form-group">
               <label>Texto</label>
-              <textarea name="ctaText" rows={3} value={form.ctaText} onChange={handleFormChange} />
+              <RichTextEditor value={form.ctaText} onChange={(value) => handleRichTextChange('ctaText', value)} />
             </div>
 
             <div className="form-actions">

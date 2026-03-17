@@ -53,7 +53,7 @@ function QuienesSomos() {
         <div className="container trust-strip__content">
           <div>
             <h3>{pageData.trustTitle}</h3>
-            <p>{pageData.trustBody}</p>
+            <RichTextContent content={pageData.trustBody} className="rich-text-content" />
           </div>
           <div className="trust-strip__actions">
             <Link to="/admision" className="btn btn--primary">Iniciar admisión</Link>

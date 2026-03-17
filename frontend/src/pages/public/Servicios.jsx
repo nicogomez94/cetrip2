@@ -58,7 +58,7 @@ function Servicios() {
               <article key={step.title} className="workflow-step">
                 <span className="workflow-step__index">{index + 1}</span>
                 <h3>{step.title}</h3>
-                <p>{step.content}</p>
+                <RichTextContent content={step.content} className="rich-text-content" />
               </article>
             ))}
           </div>
@@ -68,7 +68,7 @@ function Servicios() {
       <section className="page-cta">
         <div className="container page-cta__content">
           <h3>{pageData.ctaTitle}</h3>
-          <p>{pageData.ctaText}</p>
+          <RichTextContent content={pageData.ctaText} className="rich-text-content" />
           <div className="page-cta__actions">
             <Link to="/admision" className="btn btn--primary">Ver admisión</Link>
             <Link to="/contacto" className="btn btn--outline">Contactarnos</Link>

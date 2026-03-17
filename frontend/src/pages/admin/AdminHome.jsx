@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import AdminLayout from '../../components/admin/AdminLayout';
+import RichTextEditor from '../../components/admin/RichTextEditor';
 import Loader from '../../components/common/Loader';
 import ErrorMessage from '../../components/common/ErrorMessage';
 import api from '../../services/api';
@@ -131,6 +132,11 @@ function AdminHome() {
 
   const handleChange = (event) => {
     const { name, value } = event.target;
+    setSaved(false);
+    setForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleRichTextChange = (name, value) => {
     setSaved(false);
     setForm((prev) => ({ ...prev, [name]: value }));
   };
@@ -274,7 +280,10 @@ function AdminHome() {
             </div>
             <div className="form-group">
               <label>Hero - Texto</label>
-              <textarea name="heroContent" rows={3} value={form.heroContent} onChange={handleChange} />
+              <RichTextEditor
+                value={form.heroContent}
+                onChange={(value) => handleRichTextChange('heroContent', value)}
+              />
             </div>
             <div className="form-group">
               <label>Hero - Texto del botón</label>
@@ -295,11 +304,17 @@ function AdminHome() {
             <div className="form-row">
               <div className="form-group">
                 <label>Servicio 1 - Texto</label>
-                <textarea name="service1Content" rows={3} value={form.service1Content} onChange={handleChange} />
+                <RichTextEditor
+                  value={form.service1Content}
+                  onChange={(value) => handleRichTextChange('service1Content', value)}
+                />
               </div>
               <div className="form-group">
                 <label>Servicio 2 - Texto</label>
-                <textarea name="service2Content" rows={3} value={form.service2Content} onChange={handleChange} />
+                <RichTextEditor
+                  value={form.service2Content}
+                  onChange={(value) => handleRichTextChange('service2Content', value)}
+                />
               </div>
             </div>
             <div className="form-row">
@@ -309,7 +324,10 @@ function AdminHome() {
               </div>
               <div className="form-group">
                 <label>Servicio 3 - Texto</label>
-                <textarea name="service3Content" rows={3} value={form.service3Content} onChange={handleChange} />
+                <RichTextEditor
+                  value={form.service3Content}
+                  onChange={(value) => handleRichTextChange('service3Content', value)}
+                />
               </div>
             </div>
 

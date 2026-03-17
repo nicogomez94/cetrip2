@@ -219,6 +219,10 @@
   border-radius: 8px;
 }
 
+.rte-content .rich-video {
+  margin: 0.8rem 0;
+}
+
 .rte-content a {
   color: var(--color-primary);
   text-decoration: underline;
