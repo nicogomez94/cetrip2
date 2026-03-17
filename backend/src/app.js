@@ -19,9 +19,26 @@ app.use(
 );
 
 // ─── CORS ────────────────────────────────────────────────────────────────────
+const configuredOrigins = [
+  process.env.FRONTEND_URL,
+  ...(process.env.FRONTEND_URLS || '').split(',').map((origin) => origin.trim()),
+  'http://localhost:5173',
+].filter(Boolean);
+
+const isAllowedRenderFrontend = (origin) =>
+  /^https:\/\/cetrip-frontend(?:-[a-z0-9]+)?\.onrender\.com$/.test(origin);
+
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+    origin: (origin, callback) => {
+      if (!origin) return callback(null, true);
+
+      if (configuredOrigins.includes(origin) || isAllowedRenderFrontend(origin)) {
+        return callback(null, true);
+      }
+
+      return callback(new Error(`Origen no permitido por CORS: ${origin}`));
+    },
     credentials: true,
   })
 );

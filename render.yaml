@@ -24,7 +24,7 @@ services:
       - key: ADMIN_PASSWORD
         value: admin123
       - key: FRONTEND_URL
-        value: https://cetrip-frontend.onrender.com
+        value: https://cetrip-frontend-t4in.onrender.com
       - key: BACKEND_URL
         value: https://cetrip-api.onrender.com
       - key: DEBUG
