@@ -10,6 +10,8 @@ import QuienesSomos from './pages/public/QuienesSomos';
 import Admision from './pages/public/Admision';
 import Servicios from './pages/public/Servicios';
 import ServicioDetalle from './pages/public/ServicioDetalle';
+import CET from './pages/public/CET';
+import SAIE from './pages/public/SAIE';
 import Contacto from './pages/public/Contacto';
 
 import Login from './pages/admin/Login';
@@ -105,6 +107,8 @@ function App() {
           <Route path="/admision" element={<PublicLayout><Admision /></PublicLayout>} />
           <Route path="/servicios" element={<PublicLayout><Servicios /></PublicLayout>} />
           <Route path="/servicios/:serviceSlug" element={<PublicLayout><ServicioDetalle /></PublicLayout>} />
+          <Route path="/cet" element={<PublicLayout><CET /></PublicLayout>} />
+          <Route path="/saie" element={<PublicLayout><SAIE /></PublicLayout>} />
           <Route path="/contacto" element={<PublicLayout><Contacto /></PublicLayout>} />
           <Route path="/admin/login" element={<Login />} />
           <Route path="/admin" element={<ProtectedRoute><Navigate to="/admin/home" replace /></ProtectedRoute>} />

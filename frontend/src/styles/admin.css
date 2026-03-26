@@ -259,6 +259,114 @@
   padding-bottom: 0.75rem;
 }
 
+/* ─── Admin home form: increase gap between section blocks ───────────────────── */
+.admin-home-form {
+  gap: 2rem;
+}
+
+/* ─── Admin section blocks ───────────────────────────────────────────────────── */
+.admin-section-block {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 1.25rem 1.5rem 1.5rem;
+  background: #f8f9fc;
+  border-left: 4px solid var(--color-primary);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+
+.admin-section-block--hero {
+  border-left-color: #1b6ca8;
+  background: #f0f7ff;
+}
+
+.admin-section-block--services {
+  border-left-color: #0e9f6e;
+  background: #f0faf5;
+}
+
+.admin-section-block--about {
+  border-left-color: #7e3af2;
+  background: #f5f0ff;
+}
+
+.admin-section-block--workflow {
+  border-left-color: #e3a008;
+  background: #fffbeb;
+}
+
+.admin-section-block--faq {
+  border-left-color: #0694a2;
+  background: #f0fdfe;
+}
+
+.admin-section-block--cta {
+  border-left-color: #e74c3c;
+  background: #fff5f5;
+}
+
+.admin-section-block__header {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--color-bg-dark);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(0,0,0,0.07);
+  margin-bottom: 0.25rem;
+}
+
+/* ─── Services grid ──────────────────────────────────────────────────────────── */
+.admin-services-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+@media (max-width: 900px) {
+  .admin-services-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.admin-service-card {
+  background: #fff;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 1rem;
+  border-top: 3px solid #0e9f6e;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.admin-service-card--workflow {
+  border-top-color: #e3a008;
+}
+
+.admin-service-card--faq {
+  border-top-color: #0694a2;
+}
+
+.admin-service-card__label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #0e9f6e;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+}
+
+.admin-service-card--workflow .admin-service-card__label {
+  color: #b45309;
+}
+
+.admin-service-card--faq .admin-service-card__label {
+  color: #0694a2;
+}
+
 /* ─── Admin table ────────────────────────────────────────────────────────────── */
 .admin-table-wrapper {
   background: #fff;

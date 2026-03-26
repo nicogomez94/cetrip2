@@ -21,6 +21,11 @@
   font-size: 0.85em;
 }
 
+.form-hint {
+  color: #6e7e8f;
+  font-size: 0.8rem;
+}
+
 .form-group label {
   font-size: 0.875rem;
   font-weight: 600;
@@ -69,8 +74,13 @@
   border-color: var(--color-danger);
 }
 
+.form-group--error .rte {
+  border-color: var(--color-danger);
+}
+
 .form-group--error input:focus,
-.form-group--error textarea:focus {
+.form-group--error textarea:focus,
+.form-group--error .rte:focus-within {
   box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.15);
 }
 
@@ -136,6 +146,13 @@
   gap: 0.75rem;
   flex-wrap: wrap;
   margin-top: 0.5rem;
+  align-items: center;
+}
+
+.form-inline-error {
+  color: #b00020;
+  font-size: 0.875rem;
+  font-weight: 600;
 }
 
 /* Upload */

@@ -1,9 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import AdminLayout from '../../components/admin/AdminLayout';
 import Loader from '../../components/common/Loader';
 import ErrorMessage from '../../components/common/ErrorMessage';
 import { CONTACTO_DEFAULTS } from '../../constants/publicPageDefaults';
 import { mapContactoPage } from '../../utils/publicPageMappers';
+import { ADMIN_PLAIN_TEXT_LIMIT, exceedsAdminPlainTextLimit } from '../../utils/adminTextLimit';
 import {
   PAGE_SLUGS,
   ensureSection,
@@ -31,8 +32,10 @@ function AdminContacto() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [formError, setFormError] = useState(null);
+  const [errorField, setErrorField] = useState('');
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const formActionsRef = useRef(null);
 
   const loadData = async () => {
     setLoading(true);
@@ -72,14 +75,37 @@ function AdminContacto() {
     loadData();
   }, []);
 
+  useEffect(() => {
+    if (!formError) return;
+    formActionsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }, [formError]);
+
   const handleChange = (event) => {
     const { name, value } = event.target;
+    if (exceedsAdminPlainTextLimit(name, value)) {
+      setErrorField(name);
+      setFormError(`Este campo admite hasta ${ADMIN_PLAIN_TEXT_LIMIT} caracteres.`);
+      return;
+    }
+    if (formError) {
+      setFormError(null);
+      setErrorField('');
+    }
     setSaved(false);
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    const firstInvalidField = Object.entries(form).find(([, value]) =>
+      exceedsAdminPlainTextLimit('contactField', value)
+    )?.[0];
+    if (firstInvalidField) {
+      setErrorField(firstInvalidField);
+      setFormError(`Este campo admite hasta ${ADMIN_PLAIN_TEXT_LIMIT} caracteres.`);
+      return;
+    }
+
     setSaving(true);
     setFormError(null);
     setSaved(false);
@@ -112,6 +138,7 @@ function AdminContacto() {
       await loadData();
       setSaved(true);
     } catch (err) {
+      setErrorField('');
       setFormError(err.response?.data?.message || 'No se pudo guardar Contacto.');
     } finally {
       setSaving(false);
@@ -137,7 +164,6 @@ function AdminContacto() {
   return (
     <AdminLayout title="Contacto">
       <div className="admin-page">
-        {formError && <div className="form-alert form-alert--error">{formError}</div>}
         {saved && <div className="form-alert form-alert--success">Cambios guardados.</div>}
 
         <div className="admin-form-card">
@@ -145,46 +171,47 @@ function AdminContacto() {
           <form className="form" onSubmit={handleSubmit}>
             <h3>Banner</h3>
             <div className="form-row">
-              <div className="form-group">
+              <div className={`form-group${errorField === 'bannerTitle' ? ' form-group--error' : ''}`}>
                 <label>Título</label>
                 <input name="bannerTitle" value={form.bannerTitle} onChange={handleChange} />
               </div>
-              <div className="form-group">
+              <div className={`form-group${errorField === 'bannerSubtitle' ? ' form-group--error' : ''}`}>
                 <label>Subtítulo</label>
                 <input name="bannerSubtitle" value={form.bannerSubtitle} onChange={handleChange} />
               </div>
             </div>
 
             <h3>Panel de información</h3>
-            <div className="form-group">
+            <div className={`form-group${errorField === 'infoTitle' ? ' form-group--error' : ''}`}>
               <label>Título</label>
               <input name="infoTitle" value={form.infoTitle} onChange={handleChange} />
             </div>
-            <div className="form-group">
+            <div className={`form-group${errorField === 'infoSubtitle' ? ' form-group--error' : ''}`}>
               <label>Subtítulo</label>
               <textarea name="infoSubtitle" rows={3} value={form.infoSubtitle} onChange={handleChange} />
             </div>
-            <div className="form-group">
+            <div className={`form-group${errorField === 'address' ? ' form-group--error' : ''}`}>
               <label>Dirección</label>
               <input name="address" value={form.address} onChange={handleChange} />
             </div>
-            <div className="form-group">
+            <div className={`form-group${errorField === 'phone' ? ' form-group--error' : ''}`}>
               <label>Teléfono</label>
               <input name="phone" value={form.phone} onChange={handleChange} />
             </div>
-            <div className="form-group">
+            <div className={`form-group${errorField === 'email' ? ' form-group--error' : ''}`}>
               <label>Email</label>
               <input name="email" value={form.email} onChange={handleChange} />
             </div>
-            <div className="form-group">
+            <div className={`form-group${errorField === 'schedule' ? ' form-group--error' : ''}`}>
               <label>Horario</label>
               <input name="schedule" value={form.schedule} onChange={handleChange} />
             </div>
 
-            <div className="form-actions">
+            <div className="form-actions" ref={formActionsRef}>
               <button type="submit" className="btn btn--primary" disabled={saving}>
                 {saving ? 'Guardando...' : 'Guardar cambios'}
               </button>
+              {formError && <span className="form-inline-error">{formError}</span>}
             </div>
           </form>
         </div>

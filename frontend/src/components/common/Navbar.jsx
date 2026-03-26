@@ -6,6 +6,8 @@ const NAV_LINKS = [
   { to: '/', label: 'Inicio' },
   { to: '/quienes-somos', label: 'Quiénes Somos' },
   { to: '/servicios', label: 'Servicios' },
+  { to: '/cet', label: 'CET' },
+  { to: '/saie', label: 'SAIE' },
   { to: '/admision', label: 'Admisión' },
   { to: '/contacto', label: 'Contacto' },
 ];

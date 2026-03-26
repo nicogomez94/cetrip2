@@ -1,10 +1,15 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import AdminLayout from '../../components/admin/AdminLayout';
 import RichTextEditor from '../../components/admin/RichTextEditor';
 import Loader from '../../components/common/Loader';
 import ErrorMessage from '../../components/common/ErrorMessage';
 import { QUIENES_DEFAULTS } from '../../constants/publicPageDefaults';
 import { mapQuienesPage } from '../../utils/publicPageMappers';
+import {
+  ADMIN_PLAIN_TEXT_LIMIT,
+  exceedsAdminPlainTextLimit,
+  exceedsAdminRichTextLimit,
+} from '../../utils/adminTextLimit';
 import {
   PAGE_SLUGS,
   ensureSection,
@@ -33,15 +38,25 @@ const INITIAL_FORM = {
   trustBody: QUIENES_DEFAULTS.trustBody,
 };
 
+const QUIENES_RICH_TEXT_FIELDS = [
+  'introBody',
+  'identity1Content',
+  'identity2Content',
+  'identity3Content',
+  'trustBody',
+];
+
 function AdminQuienesSomos() {
   const [sections, setSections] = useState([]);
   const [form, setForm] = useState(INITIAL_FORM);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [formError, setFormError] = useState(null);
+  const [errorField, setErrorField] = useState('');
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
+  const formActionsRef = useRef(null);
 
   const loadData = async () => {
     setLoading(true);
@@ -84,13 +99,36 @@ function AdminQuienesSomos() {
     loadData();
   }, []);
 
+  useEffect(() => {
+    if (!formError) return;
+    formActionsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }, [formError]);
+
   const handleChange = (event) => {
     const { name, value } = event.target;
+    if (exceedsAdminPlainTextLimit(name, value)) {
+      setErrorField(name);
+      setFormError(`Este campo admite hasta ${ADMIN_PLAIN_TEXT_LIMIT} caracteres.`);
+      return;
+    }
+    if (formError) {
+      setFormError(null);
+      setErrorField('');
+    }
     setSaved(false);
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleRichTextChange = (name, value) => {
+    if (exceedsAdminRichTextLimit(value)) {
+      setErrorField(name);
+      setFormError(`Este campo admite hasta ${ADMIN_PLAIN_TEXT_LIMIT} caracteres.`);
+      return;
+    }
+    if (formError) {
+      setFormError(null);
+      setErrorField('');
+    }
     setSaved(false);
     setForm((prev) => ({ ...prev, [name]: value }));
   };
@@ -109,7 +147,12 @@ function AdminQuienesSomos() {
       });
       setForm((prev) => ({ ...prev, mainImage: res.data.url }));
       setSaved(false);
+      if (formError) {
+        setFormError(null);
+        setErrorField('');
+      }
     } catch (err) {
+      setErrorField('mainImage');
       setFormError(err.response?.data?.message || 'No se pudo subir la imagen.');
     } finally {
       setUploadingImage(false);
@@ -118,6 +161,28 @@ function AdminQuienesSomos() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    const plainFieldsTooLong = Object.entries(form).some(
+      ([name, value]) =>
+        !QUIENES_RICH_TEXT_FIELDS.includes(name) && exceedsAdminPlainTextLimit(name, value)
+    );
+    if (plainFieldsTooLong) {
+      const firstInvalidField = Object.entries(form).find(
+        ([name, value]) =>
+          !QUIENES_RICH_TEXT_FIELDS.includes(name) && exceedsAdminPlainTextLimit(name, value)
+      )?.[0];
+      setErrorField(firstInvalidField || '');
+      setFormError(`Este campo admite hasta ${ADMIN_PLAIN_TEXT_LIMIT} caracteres.`);
+      return;
+    }
+    const firstInvalidRichField = QUIENES_RICH_TEXT_FIELDS.find((fieldName) =>
+      exceedsAdminRichTextLimit(form[fieldName])
+    );
+    if (firstInvalidRichField) {
+      setErrorField(firstInvalidRichField);
+      setFormError(`Este campo admite hasta ${ADMIN_PLAIN_TEXT_LIMIT} caracteres.`);
+      return;
+    }
+
     setSaving(true);
     setFormError(null);
     setSaved(false);
@@ -176,6 +241,7 @@ function AdminQuienesSomos() {
       await loadData();
       setSaved(true);
     } catch (err) {
+      setErrorField('');
       setFormError(err.response?.data?.message || 'No se pudo guardar Quiénes Somos.');
     } finally {
       setSaving(false);
@@ -201,109 +267,115 @@ function AdminQuienesSomos() {
   return (
     <AdminLayout title="Quiénes Somos">
       <div className="admin-page">
-        {formError && <div className="form-alert form-alert--error">{formError}</div>}
         {saved && <div className="form-alert form-alert--success">Cambios guardados.</div>}
 
         <div className="admin-form-card">
           <h3>Contenido de la página</h3>
-          <form className="form" onSubmit={handleSubmit}>
-            <h3>Banner</h3>
-            <div className="form-row">
-              <div className="form-group">
-                <label>Título</label>
-                <input name="bannerTitle" value={form.bannerTitle} onChange={handleChange} />
-              </div>
-              <div className="form-group">
-                <label>Subtítulo</label>
-                <input name="bannerSubtitle" value={form.bannerSubtitle} onChange={handleChange} />
+          <form className="form admin-home-form" onSubmit={handleSubmit}>
+
+            {/* ── Banner ───────────────────────────────────────────── */}
+            <div className="admin-section-block admin-section-block--hero">
+              <div className="admin-section-block__header"><span>🖼️</span> Banner</div>
+              <div className="form-row">
+                <div className={`form-group${errorField === 'bannerTitle' ? ' form-group--error' : ''}`}>
+                  <label>Título</label>
+                  <input name="bannerTitle" value={form.bannerTitle} onChange={handleChange} />
+                </div>
+                <div className={`form-group${errorField === 'bannerSubtitle' ? ' form-group--error' : ''}`}>
+                  <label>Subtítulo</label>
+                  <input name="bannerSubtitle" value={form.bannerSubtitle} onChange={handleChange} />
+                </div>
               </div>
             </div>
 
-            <h3>Introducción</h3>
-            <div className="form-group">
-              <label>Eyebrow</label>
-              <input name="introEyebrow" value={form.introEyebrow} onChange={handleChange} />
+            {/* ── Introducción ─────────────────────────────────────── */}
+            <div className="admin-section-block admin-section-block--about">
+              <div className="admin-section-block__header"><span>📝</span> Introducción</div>
+              <div className="form-row">
+                <div className={`form-group${errorField === 'introEyebrow' ? ' form-group--error' : ''}`}>
+                  <label>Eyebrow</label>
+                  <input name="introEyebrow" value={form.introEyebrow} onChange={handleChange} />
+                </div>
+                <div className={`form-group${errorField === 'introTitle' ? ' form-group--error' : ''}`}>
+                  <label>Título</label>
+                  <input name="introTitle" value={form.introTitle} onChange={handleChange} />
+                </div>
+              </div>
+              <div className={`form-group${errorField === 'introBody' ? ' form-group--error' : ''}`}>
+                <label>Texto</label>
+                <RichTextEditor
+                  value={form.introBody}
+                  onChange={(value) => handleRichTextChange('introBody', value)}
+                />
+              </div>
+              <div className={`form-group${errorField === 'mainImage' ? ' form-group--error' : ''}`}>
+                <label>Imagen principal (URL)</label>
+                <input name="mainImage" value={form.mainImage} onChange={handleChange} placeholder="https://..." />
+                <div className="form-upload">
+                  <label className="btn btn--outline btn--sm">
+                    {uploadingImage ? 'Subiendo...' : '📎 Subir imagen'}
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleUploadImage}
+                      style={{ display: 'none' }}
+                    />
+                  </label>
+                  {form.mainImage && <img src={form.mainImage} alt="Preview" className="upload-preview" />}
+                </div>
+              </div>
             </div>
-            <div className="form-group">
-              <label>Título</label>
-              <input name="introTitle" value={form.introTitle} onChange={handleChange} />
+
+            {/* ── Identidad ────────────────────────────────────────── */}
+            <div className="admin-section-block admin-section-block--services">
+              <div className="admin-section-block__header"><span>🏛️</span> Identidad (3 bloques fijos)</div>
+              <div className="admin-services-grid">
+                {[1, 2, 3].map((n) => (
+                  <div className="admin-service-card" key={`identity-${n}`}>
+                    <div className="admin-service-card__label">Bloque {n}</div>
+                    <div className={`form-group${errorField === `identity${n}Title` ? ' form-group--error' : ''}`}>
+                      <label>Título</label>
+                      <input
+                        name={`identity${n}Title`}
+                        value={form[`identity${n}Title`]}
+                        onChange={handleChange}
+                      />
+                    </div>
+                    <div className={`form-group${errorField === `identity${n}Content` ? ' form-group--error' : ''}`}>
+                      <label>Texto</label>
+                      <RichTextEditor
+                        value={form[`identity${n}Content`]}
+                        onChange={(value) => handleRichTextChange(`identity${n}Content`, value)}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
-            <div className="form-group">
-              <label>Texto</label>
-              <RichTextEditor
-                value={form.introBody}
-                onChange={(value) => handleRichTextChange('introBody', value)}
-              />
-            </div>
-            <div className="form-group">
-              <label>Imagen principal (URL)</label>
-              <input name="mainImage" value={form.mainImage} onChange={handleChange} placeholder="https://..." />
-              <div className="form-upload">
-                <label className="btn btn--outline btn--sm">
-                  {uploadingImage ? 'Subiendo...' : '📎 Subir imagen'}
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleUploadImage}
-                    style={{ display: 'none' }}
+
+            {/* ── CTA ──────────────────────────────────────────────── */}
+            <div className="admin-section-block admin-section-block--cta">
+              <div className="admin-section-block__header"><span>🤝</span> Franja de confianza (CTA)</div>
+              <div className="form-row">
+                <div className={`form-group${errorField === 'trustTitle' ? ' form-group--error' : ''}`}>
+                  <label>Título</label>
+                  <input name="trustTitle" value={form.trustTitle} onChange={handleChange} />
+                </div>
+                <div className={`form-group${errorField === 'trustBody' ? ' form-group--error' : ''}`}>
+                  <label>Texto</label>
+                  <RichTextEditor
+                    value={form.trustBody}
+                    onChange={(value) => handleRichTextChange('trustBody', value)}
                   />
-                </label>
-                {form.mainImage && <img src={form.mainImage} alt="Preview" className="upload-preview" />}
+                </div>
               </div>
             </div>
 
-            <h3>Identidad (3 bloques fijos)</h3>
-            <div className="form-group">
-              <label>Bloque 1 - Título</label>
-              <input name="identity1Title" value={form.identity1Title} onChange={handleChange} />
-            </div>
-            <div className="form-group">
-              <label>Bloque 1 - Texto</label>
-              <RichTextEditor
-                value={form.identity1Content}
-                onChange={(value) => handleRichTextChange('identity1Content', value)}
-              />
-            </div>
-            <div className="form-group">
-              <label>Bloque 2 - Título</label>
-              <input name="identity2Title" value={form.identity2Title} onChange={handleChange} />
-            </div>
-            <div className="form-group">
-              <label>Bloque 2 - Texto</label>
-              <RichTextEditor
-                value={form.identity2Content}
-                onChange={(value) => handleRichTextChange('identity2Content', value)}
-              />
-            </div>
-            <div className="form-group">
-              <label>Bloque 3 - Título</label>
-              <input name="identity3Title" value={form.identity3Title} onChange={handleChange} />
-            </div>
-            <div className="form-group">
-              <label>Bloque 3 - Texto</label>
-              <RichTextEditor
-                value={form.identity3Content}
-                onChange={(value) => handleRichTextChange('identity3Content', value)}
-              />
-            </div>
-
-            <h3>Franja de confianza (CTA)</h3>
-            <div className="form-group">
-              <label>Título</label>
-              <input name="trustTitle" value={form.trustTitle} onChange={handleChange} />
-            </div>
-            <div className="form-group">
-              <label>Texto</label>
-              <RichTextEditor
-                value={form.trustBody}
-                onChange={(value) => handleRichTextChange('trustBody', value)}
-              />
-            </div>
-
-            <div className="form-actions">
+            <div className="form-actions" ref={formActionsRef}>
               <button type="submit" className="btn btn--primary" disabled={saving || uploadingImage}>
                 {saving ? 'Guardando...' : 'Guardar cambios'}
               </button>
+              {formError && <span className="form-inline-error">{formError}</span>}
             </div>
           </form>
         </div>

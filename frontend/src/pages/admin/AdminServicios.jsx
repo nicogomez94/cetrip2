@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import AdminLayout from '../../components/admin/AdminLayout';
 import RichTextEditor from '../../components/admin/RichTextEditor';
 import Loader from '../../components/common/Loader';
@@ -6,6 +6,7 @@ import ErrorMessage from '../../components/common/ErrorMessage';
 import { SERVICIOS_DEFAULTS } from '../../constants/publicPageDefaults';
 import { mapServiciosPage } from '../../utils/publicPageMappers';
 import { buildServiceSlugs } from '../../utils/serviceContent';
+import { ADMIN_PLAIN_TEXT_LIMIT, exceedsAdminPlainTextLimit } from '../../utils/adminTextLimit';
 import {
   PAGE_SLUGS,
   ensureSection,
@@ -44,6 +45,13 @@ const INITIAL_FORM = {
   ctaTitle: CTA_DEFAULT_TITLE,
   ctaText: CTA_DEFAULT_TEXT,
 };
+const SERVICES_RICH_TEXT_FIELDS = [
+  'introBody',
+  'workflow1Content',
+  'workflow2Content',
+  'workflow3Content',
+  'ctaText',
+];
 
 function AdminServicios() {
   const [sections, setSections] = useState([]);
@@ -52,9 +60,11 @@ function AdminServicios() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [formError, setFormError] = useState(null);
+  const [errorField, setErrorField] = useState('');
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [uploadingIndex, setUploadingIndex] = useState(null);
+  const formActionsRef = useRef(null);
 
   const loadData = async () => {
     setLoading(true);
@@ -110,18 +120,46 @@ function AdminServicios() {
     loadData();
   }, []);
 
+  useEffect(() => {
+    if (!formError) return;
+    formActionsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }, [formError]);
+
   const handleFormChange = (event) => {
     const { name, value } = event.target;
+    if (exceedsAdminPlainTextLimit(name, value)) {
+      setErrorField(name);
+      setFormError(`Este campo admite hasta ${ADMIN_PLAIN_TEXT_LIMIT} caracteres.`);
+      return;
+    }
+    if (formError) {
+      setFormError(null);
+      setErrorField('');
+    }
     setSaved(false);
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleRichTextChange = (name, value) => {
+    if (formError) {
+      setFormError(null);
+      setErrorField('');
+    }
     setSaved(false);
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleServiceChange = (index, field, value) => {
+    if (field !== 'content' && value.length > ADMIN_PLAIN_TEXT_LIMIT) {
+      setErrorField(field === 'title' ? `service${index}Title` : `service${index}ImageUrl`);
+      setFormError(`Este campo admite hasta ${ADMIN_PLAIN_TEXT_LIMIT} caracteres.`);
+      return;
+    }
+    if (formError) {
+      setFormError(null);
+      setErrorField('');
+    }
+
     setSaved(false);
     setServices((prev) =>
       prev.map((service, currentIndex) =>
@@ -159,6 +197,7 @@ function AdminServicios() {
 
     setUploadingIndex(index);
     setFormError(null);
+    setErrorField('');
     try {
       const data = new FormData();
       data.append('image', file);
@@ -167,6 +206,7 @@ function AdminServicios() {
       });
       handleServiceChange(index, 'imageUrl', res.data.url);
     } catch (err) {
+      setErrorField(`service${index}ImageUrl`);
       setFormError(err.response?.data?.message || 'No se pudo subir la imagen del servicio.');
     } finally {
       setUploadingIndex(null);
@@ -176,7 +216,31 @@ function AdminServicios() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (services.length < MIN_SERVICES || services.length > MAX_SERVICES) {
+      setErrorField('');
       setFormError(`La lista de servicios debe tener entre ${MIN_SERVICES} y ${MAX_SERVICES} ítems.`);
+      return;
+    }
+    const firstInvalidFormField = Object.entries(form).find(
+      ([name, value]) =>
+        !SERVICES_RICH_TEXT_FIELDS.includes(name) && exceedsAdminPlainTextLimit(name, value)
+    )?.[0];
+    if (firstInvalidFormField) {
+      setErrorField(firstInvalidFormField);
+      setFormError(`Este campo admite hasta ${ADMIN_PLAIN_TEXT_LIMIT} caracteres.`);
+      return;
+    }
+    const firstInvalidService = services.findIndex(
+      (service) =>
+        exceedsAdminPlainTextLimit('serviceTitle', service.title) ||
+        exceedsAdminPlainTextLimit('serviceImageUrl', service.imageUrl)
+    );
+    if (firstInvalidService !== -1) {
+      setErrorField(
+        exceedsAdminPlainTextLimit('serviceTitle', services[firstInvalidService].title)
+          ? `service${firstInvalidService}Title`
+          : `service${firstInvalidService}ImageUrl`
+      );
+      setFormError(`Este campo admite hasta ${ADMIN_PLAIN_TEXT_LIMIT} caracteres.`);
       return;
     }
 
@@ -252,6 +316,7 @@ function AdminServicios() {
       await loadData();
       setSaved(true);
     } catch (err) {
+      setErrorField('');
       setFormError(err.response?.data?.message || 'No se pudo guardar Servicios.');
     } finally {
       setSaving(false);
@@ -277,42 +342,50 @@ function AdminServicios() {
   return (
     <AdminLayout title="Servicios">
       <div className="admin-page">
-        {formError && <div className="form-alert form-alert--error">{formError}</div>}
         {saved && <div className="form-alert form-alert--success">Cambios guardados.</div>}
 
         <div className="admin-form-card">
           <h3>Contenido de la página</h3>
-          <form className="form" onSubmit={handleSubmit}>
-            <h3>Banner</h3>
-            <div className="form-row">
-              <div className="form-group">
+          <form className="form admin-home-form" onSubmit={handleSubmit}>
+
+            {/* ── Banner ───────────────────────────────────────────── */}
+            <div className="admin-section-block admin-section-block--hero">
+              <div className="admin-section-block__header"><span>🖼️</span> Banner</div>
+              <div className="form-row">
+                <div className={`form-group${errorField === 'bannerTitle' ? ' form-group--error' : ''}`}>
+                  <label>Título</label>
+                  <input name="bannerTitle" value={form.bannerTitle} onChange={handleFormChange} />
+                </div>
+                <div className={`form-group${errorField === 'bannerSubtitle' ? ' form-group--error' : ''}`}>
+                  <label>Subtítulo</label>
+                  <input name="bannerSubtitle" value={form.bannerSubtitle} onChange={handleFormChange} />
+                </div>
+              </div>
+            </div>
+
+            {/* ── Introducción ─────────────────────────────────────── */}
+            <div className="admin-section-block admin-section-block--about">
+              <div className="admin-section-block__header"><span>📝</span> Introducción</div>
+              <div className={`form-group${errorField === 'introTitle' ? ' form-group--error' : ''}`}>
                 <label>Título</label>
-                <input name="bannerTitle" value={form.bannerTitle} onChange={handleFormChange} />
+                <input name="introTitle" value={form.introTitle} onChange={handleFormChange} />
               </div>
               <div className="form-group">
-                <label>Subtítulo</label>
-                <input name="bannerSubtitle" value={form.bannerSubtitle} onChange={handleFormChange} />
+                <label>Texto</label>
+                <RichTextEditor
+                  value={form.introBody}
+                  onChange={(value) => handleRichTextChange('introBody', value)}
+                />
               </div>
             </div>
 
-            <h3>Introducción</h3>
-            <div className="form-group">
-              <label>Título</label>
-              <input name="introTitle" value={form.introTitle} onChange={handleFormChange} />
-            </div>
-            <div className="form-group">
-              <label>Texto</label>
-              <RichTextEditor
-                value={form.introBody}
-                onChange={(value) => handleRichTextChange('introBody', value)}
-              />
-            </div>
-
-            <h3>Lista de servicios ({services.length}/{MAX_SERVICES})</h3>
-            <p className="form-note">
-              Cada servicio crea su página individual en <code>/servicios/:slug</code>. El campo texto
-              corresponde al contenido completo de esa página.
-            </p>
+            {/* ── Lista de servicios ───────────────────────────────── */}
+            <div className="admin-section-block admin-section-block--services">
+              <div className="admin-section-block__header"><span>🗂️</span> Lista de servicios ({services.length}/{MAX_SERVICES})</div>
+              <p className="form-note">
+                Cada servicio crea su página individual en <code>/servicios/:slug</code>. El campo texto
+                corresponde al contenido completo de esa página.
+              </p>
             <div className="repeatable-list">
               {services.map((service, index) => (
                 <div key={`service-${index}`} className="repeatable-item">
@@ -346,7 +419,7 @@ function AdminServicios() {
                     </div>
                   </div>
 
-                  <div className="form-group">
+                  <div className={`form-group${errorField === `service${index}Title` ? ' form-group--error' : ''}`}>
                     <label>Título</label>
                     <input
                       value={service.title}
@@ -360,7 +433,7 @@ function AdminServicios() {
                       onChange={(value) => handleServiceChange(index, 'content', value)}
                     />
                   </div>
-                  <div className="form-group">
+                  <div className={`form-group${errorField === `service${index}ImageUrl` ? ' form-group--error' : ''}`}>
                     <label>Imagen (URL)</label>
                     <input
                       value={service.imageUrl}
@@ -392,63 +465,62 @@ function AdminServicios() {
             >
               + Agregar servicio
             </button>
+            </div>{/* end admin-section-block--services */}
 
-            <h3>Cómo trabajamos (3 pasos fijos)</h3>
-            <div className="form-group">
-              <label>Título de sección</label>
-              <input name="workflowTitle" value={form.workflowTitle} onChange={handleFormChange} />
-            </div>
-            <div className="form-group">
-              <label>Paso 1 - Título</label>
-              <input name="workflow1Title" value={form.workflow1Title} onChange={handleFormChange} />
-            </div>
-            <div className="form-group">
-              <label>Paso 1 - Texto</label>
-              <RichTextEditor
-                value={form.workflow1Content}
-                onChange={(value) => handleRichTextChange('workflow1Content', value)}
-              />
-            </div>
-            <div className="form-group">
-              <label>Paso 2 - Título</label>
-              <input name="workflow2Title" value={form.workflow2Title} onChange={handleFormChange} />
-            </div>
-            <div className="form-group">
-              <label>Paso 2 - Texto</label>
-              <RichTextEditor
-                value={form.workflow2Content}
-                onChange={(value) => handleRichTextChange('workflow2Content', value)}
-              />
-            </div>
-            <div className="form-group">
-              <label>Paso 3 - Título</label>
-              <input name="workflow3Title" value={form.workflow3Title} onChange={handleFormChange} />
-            </div>
-            <div className="form-group">
-              <label>Paso 3 - Texto</label>
-              <RichTextEditor
-                value={form.workflow3Content}
-                onChange={(value) => handleRichTextChange('workflow3Content', value)}
-              />
-            </div>
+            {/* ── Cómo trabajamos ──────────────────────────────────── */}
+            <div className="admin-section-block admin-section-block--workflow">
+              <div className="admin-section-block__header"><span>🔄</span> Cómo trabajamos (3 pasos fijos)</div>
+              <div className={`form-group${errorField === 'workflowTitle' ? ' form-group--error' : ''}`}>
+                <label>Título de sección</label>
+                <input name="workflowTitle" value={form.workflowTitle} onChange={handleFormChange} />
+              </div>
+              <div className="admin-services-grid">
+                {[1, 2, 3].map((n) => (
+                  <div className="admin-service-card admin-service-card--workflow" key={`workflow-${n}`}>
+                    <div className="admin-service-card__label">Paso {n}</div>
+                    <div className={`form-group${errorField === `workflow${n}Title` ? ' form-group--error' : ''}`}>
+                      <label>Título</label>
+                      <input
+                        name={`workflow${n}Title`}
+                        value={form[`workflow${n}Title`]}
+                        onChange={handleFormChange}
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>Texto</label>
+                      <RichTextEditor
+                        value={form[`workflow${n}Content`]}
+                        onChange={(value) => handleRichTextChange(`workflow${n}Content`, value)}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>{/* end admin-section-block--workflow */}
 
-            <h3>CTA final</h3>
-            <div className="form-group">
-              <label>Título</label>
-              <input name="ctaTitle" value={form.ctaTitle} onChange={handleFormChange} />
-            </div>
-            <div className="form-group">
-              <label>Texto</label>
-              <RichTextEditor
-                value={form.ctaText}
-                onChange={(value) => handleRichTextChange('ctaText', value)}
-              />
+            {/* ── CTA final ────────────────────────────────────────── */}
+            <div className="admin-section-block admin-section-block--cta">
+              <div className="admin-section-block__header"><span>📣</span> CTA final</div>
+              <div className="form-row">
+                <div className={`form-group${errorField === 'ctaTitle' ? ' form-group--error' : ''}`}>
+                  <label>Título</label>
+                  <input name="ctaTitle" value={form.ctaTitle} onChange={handleFormChange} />
+                </div>
+                <div className="form-group">
+                  <label>Texto</label>
+                  <RichTextEditor
+                    value={form.ctaText}
+                    onChange={(value) => handleRichTextChange('ctaText', value)}
+                  />
+                </div>
+              </div>
             </div>
 
-            <div className="form-actions">
+            <div className="form-actions" ref={formActionsRef}>
               <button type="submit" className="btn btn--primary" disabled={saving || uploadingIndex !== null}>
                 {saving ? 'Guardando...' : 'Guardar cambios'}
               </button>
+              {formError && <span className="form-inline-error">{formError}</span>}
             </div>
           </form>
         </div>

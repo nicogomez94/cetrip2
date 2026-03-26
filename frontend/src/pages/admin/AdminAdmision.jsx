@@ -1,10 +1,15 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import AdminLayout from '../../components/admin/AdminLayout';
 import RichTextEditor from '../../components/admin/RichTextEditor';
 import Loader from '../../components/common/Loader';
 import ErrorMessage from '../../components/common/ErrorMessage';
 import { ADMISION_DEFAULTS } from '../../constants/publicPageDefaults';
 import { mapAdmisionPage } from '../../utils/publicPageMappers';
+import {
+  ADMIN_PLAIN_TEXT_LIMIT,
+  exceedsAdminPlainTextLimit,
+  exceedsAdminRichTextLimit,
+} from '../../utils/adminTextLimit';
 import {
   PAGE_SLUGS,
   ensureSection,
@@ -22,6 +27,7 @@ const FAQ_COUNT = 3;
 
 const CTA_DEFAULT_TITLE = '¿Listos para empezar?';
 const CTA_DEFAULT_TEXT = 'Escribinos y coordinamos la primera entrevista para orientar el proceso.';
+const ADMISION_RICH_TEXT_FIELDS = ['introBody', 'ctaText'];
 
 const createEmptyStep = () => ({
   title: `Paso ${Date.now()}`,
@@ -56,8 +62,10 @@ function AdminAdmision() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [formError, setFormError] = useState(null);
+  const [errorField, setErrorField] = useState('');
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const formActionsRef = useRef(null);
 
   const loadData = async () => {
     setLoading(true);
@@ -131,18 +139,55 @@ function AdminAdmision() {
     loadData();
   }, []);
 
+  useEffect(() => {
+    if (!formError) return;
+    formActionsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }, [formError]);
+
   const handleFormChange = (event) => {
     const { name, value } = event.target;
+    if (exceedsAdminPlainTextLimit(name, value)) {
+      setErrorField(name);
+      setFormError(`Este campo admite hasta ${ADMIN_PLAIN_TEXT_LIMIT} caracteres.`);
+      return;
+    }
+    if (formError) {
+      setFormError(null);
+      setErrorField('');
+    }
     setSaved(false);
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleRichTextChange = (name, value) => {
+    if (exceedsAdminRichTextLimit(value)) {
+      setErrorField(name);
+      setFormError(`Este campo admite hasta ${ADMIN_PLAIN_TEXT_LIMIT} caracteres.`);
+      return;
+    }
+    if (formError) {
+      setFormError(null);
+      setErrorField('');
+    }
     setSaved(false);
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleStepChange = (index, field, value) => {
+    if (field === 'title' && value.length > ADMIN_PLAIN_TEXT_LIMIT) {
+      setErrorField(`step${index}Title`);
+      setFormError(`Este campo admite hasta ${ADMIN_PLAIN_TEXT_LIMIT} caracteres.`);
+      return;
+    }
+    if (field === 'content' && exceedsAdminRichTextLimit(value)) {
+      setErrorField(`step${index}Content`);
+      setFormError(`Este campo admite hasta ${ADMIN_PLAIN_TEXT_LIMIT} caracteres.`);
+      return;
+    }
+    if (formError) {
+      setFormError(null);
+      setErrorField('');
+    }
     setSaved(false);
     setSteps((prev) =>
       prev.map((step, currentIndex) =>
@@ -177,12 +222,44 @@ function AdminAdmision() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (steps.length < MIN_STEPS || steps.length > MAX_STEPS) {
+      setErrorField('');
       setFormError(`Los pasos deben mantenerse entre ${MIN_STEPS} y ${MAX_STEPS}.`);
+      return;
+    }
+    const firstInvalidPlainField = Object.entries(form).find(
+      ([name, value]) =>
+        !ADMISION_RICH_TEXT_FIELDS.includes(name) && exceedsAdminPlainTextLimit(name, value)
+    )?.[0];
+    if (firstInvalidPlainField) {
+      setErrorField(firstInvalidPlainField);
+      setFormError(`Este campo admite hasta ${ADMIN_PLAIN_TEXT_LIMIT} caracteres.`);
+      return;
+    }
+    const firstInvalidRichField = ADMISION_RICH_TEXT_FIELDS.find((fieldName) =>
+      exceedsAdminRichTextLimit(form[fieldName])
+    );
+    if (firstInvalidRichField) {
+      setErrorField(firstInvalidRichField);
+      setFormError(`Este campo admite hasta ${ADMIN_PLAIN_TEXT_LIMIT} caracteres.`);
+      return;
+    }
+    const firstInvalidStepIndex = steps.findIndex(
+      (step) =>
+        exceedsAdminPlainTextLimit('stepTitle', step.title) || exceedsAdminRichTextLimit(step.content)
+    );
+    if (firstInvalidStepIndex !== -1) {
+      setErrorField(
+        exceedsAdminPlainTextLimit('stepTitle', steps[firstInvalidStepIndex].title)
+          ? `step${firstInvalidStepIndex}Title`
+          : `step${firstInvalidStepIndex}Content`
+      );
+      setFormError(`Este campo admite hasta ${ADMIN_PLAIN_TEXT_LIMIT} caracteres.`);
       return;
     }
 
     setSaving(true);
     setFormError(null);
+    setErrorField('');
     setSaved(false);
     try {
       const bannerSectionId = await ensureSection({
@@ -261,6 +338,7 @@ function AdminAdmision() {
       await loadData();
       setSaved(true);
     } catch (err) {
+      setErrorField('');
       setFormError(err.response?.data?.message || 'No se pudo guardar Admisión.');
     } finally {
       setSaving(false);
@@ -286,38 +364,46 @@ function AdminAdmision() {
   return (
     <AdminLayout title="Admisión">
       <div className="admin-page">
-        {formError && <div className="form-alert form-alert--error">{formError}</div>}
         {saved && <div className="form-alert form-alert--success">Cambios guardados.</div>}
 
         <div className="admin-form-card">
           <h3>Contenido de la página</h3>
-          <form className="form" onSubmit={handleSubmit}>
-            <h3>Banner</h3>
-            <div className="form-row">
-              <div className="form-group">
+          <form className="form admin-home-form" onSubmit={handleSubmit}>
+
+            {/* ── Banner ───────────────────────────────────────────── */}
+            <div className="admin-section-block admin-section-block--hero">
+              <div className="admin-section-block__header"><span>🖼️</span> Banner</div>
+              <div className="form-row">
+                <div className={`form-group${errorField === 'bannerTitle' ? ' form-group--error' : ''}`}>
+                  <label>Título</label>
+                  <input name="bannerTitle" value={form.bannerTitle} onChange={handleFormChange} />
+                </div>
+                <div className={`form-group${errorField === 'bannerSubtitle' ? ' form-group--error' : ''}`}>
+                  <label>Subtítulo</label>
+                  <input name="bannerSubtitle" value={form.bannerSubtitle} onChange={handleFormChange} />
+                </div>
+              </div>
+            </div>
+
+            {/* ── Introducción ─────────────────────────────────────── */}
+            <div className="admin-section-block admin-section-block--about">
+              <div className="admin-section-block__header"><span>📝</span> Introducción</div>
+              <div className={`form-group${errorField === 'introTitle' ? ' form-group--error' : ''}`}>
                 <label>Título</label>
-                <input name="bannerTitle" value={form.bannerTitle} onChange={handleFormChange} />
+                <input name="introTitle" value={form.introTitle} onChange={handleFormChange} />
               </div>
-              <div className="form-group">
-                <label>Subtítulo</label>
-                <input name="bannerSubtitle" value={form.bannerSubtitle} onChange={handleFormChange} />
+              <div className={`form-group${errorField === 'introBody' ? ' form-group--error' : ''}`}>
+                <label>Texto</label>
+                <RichTextEditor
+                  value={form.introBody}
+                  onChange={(value) => handleRichTextChange('introBody', value)}
+                />
               </div>
             </div>
 
-            <h3>Introducción</h3>
-            <div className="form-group">
-              <label>Título</label>
-              <input name="introTitle" value={form.introTitle} onChange={handleFormChange} />
-            </div>
-            <div className="form-group">
-              <label>Texto</label>
-              <RichTextEditor
-                value={form.introBody}
-                onChange={(value) => handleRichTextChange('introBody', value)}
-              />
-            </div>
-
-            <h3>Pasos del proceso ({steps.length}/{MAX_STEPS})</h3>
+            {/* ── Pasos del proceso ────────────────────────────────── */}
+            <div className="admin-section-block admin-section-block--services">
+              <div className="admin-section-block__header"><span>📋</span> Pasos del proceso ({steps.length}/{MAX_STEPS})</div>
             <div className="repeatable-list">
               {steps.map((step, index) => (
                 <div key={`step-${index}`} className="repeatable-item">
@@ -350,14 +436,14 @@ function AdminAdmision() {
                       </button>
                     </div>
                   </div>
-                  <div className="form-group">
+                  <div className={`form-group${errorField === `step${index}Title` ? ' form-group--error' : ''}`}>
                     <label>Título</label>
                     <input
                       value={step.title}
                       onChange={(event) => handleStepChange(index, 'title', event.target.value)}
                     />
                   </div>
-                  <div className="form-group">
+                  <div className={`form-group${errorField === `step${index}Content` ? ' form-group--error' : ''}`}>
                     <label>Texto</label>
                     <RichTextEditor
                       value={step.content}
@@ -375,73 +461,90 @@ function AdminAdmision() {
             >
               + Agregar paso
             </button>
+            </div>{/* end admin-section-block--services */}
 
-            <h3>Requisitos (4 campos fijos)</h3>
-            <div className="form-group">
-              <label>Título de sección</label>
-              <input name="requirementsTitle" value={form.requirementsTitle} onChange={handleFormChange} />
-            </div>
-            <div className="form-group">
-              <label>Requisito 1</label>
-              <input name="requirement1" value={form.requirement1} onChange={handleFormChange} />
-            </div>
-            <div className="form-group">
-              <label>Requisito 2</label>
-              <input name="requirement2" value={form.requirement2} onChange={handleFormChange} />
-            </div>
-            <div className="form-group">
-              <label>Requisito 3</label>
-              <input name="requirement3" value={form.requirement3} onChange={handleFormChange} />
-            </div>
-            <div className="form-group">
-              <label>Requisito 4</label>
-              <input name="requirement4" value={form.requirement4} onChange={handleFormChange} />
-            </div>
-
-            <h3>Preguntas frecuentes (3 ítems fijos)</h3>
-            <div className="form-group">
-              <label>Título de sección</label>
-              <input name="faqTitle" value={form.faqTitle} onChange={handleFormChange} />
-            </div>
-            <div className="form-group">
-              <label>FAQ 1 - Pregunta</label>
-              <input name="faq1Question" value={form.faq1Question} onChange={handleFormChange} />
-            </div>
-            <div className="form-group">
-              <label>FAQ 1 - Respuesta</label>
-              <textarea name="faq1Answer" rows={3} value={form.faq1Answer} onChange={handleFormChange} />
-            </div>
-            <div className="form-group">
-              <label>FAQ 2 - Pregunta</label>
-              <input name="faq2Question" value={form.faq2Question} onChange={handleFormChange} />
-            </div>
-            <div className="form-group">
-              <label>FAQ 2 - Respuesta</label>
-              <textarea name="faq2Answer" rows={3} value={form.faq2Answer} onChange={handleFormChange} />
-            </div>
-            <div className="form-group">
-              <label>FAQ 3 - Pregunta</label>
-              <input name="faq3Question" value={form.faq3Question} onChange={handleFormChange} />
-            </div>
-            <div className="form-group">
-              <label>FAQ 3 - Respuesta</label>
-              <textarea name="faq3Answer" rows={3} value={form.faq3Answer} onChange={handleFormChange} />
+            {/* ── Requisitos ───────────────────────────────────────── */}
+            <div className="admin-section-block admin-section-block--workflow">
+              <div className="admin-section-block__header"><span>✅</span> Requisitos (4 campos fijos)</div>
+              <div className={`form-group${errorField === 'requirementsTitle' ? ' form-group--error' : ''}`}>
+                <label>Título de sección</label>
+                <input name="requirementsTitle" value={form.requirementsTitle} onChange={handleFormChange} />
+              </div>
+              <div className="form-row">
+                <div className={`form-group${errorField === 'requirement1' ? ' form-group--error' : ''}`}>
+                  <label>Requisito 1</label>
+                  <input name="requirement1" value={form.requirement1} onChange={handleFormChange} />
+                </div>
+                <div className={`form-group${errorField === 'requirement2' ? ' form-group--error' : ''}`}>
+                  <label>Requisito 2</label>
+                  <input name="requirement2" value={form.requirement2} onChange={handleFormChange} />
+                </div>
+              </div>
+              <div className="form-row">
+                <div className={`form-group${errorField === 'requirement3' ? ' form-group--error' : ''}`}>
+                  <label>Requisito 3</label>
+                  <input name="requirement3" value={form.requirement3} onChange={handleFormChange} />
+                </div>
+                <div className={`form-group${errorField === 'requirement4' ? ' form-group--error' : ''}`}>
+                  <label>Requisito 4</label>
+                  <input name="requirement4" value={form.requirement4} onChange={handleFormChange} />
+                </div>
+              </div>
             </div>
 
-            <h3>CTA final</h3>
-            <div className="form-group">
-              <label>Título</label>
-              <input name="ctaTitle" value={form.ctaTitle} onChange={handleFormChange} />
-            </div>
-            <div className="form-group">
-              <label>Texto</label>
-              <RichTextEditor value={form.ctaText} onChange={(value) => handleRichTextChange('ctaText', value)} />
+            {/* ── Preguntas frecuentes ─────────────────────────────── */}
+            <div className="admin-section-block admin-section-block--faq">
+              <div className="admin-section-block__header"><span>❓</span> Preguntas frecuentes (3 ítems fijos)</div>
+              <div className={`form-group${errorField === 'faqTitle' ? ' form-group--error' : ''}`}>
+                <label>Título de sección</label>
+                <input name="faqTitle" value={form.faqTitle} onChange={handleFormChange} />
+              </div>
+              <div className="admin-services-grid">
+                {[1, 2, 3].map((n) => (
+                  <div className="admin-service-card admin-service-card--faq" key={`faq-${n}`}>
+                    <div className="admin-service-card__label">FAQ {n}</div>
+                    <div className={`form-group${errorField === `faq${n}Question` ? ' form-group--error' : ''}`}>
+                      <label>Pregunta</label>
+                      <input
+                        name={`faq${n}Question`}
+                        value={form[`faq${n}Question`]}
+                        onChange={handleFormChange}
+                      />
+                    </div>
+                    <div className={`form-group${errorField === `faq${n}Answer` ? ' form-group--error' : ''}`}>
+                      <label>Respuesta</label>
+                      <textarea
+                        name={`faq${n}Answer`}
+                        rows={3}
+                        value={form[`faq${n}Answer`]}
+                        onChange={handleFormChange}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
 
-            <div className="form-actions">
+            {/* ── CTA final ────────────────────────────────────────── */}
+            <div className="admin-section-block admin-section-block--cta">
+              <div className="admin-section-block__header"><span>📣</span> CTA final</div>
+              <div className="form-row">
+                <div className={`form-group${errorField === 'ctaTitle' ? ' form-group--error' : ''}`}>
+                  <label>Título</label>
+                  <input name="ctaTitle" value={form.ctaTitle} onChange={handleFormChange} />
+                </div>
+                <div className={`form-group${errorField === 'ctaText' ? ' form-group--error' : ''}`}>
+                  <label>Texto</label>
+                  <RichTextEditor value={form.ctaText} onChange={(value) => handleRichTextChange('ctaText', value)} />
+                </div>
+              </div>
+            </div>
+
+            <div className="form-actions" ref={formActionsRef}>
               <button type="submit" className="btn btn--primary" disabled={saving}>
                 {saving ? 'Guardando...' : 'Guardar cambios'}
               </button>
+              {formError && <span className="form-inline-error">{formError}</span>}
             </div>
           </form>
         </div>

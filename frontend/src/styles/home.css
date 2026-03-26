@@ -124,7 +124,7 @@
 .public-site .home .hero__title {
   margin: 0;
   color: #313a46;
-  font-size: clamp(2.4rem, 4.8vw, 4.4rem);
+  font-size: clamp(2.4rem, 4vw, 4.4rem);
   line-height: 1.04;
   letter-spacing: -0.03em;
 }
@@ -181,6 +181,14 @@
   position: relative;
   z-index: 1;
   padding: 0 22px;
+}
+
+.public-site .home .services-wrap__actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 22px;
+  position: relative;
+  z-index: 1;
 }
 
 .public-site .home .service {
@@ -362,6 +370,39 @@
   filter: saturate(1.15);
 }
 
+.public-site .home .home-contact-section {
+  margin: 14px 16px 0;
+}
+
+.public-site .home .home-contact-cta {
+  padding: 1.2rem 1.2rem 0.2rem;
+  text-align: center;
+}
+
+.public-site .home .home-contact-cta__eyebrow {
+  margin: 0 0 0.35rem;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  letter-spacing: 0.09em;
+  font-weight: 800;
+  color: #b85c18;
+}
+
+.public-site .home .home-contact-cta h2 {
+  margin: 0 0 0.35rem;
+  font-size: clamp(1.55rem, 2.6vw, 2rem);
+  color: #1f3d58;
+}
+
+.public-site .home .home-contact-cta p {
+  margin: 0;
+  color: #617285;
+}
+
+.public-site .home .home-contact-section .contact-grid {
+  padding: 1.2rem;
+}
+
 .public-site .home .zigodev-banner {
   margin: 16px;
   padding: 30px 20px;
@@ -493,6 +534,10 @@
 
   .public-site .home .gallery {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .public-site .home .home-contact-section {
+    margin-inline: 8px;
   }
 }
 

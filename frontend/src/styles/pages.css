@@ -65,6 +65,14 @@
   background: linear-gradient(135deg, #275f7c, #469fd8);
 }
 
+.public-site .page-banner--cet {
+  background: linear-gradient(135deg, #a74682, #cc5b9f);
+}
+
+.public-site .page-banner--saie {
+  background: linear-gradient(135deg, #2a5d7d, #4e8db8);
+}
+
 .public-site .rich-text-content > *:first-child {
   margin-top: 0;
 }
@@ -103,7 +111,9 @@
 .public-site .admission-support,
 .public-site .page-cta,
 .public-site .about-identity,
-.public-site .trust-strip {
+.public-site .trust-strip,
+.public-site .program-highlight,
+.public-site .program-gallery {
   background: #fff;
   border-radius: 20px;
   border: 1px solid #f0dfd6;
@@ -359,6 +369,81 @@
   font-size: 0.9rem;
 }
 
+/* CET / SAIE */
+.public-site .program-highlight .container,
+.public-site .program-gallery .container {
+  padding: 1.35rem;
+}
+
+.public-site .program-highlight__grid {
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  gap: 1rem;
+  align-items: stretch;
+}
+
+.public-site .program-highlight__media {
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid #efd8e6;
+}
+
+.public-site .program-highlight__media img {
+  width: 100%;
+  height: 100%;
+  min-height: 300px;
+  max-height: 520px;
+  object-fit: cover;
+  display: block;
+}
+
+.public-site .program-highlight__content {
+  background: #fff8fc;
+  border: 1px solid #f2dce9;
+  border-radius: 16px;
+  padding: 1.1rem 1.2rem;
+}
+
+.public-site .program-highlight__content h2 {
+  margin-bottom: 0.7rem;
+  color: #1f3d58;
+}
+
+.public-site .program-highlight__content p {
+  color: #5f6f81;
+  line-height: 1.7;
+  margin-bottom: 0.55rem;
+}
+
+.public-site .program-highlight__content p:last-child {
+  margin-bottom: 0;
+}
+
+.public-site .program-gallery h3 {
+  margin-bottom: 0.85rem;
+}
+
+.public-site .program-gallery__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.8rem;
+}
+
+.public-site .program-gallery__item {
+  margin: 0;
+  border: 1px solid #f0dfd6;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #fff;
+}
+
+.public-site .program-gallery__item img {
+  width: 100%;
+  height: 260px;
+  object-fit: cover;
+  display: block;
+}
+
 /* Admisión */
 .public-site .admission-intro .container {
   padding: 1.35rem;
@@ -595,7 +680,8 @@
   }
 
   .public-site .about-main__grid,
-  .public-site .admission-support__grid {
+  .public-site .admission-support__grid,
+  .public-site .program-highlight__grid {
     grid-template-columns: 1fr;
   }
 
@@ -615,7 +701,8 @@
   }
 
   .public-site .identity-grid,
-  .public-site .workflow-grid {
+  .public-site .workflow-grid,
+  .public-site .program-gallery__grid {
     grid-template-columns: 1fr;
   }
 
