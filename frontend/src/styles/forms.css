@@ -11,6 +11,16 @@
   gap: 0.4rem;
 }
 
+.form-note {
+  font-size: 0.875rem;
+  color: #5f6f7f;
+  margin-top: -0.35rem;
+}
+
+.form-note code {
+  font-size: 0.85em;
+}
+
 .form-group label {
   font-size: 0.875rem;
   font-weight: 600;

@@ -9,6 +9,7 @@ import Home from './pages/public/Home';
 import QuienesSomos from './pages/public/QuienesSomos';
 import Admision from './pages/public/Admision';
 import Servicios from './pages/public/Servicios';
+import ServicioDetalle from './pages/public/ServicioDetalle';
 import Contacto from './pages/public/Contacto';
 
 import Login from './pages/admin/Login';
@@ -103,6 +104,7 @@ function App() {
           <Route path="/quienes-somos" element={<PublicLayout><QuienesSomos /></PublicLayout>} />
           <Route path="/admision" element={<PublicLayout><Admision /></PublicLayout>} />
           <Route path="/servicios" element={<PublicLayout><Servicios /></PublicLayout>} />
+          <Route path="/servicios/:serviceSlug" element={<PublicLayout><ServicioDetalle /></PublicLayout>} />
           <Route path="/contacto" element={<PublicLayout><Contacto /></PublicLayout>} />
           <Route path="/admin/login" element={<Login />} />
           <Route path="/admin" element={<ProtectedRoute><Navigate to="/admin/home" replace /></ProtectedRoute>} />

@@ -1,13 +1,21 @@
 const path = require('path');
+const fs = require('fs');
 const multer = require('multer');
 const { AppError } = require('../middleware/error.middleware');
+const { toAbsoluteUploadUrl } = require('../utils/media-url');
 
 const ALLOWED_MIME = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif'];
 const MAX_SIZE = 5 * 1024 * 1024; // 5MB
+const UPLOADS_DIR = path.join(__dirname, '..', '..', 'uploads');
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, path.join(__dirname, '..', '..', 'uploads'));
+    try {
+      fs.mkdirSync(UPLOADS_DIR, { recursive: true });
+      cb(null, UPLOADS_DIR);
+    } catch (err) {
+      cb(err);
+    }
   },
   filename: (req, file, cb) => {
     const ext = path.extname(file.originalname).toLowerCase();
@@ -40,8 +48,7 @@ const uploadImage = (req, res, next) => {
       return next(new AppError('No se recibió ningún archivo.', 400));
     }
 
-    const baseUrl = process.env.BACKEND_URL || `http://localhost:${process.env.PORT || 4000}`;
-    const url = `${baseUrl}/uploads/${req.file.filename}`;
+    const url = toAbsoluteUploadUrl(req, req.file.filename);
 
     res.json({
       success: true,

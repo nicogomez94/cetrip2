@@ -4,6 +4,7 @@ import {
   QUIENES_DEFAULTS,
   SERVICIOS_DEFAULTS,
 } from '../constants/publicPageDefaults';
+import { buildServiceSlugs, stripRichText } from './serviceContent';
 
 const sortByOrder = (items = []) => [...items].sort((a, b) => (a.order || 0) - (b.order || 0));
 
@@ -60,6 +61,27 @@ const resolveServiceImage = (title, index, fallbackUrl) => {
   if (match) return match.imageUrl;
   if (fallbackUrl) return fallbackUrl;
   return `/servicios/${(index % SERVICE_IMAGE_BY_TITLE.length) + 1}.png`;
+};
+
+const mapServiceItems = (items = [], defaults = []) => {
+  const baseItems = items.map((item, index) => ({
+    id: item.id || `service-${index}`,
+    title: fallbackText(item.title, defaults[index]?.title || 'Servicio'),
+    content: fallbackText(item.content, defaults[index]?.content || ''),
+    imageUrl: fallbackText(
+      item.imageUrl,
+      resolveServiceImage(item.title, index, defaults[index % defaults.length]?.imageUrl)
+    ),
+    slug: fallbackText(item.linkUrl || item.slug, item.title || defaults[index]?.title || ''),
+  }));
+
+  const slugs = buildServiceSlugs(baseItems);
+
+  return baseItems.map((service, index) => ({
+    ...service,
+    slug: slugs[index],
+    summary: stripRichText(service.content),
+  }));
 };
 
 export function mapQuienesPage(sections = []) {
@@ -157,18 +179,10 @@ export function mapServiciosPage(sections = []) {
     ) || getBlocksByType(sections, 'TEXT')[0];
 
   const cardBlocks = getBlocksByType(sections, 'CARD');
-  const mappedServices = cardBlocks.map((block, index) => ({
-    id: block.id || `service-${index}`,
-    title: fallbackText(block.title, defaults.services[index]?.title || 'Servicio'),
-    content: fallbackText(block.content, defaults.services[index]?.content || ''),
-    imageUrl: resolveServiceImage(
-      block.title,
-      index,
-      defaults.services[index % defaults.services.length]?.imageUrl
-    ),
-  }));
+  const mappedServices = mapServiceItems(cardBlocks, defaults.services);
 
-  const services = mappedServices.length > 0 ? mappedServices : defaults.services;
+  const fallbackServices = mapServiceItems(defaults.services, defaults.services);
+  const services = mappedServices.length > 0 ? mappedServices : fallbackServices;
   const legacy = {
     bannerTitle: fallbackText(introSection?.title, defaults.bannerTitle),
     bannerSubtitle: fallbackText(introSection?.description, defaults.bannerSubtitle),
@@ -187,16 +201,8 @@ export function mapServiciosPage(sections = []) {
     (block) => block.type === 'TEXT'
   );
   const structuredServices = getBlocksBySectionSlug(sections, 'servicios-lista')
-    .filter((block) => block.type === 'CARD')
-    .map((block, index) => ({
-      id: block.id || `structured-service-${index}`,
-      title: fallbackText(block.title, legacy.services[index]?.title || 'Servicio'),
-      content: fallbackText(block.content, legacy.services[index]?.content || ''),
-      imageUrl: fallbackText(
-        block.imageUrl,
-        resolveServiceImage(block.title, index, legacy.services[index]?.imageUrl)
-      ),
-    }));
+    .filter((block) => block.type === 'CARD');
+  const mappedStructuredServices = mapServiceItems(structuredServices, legacy.services);
   const structuredWorkflowSection = getSectionBySlug(sections, 'servicios-workflow');
   const structuredWorkflowBlocks = getBlocksBySectionSlug(sections, 'servicios-workflow').filter(
     (block) => block.type === 'CARD' || block.type === 'TEXT'
@@ -212,7 +218,7 @@ export function mapServiciosPage(sections = []) {
     bannerSubtitle: fallbackText(structuredBanner?.description, legacy.bannerSubtitle),
     introTitle: fallbackText(structuredIntro?.title, legacy.introTitle),
     introBody: fallbackText(structuredIntroText?.content, legacy.introBody),
-    services: structuredServices.length > 0 ? structuredServices : legacy.services,
+    services: mappedStructuredServices.length > 0 ? mappedStructuredServices : legacy.services,
     workflowTitle: fallbackText(structuredWorkflowSection?.title, legacy.workflowTitle),
     workflow: structuredWorkflow,
     ctaTitle: fallbackText(structuredCta?.title, legacy.ctaTitle),

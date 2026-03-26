@@ -34,17 +34,23 @@ function Servicios() {
         <div className="container">
           <div className="services-grid">
             {pageData.services.map((service, index) => (
-              <article key={service.id || `${service.title}-${index}`} className="service-card">
-                {service.imageUrl && (
-                  <div className="service-card__media">
-                    <img src={service.imageUrl} alt={service.title} />
+              <Link
+                key={service.id || service.slug || `${service.title}-${index}`}
+                to={`/servicios/${service.slug}`}
+                className="service-card-link"
+              >
+                <article className="service-card">
+                  {service.imageUrl && (
+                    <div className="service-card__media">
+                      <img src={service.imageUrl} alt={service.title} />
+                    </div>
+                  )}
+                  <div className="service-card__body">
+                    <h3>{service.title}</h3>
+                    <p className="service-card__summary">{service.summary}</p>
                   </div>
-                )}
-                <div className="service-card__body">
-                  <h3>{service.title}</h3>
-                  <RichTextContent content={service.content} className="rich-text-content" />
-                </div>
-              </article>
+                </article>
+              </Link>
             ))}
           </div>
         </div>

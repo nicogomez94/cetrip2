@@ -1,5 +1,6 @@
 const prisma = require('../utils/prisma');
 const { AppError } = require('../middleware/error.middleware');
+const { normalizeSectionBlocksImageUrls } = require('../utils/media-url');
 
 // ─── Público ──────────────────────────────────────────────────────────────────
 const getByPage = async (req, res, next) => {
@@ -15,7 +16,10 @@ const getByPage = async (req, res, next) => {
         },
       },
     });
-    res.json({ success: true, data: sections });
+    res.json({
+      success: true,
+      data: sections.map((section) => normalizeSectionBlocksImageUrls(req, section)),
+    });
   } catch (err) {
     next(err);
   }
@@ -35,7 +39,10 @@ const getAll = async (req, res, next) => {
         _count: { select: { blocks: true } },
       },
     });
-    res.json({ success: true, data: sections });
+    res.json({
+      success: true,
+      data: sections.map((section) => normalizeSectionBlocksImageUrls(req, section)),
+    });
   } catch (err) {
     next(err);
   }
@@ -48,7 +55,7 @@ const getOne = async (req, res, next) => {
       include: { blocks: { orderBy: { order: 'asc' } } },
     });
     if (!section) return next(new AppError('Sección no encontrada.', 404));
-    res.json({ success: true, data: section });
+    res.json({ success: true, data: normalizeSectionBlocksImageUrls(req, section) });
   } catch (err) {
     next(err);
   }

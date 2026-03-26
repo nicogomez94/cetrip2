@@ -5,6 +5,7 @@ import Loader from '../../components/common/Loader';
 import ErrorMessage from '../../components/common/ErrorMessage';
 import { SERVICIOS_DEFAULTS } from '../../constants/publicPageDefaults';
 import { mapServiciosPage } from '../../utils/publicPageMappers';
+import { buildServiceSlugs } from '../../utils/serviceContent';
 import {
   PAGE_SLUGS,
   ensureSection,
@@ -183,6 +184,8 @@ function AdminServicios() {
     setFormError(null);
     setSaved(false);
     try {
+      const serviceSlugs = buildServiceSlugs(services);
+
       const bannerSectionId = await ensureSection({
         sections,
         page: 'servicios',
@@ -235,6 +238,7 @@ function AdminServicios() {
           title: service.title,
           content: service.content,
           imageUrl: service.imageUrl,
+          linkUrl: serviceSlugs[index],
           order: index + 1,
         }))
       );
@@ -305,6 +309,10 @@ function AdminServicios() {
             </div>
 
             <h3>Lista de servicios ({services.length}/{MAX_SERVICES})</h3>
+            <p className="form-note">
+              Cada servicio crea su página individual en <code>/servicios/:slug</code>. El campo texto
+              corresponde al contenido completo de esa página.
+            </p>
             <div className="repeatable-list">
               {services.map((service, index) => (
                 <div key={`service-${index}`} className="repeatable-item">
@@ -346,7 +354,7 @@ function AdminServicios() {
                     />
                   </div>
                   <div className="form-group">
-                    <label>Texto</label>
+                    <label>Texto (contenido completo de la página detalle)</label>
                     <RichTextEditor
                       value={service.content}
                       onChange={(value) => handleServiceChange(index, 'content', value)}

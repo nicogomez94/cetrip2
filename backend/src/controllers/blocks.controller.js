@@ -1,5 +1,6 @@
 const prisma = require('../utils/prisma');
 const { AppError } = require('../middleware/error.middleware');
+const { normalizeImageUrl, normalizeBlockImageUrl } = require('../utils/media-url');
 
 const VALID_TYPES = ['HERO', 'TEXT', 'IMAGE', 'VIDEO', 'CARD', 'CTA'];
 
@@ -13,7 +14,7 @@ const getAll = async (req, res, next) => {
       orderBy: { order: 'asc' },
       include: { section: { select: { id: true, title: true, page: true } } },
     });
-    res.json({ success: true, data: blocks });
+    res.json({ success: true, data: blocks.map((block) => normalizeBlockImageUrl(req, block)) });
   } catch (err) {
     next(err);
   }
@@ -26,7 +27,7 @@ const getOne = async (req, res, next) => {
       include: { section: true },
     });
     if (!block) return next(new AppError('Bloque no encontrado.', 404));
-    res.json({ success: true, data: block });
+    res.json({ success: true, data: normalizeBlockImageUrl(req, block) });
   } catch (err) {
     next(err);
   }
@@ -79,7 +80,7 @@ const create = async (req, res, next) => {
         title: title?.trim(),
         subtitle: subtitle?.trim(),
         content: content?.trim(),
-        imageUrl: imageUrl?.trim(),
+        imageUrl: normalizeImageUrl(req, imageUrl?.trim()),
         videoUrl: videoUrl?.trim(),
         linkUrl: linkUrl?.trim(),
         linkText: linkText?.trim(),
@@ -87,7 +88,7 @@ const create = async (req, res, next) => {
         isActive: isActive !== undefined ? Boolean(isActive) : true,
       },
     });
-    res.status(201).json({ success: true, data: block });
+    res.status(201).json({ success: true, data: normalizeBlockImageUrl(req, block) });
   } catch (err) {
     next(err);
   }
@@ -123,7 +124,7 @@ const update = async (req, res, next) => {
     if (title !== undefined) data.title = title.trim();
     if (subtitle !== undefined) data.subtitle = subtitle.trim();
     if (content !== undefined) data.content = content.trim();
-    if (imageUrl !== undefined) data.imageUrl = imageUrl.trim();
+    if (imageUrl !== undefined) data.imageUrl = normalizeImageUrl(req, imageUrl.trim());
     if (videoUrl !== undefined) data.videoUrl = videoUrl.trim();
     if (linkUrl !== undefined) data.linkUrl = linkUrl.trim();
     if (linkText !== undefined) data.linkText = linkText.trim();
@@ -147,7 +148,7 @@ const update = async (req, res, next) => {
     }
 
     const block = await prisma.block.update({ where: { id }, data });
-    res.json({ success: true, data: block });
+    res.json({ success: true, data: normalizeBlockImageUrl(req, block) });
   } catch (err) {
     next(err);
   }
@@ -163,7 +164,7 @@ const toggle = async (req, res, next) => {
       where: { id },
       data: { isActive: !current.isActive },
     });
-    res.json({ success: true, data: block });
+    res.json({ success: true, data: normalizeBlockImageUrl(req, block) });
   } catch (err) {
     next(err);
   }
