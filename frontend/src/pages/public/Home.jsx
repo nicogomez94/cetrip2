@@ -88,7 +88,7 @@ function Home() {
     if (heroImages.length <= 1) return undefined;
     const intervalId = setInterval(() => {
       setHeroSlideIndex((prev) => (prev + 1) % heroImages.length);
-    }, 4500);
+    }, 3100);
     return () => clearInterval(intervalId);
   }, [heroImages.length]);
 
