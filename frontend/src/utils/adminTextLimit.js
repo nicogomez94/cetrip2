@@ -1,6 +1,6 @@
 import { stripRichText } from './serviceContent';
 
-export const ADMIN_PLAIN_TEXT_LIMIT = 100;
+export const ADMIN_PLAIN_TEXT_LIMIT = 300;
 
 export const exceedsAdminPlainTextLimit = (fieldName = '', value = '') => {
   void fieldName;
