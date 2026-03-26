@@ -110,13 +110,13 @@
   text-transform: uppercase;
   letter-spacing: 0.11em;
   font-weight: 700;
-  color: #d9b29f;
+  color: #b85c18;
   margin: 0 0 18px;
   display: inline-flex;
   align-items: center;
   width: fit-content;
-  background: #fff5ed;
-  border: 1px solid #f4d9c8;
+  background: #ffd8a8;
+  border: 1px solid #e8a060;
   padding: 8px 12px;
   border-radius: 999px;
 }
@@ -156,7 +156,7 @@
 }
 
 .public-site .home .services-wrap {
-  background: #fff2ea;
+  background: #ffc888;
   margin-top: 0;
   padding: 36px 0 44px;
   position: relative;
@@ -169,7 +169,7 @@
   right: 0;
   top: -29px;
   height: 30px;
-  background: #fff2ea;
+  background: #ffc888;
   border-top-left-radius: 45% 100%;
   border-top-right-radius: 45% 100%;
 }
@@ -185,7 +185,7 @@
 
 .public-site .home .service {
   border-radius: 16px;
-  border: 1px solid #f0dfd6;
+  border: 1px solid #d4a070;
   padding: 28px 24px;
   min-height: 176px;
   transition: transform 0.28s ease, box-shadow 0.28s ease;
@@ -197,7 +197,7 @@
   object-fit: cover;
   border-radius: 12px;
   margin-bottom: 14px;
-  border: 1px solid #e7d8cf;
+  border: 1px solid #cc9060;
 }
 
 .public-site .home .service:hover {
@@ -224,15 +224,15 @@
 }
 
 .public-site .home .service-a {
-  background: #fffdfc;
+  background: #fff0dd;
 }
 
 .public-site .home .service-b {
-  background: #edf6ff;
+  background: #bce0ff;
 }
 
 .public-site .home .service-c {
-  background: #fffbea;
+  background: #fef39a;
 }
 
 .public-site .home .about {
@@ -249,12 +249,12 @@
 
 .public-site .home .hours-card {
   border-radius: 14px;
-  background: #eef3fa;
+  background: #b8d8f4;
   padding: 20px 16px 14px;
   display: flex;
   flex-direction: column;
   gap: 7px;
-  box-shadow: 0 8px 25px rgba(64, 80, 98, 0.12);
+  box-shadow: 0 8px 25px rgba(64, 80, 98, 0.18);
 }
 
 .public-site .home .hours-card h4 {
@@ -293,7 +293,7 @@
   text-transform: uppercase;
   letter-spacing: 0.11em;
   font-weight: 700;
-  color: #d9b29f;
+  color: #b85c18;
   margin: 0 0 18px;
 }
 
@@ -311,9 +311,9 @@
 }
 
 .public-site .home .tags span {
-  background: #fff5ed;
-  color: #cb9878;
-  border: 1px solid #f4d9c8;
+  background: #ffd8a8;
+  color: #a04c10;
+  border: 1px solid #e8a060;
   font-size: 0.95rem;
   font-weight: 700;
   padding: 8px 12px;
@@ -330,8 +330,8 @@
 .public-site .home blockquote {
   margin: 0 0 16px;
   padding: 20px 22px;
-  background: #f8fbff;
-  border-left: 4px solid #8ac8ed;
+  background: #d4eeff;
+  border-left: 4px solid #2aaae0;
   color: #4e6177;
   border-radius: 8px;
   font-style: italic;
