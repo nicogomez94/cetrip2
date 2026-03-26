@@ -8,11 +8,13 @@ import { HOME_DEFAULTS } from '../../constants/homeDefaults';
 import '../../styles/home.css';
 
 const sortByOrder = (items = []) => [...items].sort((a, b) => a.order - b.order);
+const HERO_CAROUSEL_IMAGES = HOME_DEFAULTS.images.gallery.slice(0, 4);
 
 function Home() {
   const [sections, setSections] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [heroSlideIndex, setHeroSlideIndex] = useState(0);
 
   const fetchSections = async () => {
     setLoading(true);
@@ -69,20 +71,46 @@ function Home() {
     };
   }, [sections]);
 
+  const heroImages = useMemo(() => {
+    const images = [homeData.hero.imageUrl, ...HERO_CAROUSEL_IMAGES]
+      .filter(Boolean)
+      .filter((value, index, array) => array.indexOf(value) === index)
+      .slice(0, 4);
+
+    return images.length === 4 ? images : HERO_CAROUSEL_IMAGES;
+  }, [homeData.hero.imageUrl]);
+
+  useEffect(() => {
+    setHeroSlideIndex(0);
+  }, [heroImages.length]);
+
+  useEffect(() => {
+    if (heroImages.length <= 1) return undefined;
+    const intervalId = setInterval(() => {
+      setHeroSlideIndex((prev) => (prev + 1) % heroImages.length);
+    }, 4500);
+    return () => clearInterval(intervalId);
+  }, [heroImages.length]);
+
   if (loading) return <Loader text="Cargando inicio..." />;
   if (error) return <ErrorMessage message={error} onRetry={fetchSections} />;
 
   return (
     <div className="home">
       <section className="hero">
-        <div
-          className="hero__bg"
-          style={
-            homeData.hero.imageUrl
-              ? { backgroundImage: `url(${homeData.hero.imageUrl})` }
-              : {}
-          }
-        >
+        <div className="hero__bg">
+          <div className="hero__carousel">
+            {heroImages.map((src, index) => (
+              <div
+                key={`${src}-${index}`}
+                className={`hero__slide ${index === heroSlideIndex ? 'is-active' : ''}`}
+              >
+                <div className="hero__slide-image">
+                  <img src={src} alt={`Niños en terapia ${index + 1}`} />
+                </div>
+              </div>
+            ))}
+          </div>
           <div className="hero__overlay" />
         </div>
         <div className="hero__content">
