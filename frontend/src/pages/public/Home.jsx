@@ -12,7 +12,8 @@ import '../../styles/pages.css';
 import '../../styles/forms.css';
 
 const sortByOrder = (items = []) => [...items].sort((a, b) => a.order - b.order);
-const HERO_CAROUSEL_IMAGES = HOME_DEFAULTS.images.gallery.slice(0, 4);
+const HERO_CAROUSEL_LIMIT = 4;
+const DEFAULT_HERO_CAROUSEL_IMAGES = HOME_DEFAULTS.images.gallery.slice(0, HERO_CAROUSEL_LIMIT);
 const DEBUG = import.meta.env.VITE_DEBUG === 'true';
 const DEBUG_DATA = {
   name: 'María González',
@@ -59,6 +60,20 @@ function Home() {
     const heroSection = sections.find((s) => s.slug === 'home-hero');
     const heroBlock = sortByOrder(heroSection?.blocks).find((b) => b.type === 'HERO');
 
+    const carouselSection = sections.find((s) => s.slug === 'home-carrusel');
+    const carouselBlocks = sortByOrder(carouselSection?.blocks)
+      .filter((b) => b.type === 'IMAGE')
+      .slice(0, HERO_CAROUSEL_LIMIT);
+    const carouselImages = carouselBlocks
+      .map((block) => block.imageUrl)
+      .filter(Boolean)
+      .filter((value, index, array) => array.indexOf(value) === index)
+      .slice(0, HERO_CAROUSEL_LIMIT);
+    const legacyCarouselImages = [heroBlock?.imageUrl, ...DEFAULT_HERO_CAROUSEL_IMAGES]
+      .filter(Boolean)
+      .filter((value, index, array) => array.indexOf(value) === index)
+      .slice(0, HERO_CAROUSEL_LIMIT);
+
     const infoSection = sections.find((s) => s.slug === 'home-info');
     const infoBlocks = sortByOrder(infoSection?.blocks).slice(0, 3);
 
@@ -80,6 +95,7 @@ function Home() {
         linkText: heroBlock?.linkText || HOME_DEFAULTS.hero.linkText,
         linkUrl: heroBlock?.linkUrl || '/admision',
         imageUrl: heroBlock?.imageUrl || '',
+        carouselImages: carouselImages.length > 0 ? carouselImages : legacyCarouselImages,
       },
       services,
       about: {
@@ -94,13 +110,13 @@ function Home() {
   }, [sections]);
 
   const heroImages = useMemo(() => {
-    const images = [homeData.hero.imageUrl, ...HERO_CAROUSEL_IMAGES]
+    const images = homeData.hero.carouselImages
       .filter(Boolean)
       .filter((value, index, array) => array.indexOf(value) === index)
-      .slice(0, 4);
+      .slice(0, HERO_CAROUSEL_LIMIT);
 
-    return images.length === 4 ? images : HERO_CAROUSEL_IMAGES;
-  }, [homeData.hero.imageUrl]);
+    return images.length > 0 ? images : DEFAULT_HERO_CAROUSEL_IMAGES;
+  }, [homeData.hero.carouselImages]);
 
   useEffect(() => {
     setHeroSlideIndex(0);
@@ -223,7 +239,7 @@ function Home() {
         </div>
         <div className="services-wrap__actions">
           <Link to="/servicios" className="btn btn--outline">
-            Ver más
+            Ver mas
           </Link>
         </div>
       </section>

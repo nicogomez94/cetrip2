@@ -43,7 +43,7 @@ const PAGE_STATUS_CONFIG = [
   },
   {
     key: 'servicios',
-    label: 'Servicios',
+    label: 'Consultorios Externos',
     icon: '🩺',
     to: '/admin/servicios',
     evaluate: (sections) => {
@@ -222,7 +222,7 @@ function Dashboard() {
                 <span>🧭</span> Editar Quiénes
               </Link>
               <Link to="/admin/servicios" className="quick-link">
-                <span>🩺</span> Editar Servicios
+                <span>🩺</span> Editar Consultorios Externos
               </Link>
               <Link to="/admin/admision" className="quick-link">
                 <span>🗓️</span> Editar Admisión

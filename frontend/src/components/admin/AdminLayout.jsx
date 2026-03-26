@@ -6,7 +6,7 @@ import '../../styles/admin.css';
 const MENU = [
   { to: '/admin/home', label: 'Home', icon: '🏠' },
   { to: '/admin/quienes-somos', label: 'Quiénes Somos', icon: '🧭' },
-  { to: '/admin/servicios', label: 'Servicios', icon: '🩺' },
+  { to: '/admin/servicios', label: 'Consultorios Externos', icon: '🩺' },
   { to: '/admin/admision', label: 'Admisión', icon: '🗓️' },
   { to: '/admin/contacto', label: 'Contacto', icon: '📞' },
   { to: '/admin/mensajes', label: 'Mensajes', icon: '✉️' },

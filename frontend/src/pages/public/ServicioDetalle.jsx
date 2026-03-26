@@ -16,7 +16,7 @@ function ServicioDetalle() {
     [pageData.services, serviceSlug]
   );
 
-  if (loading) return <Loader text="Cargando servicio..." />;
+  if (loading) return <Loader text="Cargando consultorio externo..." />;
   if (error) return <ErrorMessage message={error} onRetry={refetch} />;
 
   if (!service) {
@@ -24,9 +24,9 @@ function ServicioDetalle() {
       <div className="page-wrapper service-detail-page">
         <section className="service-detail">
           <div className="container service-detail__content">
-            <h1>Servicio no encontrado</h1>
-            <p>Este servicio no existe o fue movido.</p>
-            <Link to="/servicios" className="btn btn--outline">Volver a servicios</Link>
+            <h1>Consultorio externo no encontrado</h1>
+            <p>Este consultorio externo no existe o fue movido.</p>
+            <Link to="/servicios" className="btn btn--outline">Volver a consultorios externos</Link>
           </div>
         </section>
       </div>
@@ -37,7 +37,7 @@ function ServicioDetalle() {
     <div className="page-wrapper service-detail-page">
       <section className="service-detail">
         <div className="container service-detail__content">
-          <Link to="/servicios" className="service-detail__back">← Volver a servicios</Link>
+          <Link to="/servicios" className="service-detail__back">← Volver a consultorios externos</Link>
           {service.imageUrl && (
             <div className="service-detail__media">
               <img src={service.imageUrl} alt={service.title} />

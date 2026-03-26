@@ -20,25 +20,40 @@ const SECTION_META = {
     description: 'Bloque principal de bienvenida de la página de inicio',
     order: 1,
   },
+  carousel: {
+    slug: 'home-carrusel',
+    title: 'Carrusel del Hero',
+    description: 'Imágenes rotativas del encabezado de Home',
+    order: 2,
+  },
   services: {
     slug: 'home-info',
-    title: 'Servicios Home',
-    description: 'Servicios principales de la portada',
-    order: 2,
+    title: 'Consultorios Externos Home',
+    description: 'Consultorios externos principales de la portada',
+    order: 3,
   },
   about: {
     slug: 'home-bienvenida',
     title: 'Sobre nuestro centro',
     description: 'Textos institucionales de la portada',
-    order: 3,
+    order: 4,
   },
 };
+
+const HERO_CAROUSEL_LIMIT = 4;
+const DEFAULT_HERO_CAROUSEL_IMAGES = Array.from(
+  { length: HERO_CAROUSEL_LIMIT },
+  (_, index) => HOME_DEFAULTS.images.gallery[index] || ''
+);
 
 const EMPTY_IDS = {
   heroSectionId: null,
   heroBlockId: null,
   heroImageUrl: '',
   heroLinkUrl: '/admision',
+  carouselSectionId: null,
+  carouselBlockIds: [null, null, null, null],
+  carouselImageUrls: DEFAULT_HERO_CAROUSEL_IMAGES,
   servicesSectionId: null,
   serviceBlockIds: [null, null, null],
   serviceImageUrls: [
@@ -81,6 +96,7 @@ function AdminHome() {
   const [ids, setIds] = useState(EMPTY_IDS);
   const [form, setForm] = useState(DEFAULT_FORM);
   const [uploadingServiceIndex, setUploadingServiceIndex] = useState(null);
+  const [uploadingCarouselIndex, setUploadingCarouselIndex] = useState(null);
   const formActionsRef = useRef(null);
 
   const fetchHome = async () => {
@@ -93,6 +109,11 @@ function AdminHome() {
       const heroSection = homeSections.find((s) => s.slug === SECTION_META.hero.slug);
       const heroBlock = byOrder(heroSection?.blocks).find((b) => b.type === 'HERO');
 
+      const carouselSection = homeSections.find((s) => s.slug === SECTION_META.carousel.slug);
+      const carouselBlocks = byOrder(carouselSection?.blocks)
+        .filter((b) => b.type === 'IMAGE')
+        .slice(0, HERO_CAROUSEL_LIMIT);
+
       const servicesSection = homeSections.find((s) => s.slug === SECTION_META.services.slug);
       const serviceBlocks = byOrder(servicesSection?.blocks).slice(0, 3);
 
@@ -104,6 +125,15 @@ function AdminHome() {
         heroBlockId: heroBlock?.id || null,
         heroImageUrl: heroBlock?.imageUrl || '',
         heroLinkUrl: heroBlock?.linkUrl || '/admision',
+        carouselSectionId: carouselSection?.id || null,
+        carouselBlockIds: Array.from(
+          { length: HERO_CAROUSEL_LIMIT },
+          (_, index) => carouselBlocks[index]?.id || null
+        ),
+        carouselImageUrls: Array.from(
+          { length: HERO_CAROUSEL_LIMIT },
+          (_, index) => carouselBlocks[index]?.imageUrl || DEFAULT_HERO_CAROUSEL_IMAGES[index]
+        ),
         servicesSectionId: servicesSection?.id || null,
         serviceBlockIds: [serviceBlocks[0]?.id || null, serviceBlocks[1]?.id || null, serviceBlocks[2]?.id || null],
         serviceImageUrls: [
@@ -212,9 +242,50 @@ function AdminHome() {
       handleServiceImageChange(index, res.data.url);
     } catch (err) {
       setErrorField(`serviceImageUrl${index}`);
-      setFormError(err.response?.data?.message || 'No se pudo subir la imagen del servicio.');
+      setFormError(err.response?.data?.message || 'No se pudo subir la imagen del consultorio externo.');
     } finally {
       setUploadingServiceIndex(null);
+    }
+  };
+
+  const handleCarouselImageChange = (index, value) => {
+    if (exceedsAdminPlainTextLimit(`carouselImageUrl${index}`, value)) {
+      setErrorField(`carouselImageUrl${index}`);
+      setFormError(`Este campo admite hasta ${ADMIN_PLAIN_TEXT_LIMIT} caracteres.`);
+      return;
+    }
+    if (formError) {
+      setFormError(null);
+      setErrorField('');
+    }
+    setSaved(false);
+    setIds((prev) => ({
+      ...prev,
+      carouselImageUrls: prev.carouselImageUrls.map((url, currentIndex) =>
+        currentIndex === index ? value : url
+      ),
+    }));
+  };
+
+  const handleCarouselImageUpload = async (index, event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    setUploadingCarouselIndex(index);
+    setFormError(null);
+    setErrorField('');
+    try {
+      const data = new FormData();
+      data.append('image', file);
+      const res = await api.post('/admin/upload', data, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+      handleCarouselImageChange(index, res.data.url);
+    } catch (err) {
+      setErrorField(`carouselImageUrl${index}`);
+      setFormError(err.response?.data?.message || 'No se pudo subir la imagen del carrusel.');
+    } finally {
+      setUploadingCarouselIndex(null);
     }
   };
 
@@ -277,6 +348,14 @@ function AdminHome() {
       setFormError(`Este campo admite hasta ${ADMIN_PLAIN_TEXT_LIMIT} caracteres.`);
       return;
     }
+    const firstInvalidCarouselImage = ids.carouselImageUrls.findIndex((value) =>
+      exceedsAdminPlainTextLimit('carouselImageUrl', value)
+    );
+    if (firstInvalidCarouselImage !== -1) {
+      setErrorField(`carouselImageUrl${firstInvalidCarouselImage}`);
+      setFormError(`Este campo admite hasta ${ADMIN_PLAIN_TEXT_LIMIT} caracteres.`);
+      return;
+    }
 
     setSaving(true);
     setFormError(null);
@@ -297,6 +376,20 @@ function AdminHome() {
         order: 1,
         isActive: true,
       });
+
+      const carouselSectionId = await ensureSection(ids.carouselSectionId, SECTION_META.carousel);
+      const nextCarouselBlockIds = [];
+      for (let i = 0; i < HERO_CAROUSEL_LIMIT; i += 1) {
+        const blockId = await ensureBlock(ids.carouselBlockIds[i], {
+          sectionId: carouselSectionId,
+          type: 'IMAGE',
+          title: `Slide ${i + 1}`,
+          imageUrl: ids.carouselImageUrls[i],
+          order: i + 1,
+          isActive: true,
+        });
+        nextCarouselBlockIds.push(blockId);
+      }
 
       const servicesSectionId = await ensureSection(ids.servicesSectionId, SECTION_META.services);
       const nextServiceIds = [];
@@ -336,6 +429,8 @@ function AdminHome() {
         ...prev,
         heroSectionId,
         heroBlockId,
+        carouselSectionId,
+        carouselBlockIds: nextCarouselBlockIds,
         servicesSectionId,
         serviceBlockIds: nextServiceIds,
         aboutSectionId,
@@ -405,17 +500,60 @@ function AdminHome() {
               </div>
             </div>
 
-            {/* ── Servicios ────────────────────────────────────────── */}
+            {/* ── Carrusel ────────────────────────────────────────── */}
+            <div className="admin-section-block admin-section-block--carousel">
+              <div className="admin-section-block__header">
+                <span>🎞️</span> Carrusel Hero
+              </div>
+              <p className="form-note">
+                Editá los 4 slides que se muestran en el encabezado de Inicio.
+              </p>
+              <div className="admin-carousel-grid">
+                {Array.from({ length: HERO_CAROUSEL_LIMIT }, (_, index) => (
+                  <div className="admin-service-card admin-service-card--carousel" key={`carousel-slide-${index}`}>
+                    <div className="admin-service-card__label">Slide {index + 1}</div>
+                    <div className={`form-group${errorField === `carouselImageUrl${index}` ? ' form-group--error' : ''}`}>
+                      <label>Imagen (URL)</label>
+                      <input
+                        value={ids.carouselImageUrls[index] || ''}
+                        onChange={(event) => handleCarouselImageChange(index, event.target.value)}
+                        placeholder="https://..."
+                      />
+                      <div className="form-upload">
+                        <label className="btn btn--outline btn--sm">
+                          {uploadingCarouselIndex === index ? 'Subiendo...' : '📎 Subir imagen'}
+                          <input
+                            type="file"
+                            accept="image/*"
+                            onChange={(event) => handleCarouselImageUpload(index, event)}
+                            style={{ display: 'none' }}
+                          />
+                        </label>
+                        {ids.carouselImageUrls[index] && (
+                          <img
+                            src={ids.carouselImageUrls[index]}
+                            alt={`Preview slide ${index + 1}`}
+                            className="upload-preview"
+                          />
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* ── Consultorios Externos ───────────────────────────── */}
             <div className="admin-section-block admin-section-block--services">
               <div className="admin-section-block__header">
-                <span>🗂️</span> Servicios
+                <span>🗂️</span> Consultorios Externos
               </div>
               <div className="admin-services-grid">
                 {[0, 1, 2].map((index) => {
                   const number = index + 1;
                   return (
                     <div className="admin-service-card" key={`service-card-${index}`}>
-                      <div className="admin-service-card__label">Servicio {number}</div>
+                      <div className="admin-service-card__label">Consultorio externo {number}</div>
                       <div className={`form-group${errorField === `service${number}Title` ? ' form-group--error' : ''}`}>
                         <label>Título</label>
                         <input
@@ -451,7 +589,7 @@ function AdminHome() {
                           {ids.serviceImageUrls[index] && (
                             <img
                               src={ids.serviceImageUrls[index]}
-                              alt={`Preview servicio ${number}`}
+                              alt={`Preview consultorio externo ${number}`}
                               className="upload-preview"
                             />
                           )}
@@ -495,7 +633,11 @@ function AdminHome() {
             </div>
 
             <div className="form-actions" ref={formActionsRef}>
-              <button type="submit" className="btn btn--primary" disabled={saving || uploadingServiceIndex !== null}>
+              <button
+                type="submit"
+                className="btn btn--primary"
+                disabled={saving || uploadingServiceIndex !== null || uploadingCarouselIndex !== null}
+              >
                 {saving ? 'Guardando...' : 'Guardar cambios'}
               </button>
               {formError && <span className="form-inline-error">{formError}</span>}

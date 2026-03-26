@@ -29,7 +29,7 @@ export const QUIENES_DEFAULTS = {
 };
 
 export const SERVICIOS_DEFAULTS = {
-  bannerTitle: 'Nuestros Servicios',
+  bannerTitle: 'Nuestros Consultorios Externos',
   bannerSubtitle: 'Atención integral e interdisciplinaria para cada etapa del desarrollo',
   introTitle: 'Tratamientos pensados para cada necesidad',
   introBody:

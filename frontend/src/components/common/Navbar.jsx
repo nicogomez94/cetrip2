@@ -3,13 +3,11 @@ import { Link, NavLink, useNavigate } from 'react-router-dom';
 import '../../styles/navbar.css';
 
 const NAV_LINKS = [
-  { to: '/', label: 'Inicio' },
-  { to: '/quienes-somos', label: 'Quiénes Somos' },
-  { to: '/servicios', label: 'Servicios' },
+  { to: '/quienes-somos', label: 'Nosotros' },
+  { to: '/servicios', label: 'Consultorios Externos' },
   { to: '/cet', label: 'CET' },
   { to: '/saie', label: 'SAIE' },
   { to: '/admision', label: 'Admisión' },
-  { to: '/contacto', label: 'Contacto' },
 ];
 
 function Navbar() {
@@ -53,7 +51,7 @@ function Navbar() {
             </NavLink>
           ))}
           <Link to="/contacto" className="navbar__cta" onClick={() => setOpen(false)}>
-            Pedir turno
+            Contacto
           </Link>
         </nav>
 

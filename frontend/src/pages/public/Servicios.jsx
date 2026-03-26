@@ -11,7 +11,7 @@ function Servicios() {
   const { sections, loading, error, refetch } = usePublicSections('servicios');
   const pageData = useMemo(() => mapServiciosPage(sections), [sections]);
 
-  if (loading) return <Loader text="Cargando servicios..." />;
+  if (loading) return <Loader text="Cargando consultorios externos..." />;
   if (error) return <ErrorMessage message={error} onRetry={refetch} />;
 
   return (

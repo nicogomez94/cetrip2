@@ -287,6 +287,11 @@
   background: #f0faf5;
 }
 
+.admin-section-block--carousel {
+  border-left-color: #9333ea;
+  background: #faf5ff;
+}
+
 .admin-section-block--about {
   border-left-color: #7e3af2;
   background: #f5f0ff;
@@ -326,8 +331,18 @@
   gap: 1rem;
 }
 
+.admin-carousel-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
 @media (max-width: 900px) {
   .admin-services-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-carousel-grid {
     grid-template-columns: 1fr;
   }
 }
@@ -351,6 +366,10 @@
   border-top-color: #0694a2;
 }
 
+.admin-service-card--carousel {
+  border-top-color: #9333ea;
+}
+
 .admin-service-card__label {
   font-size: 0.75rem;
   font-weight: 700;
@@ -365,6 +384,10 @@
 
 .admin-service-card--faq .admin-service-card__label {
   color: #0694a2;
+}
+
+.admin-service-card--carousel .admin-service-card__label {
+  color: #7e22ce;
 }
 
 /* ─── Admin table ────────────────────────────────────────────────────────────── */

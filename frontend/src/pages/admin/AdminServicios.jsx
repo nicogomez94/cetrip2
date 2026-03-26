@@ -25,7 +25,7 @@ const CTA_DEFAULT_TITLE = '¿Querés que evaluemos tu caso?';
 const CTA_DEFAULT_TEXT = 'Podemos orientarte sobre el tratamiento más adecuado para tu hijo o hija.';
 
 const createEmptyService = () => ({
-  title: 'Nuevo servicio',
+  title: 'Nuevo consultorio externo',
   content: '',
   imageUrl: '',
 });
@@ -110,7 +110,7 @@ function AdminServicios() {
         ctaText: ctaSection?.description || CTA_DEFAULT_TEXT,
       });
     } catch {
-      setError('No se pudo cargar el editor de Servicios.');
+      setError('No se pudo cargar el editor de Consultorios Externos.');
     } finally {
       setLoading(false);
     }
@@ -207,7 +207,7 @@ function AdminServicios() {
       handleServiceChange(index, 'imageUrl', res.data.url);
     } catch (err) {
       setErrorField(`service${index}ImageUrl`);
-      setFormError(err.response?.data?.message || 'No se pudo subir la imagen del servicio.');
+      setFormError(err.response?.data?.message || 'No se pudo subir la imagen del consultorio externo.');
     } finally {
       setUploadingIndex(null);
     }
@@ -217,7 +217,7 @@ function AdminServicios() {
     event.preventDefault();
     if (services.length < MIN_SERVICES || services.length > MAX_SERVICES) {
       setErrorField('');
-      setFormError(`La lista de servicios debe tener entre ${MIN_SERVICES} y ${MAX_SERVICES} ítems.`);
+      setFormError(`La lista de consultorios externos debe tener entre ${MIN_SERVICES} y ${MAX_SERVICES} ítems.`);
       return;
     }
     const firstInvalidFormField = Object.entries(form).find(
@@ -270,7 +270,7 @@ function AdminServicios() {
         sections,
         page: 'servicios',
         slug: PAGE_SLUGS.servicios.list,
-        title: 'Lista de servicios',
+        title: 'Lista de consultorios externos',
         description: '',
         order: 3,
       });
@@ -317,7 +317,7 @@ function AdminServicios() {
       setSaved(true);
     } catch (err) {
       setErrorField('');
-      setFormError(err.response?.data?.message || 'No se pudo guardar Servicios.');
+      setFormError(err.response?.data?.message || 'No se pudo guardar Consultorios Externos.');
     } finally {
       setSaving(false);
     }
@@ -325,7 +325,7 @@ function AdminServicios() {
 
   if (loading) {
     return (
-      <AdminLayout title="Servicios">
+      <AdminLayout title="Consultorios Externos">
         <Loader />
       </AdminLayout>
     );
@@ -333,14 +333,14 @@ function AdminServicios() {
 
   if (error) {
     return (
-      <AdminLayout title="Servicios">
+      <AdminLayout title="Consultorios Externos">
         <ErrorMessage message={error} onRetry={loadData} />
       </AdminLayout>
     );
   }
 
   return (
-    <AdminLayout title="Servicios">
+    <AdminLayout title="Consultorios Externos">
       <div className="admin-page">
         {saved && <div className="form-alert form-alert--success">Cambios guardados.</div>}
 
@@ -379,18 +379,18 @@ function AdminServicios() {
               </div>
             </div>
 
-            {/* ── Lista de servicios ───────────────────────────────── */}
+            {/* ── Lista de consultorios externos ───────────────────── */}
             <div className="admin-section-block admin-section-block--services">
-              <div className="admin-section-block__header"><span>🗂️</span> Lista de servicios ({services.length}/{MAX_SERVICES})</div>
+              <div className="admin-section-block__header"><span>🗂️</span> Lista de consultorios externos ({services.length}/{MAX_SERVICES})</div>
               <p className="form-note">
-                Cada servicio crea su página individual en <code>/servicios/:slug</code>. El campo texto
+                Cada consultorio externo crea su página individual en <code>/servicios/:slug</code>. El campo texto
                 corresponde al contenido completo de esa página.
               </p>
             <div className="repeatable-list">
               {services.map((service, index) => (
                 <div key={`service-${index}`} className="repeatable-item">
                   <div className="repeatable-item__header">
-                    <strong>Servicio {index + 1}</strong>
+                    <strong>Consultorio externo {index + 1}</strong>
                     <div className="repeatable-item__actions">
                       <button
                         type="button"
@@ -463,7 +463,7 @@ function AdminServicios() {
               onClick={handleAddService}
               disabled={services.length >= MAX_SERVICES}
             >
-              + Agregar servicio
+              + Agregar consultorio externo
             </button>
             </div>{/* end admin-section-block--services */}
 

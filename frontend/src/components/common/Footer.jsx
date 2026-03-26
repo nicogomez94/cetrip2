@@ -30,7 +30,7 @@ function Footer() {
           <ul>
             <li><Link to="/">Inicio</Link></li>
             <li><Link to="/quienes-somos">Quiénes Somos</Link></li>
-            <li><Link to="/servicios">Servicios</Link></li>
+            <li><Link to="/servicios">Consultorios Externos</Link></li>
             <li><Link to="/admision">Admisión</Link></li>
             <li><Link to="/contacto">Contacto</Link></li>
           </ul>
