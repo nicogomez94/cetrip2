@@ -45,6 +45,7 @@ function Home() {
       ...item,
       title: infoBlocks[index]?.title || item.title,
       content: infoBlocks[index]?.content || item.content,
+      imageUrl: infoBlocks[index]?.imageUrl || item.imageUrl || '',
     }));
 
     return {
@@ -102,10 +103,17 @@ function Home() {
 
       <section className="services-wrap">
         <div className="services">
-          {homeData.services.map((service) => (
-            <article key={service.title} className={`service ${service.className}`}>
+          {homeData.services.map((service, index) => (
+            <article key={`${service.title}-${index}`} className={`service ${service.className}`}>
+              {service.imageUrl ? (
+                <img
+                  src={service.imageUrl}
+                  alt={service.title}
+                  className="service__media"
+                />
+              ) : null}
               <h3>
-                <span>{service.icon}</span>
+                {!service.imageUrl && <span>{service.icon}</span>}
                 {service.title}
               </h3>
               <RichTextContent content={service.content} className="service__content rich-text-content" />
@@ -151,13 +159,6 @@ function Home() {
         ))}
       </section>
 
-      <section className="zigodev-banner" aria-label="Crédito del creador">
-        <p>{HOME_DEFAULTS.bannerText}</p>
-      </section>
-
-      <footer className="site-footer">
-        <p>{HOME_DEFAULTS.footerText}</p>
-      </footer>
     </div>
   );
 }

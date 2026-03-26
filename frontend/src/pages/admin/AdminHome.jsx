@@ -36,7 +36,11 @@ const EMPTY_IDS = {
   heroLinkUrl: '/admision',
   servicesSectionId: null,
   serviceBlockIds: [null, null, null],
-  serviceImageUrls: ['', '', ''],
+  serviceImageUrls: [
+    HOME_DEFAULTS.services[0]?.imageUrl || '',
+    HOME_DEFAULTS.services[1]?.imageUrl || '',
+    HOME_DEFAULTS.services[2]?.imageUrl || '',
+  ],
   aboutSectionId: null,
   aboutBlockIds: [null, null, null],
 };
@@ -69,6 +73,7 @@ function AdminHome() {
   const [formError, setFormError] = useState(null);
   const [ids, setIds] = useState(EMPTY_IDS);
   const [form, setForm] = useState(DEFAULT_FORM);
+  const [uploadingServiceIndex, setUploadingServiceIndex] = useState(null);
 
   const fetchHome = async () => {
     setLoading(true);
@@ -94,9 +99,9 @@ function AdminHome() {
         servicesSectionId: servicesSection?.id || null,
         serviceBlockIds: [serviceBlocks[0]?.id || null, serviceBlocks[1]?.id || null, serviceBlocks[2]?.id || null],
         serviceImageUrls: [
-          serviceBlocks[0]?.imageUrl || '',
-          serviceBlocks[1]?.imageUrl || '',
-          serviceBlocks[2]?.imageUrl || '',
+          serviceBlocks[0]?.imageUrl || HOME_DEFAULTS.services[0]?.imageUrl || '',
+          serviceBlocks[1]?.imageUrl || HOME_DEFAULTS.services[1]?.imageUrl || '',
+          serviceBlocks[2]?.imageUrl || HOME_DEFAULTS.services[2]?.imageUrl || '',
         ],
         aboutSectionId: aboutSection?.id || null,
         aboutBlockIds: [aboutBlocks[0]?.id || null, aboutBlocks[1]?.id || null, aboutBlocks[2]?.id || null],
@@ -139,6 +144,36 @@ function AdminHome() {
   const handleRichTextChange = (name, value) => {
     setSaved(false);
     setForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleServiceImageChange = (index, value) => {
+    setSaved(false);
+    setIds((prev) => ({
+      ...prev,
+      serviceImageUrls: prev.serviceImageUrls.map((url, currentIndex) =>
+        currentIndex === index ? value : url
+      ),
+    }));
+  };
+
+  const handleServiceImageUpload = async (index, event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    setUploadingServiceIndex(index);
+    setFormError(null);
+    try {
+      const data = new FormData();
+      data.append('image', file);
+      const res = await api.post('/admin/upload', data, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+      handleServiceImageChange(index, res.data.url);
+    } catch (err) {
+      setFormError(err.response?.data?.message || 'No se pudo subir la imagen del servicio.');
+    } finally {
+      setUploadingServiceIndex(null);
+    }
   };
 
   const ensureSection = async (existingId, meta, sectionData = {}) => {
@@ -330,6 +365,34 @@ function AdminHome() {
                 />
               </div>
             </div>
+            {[0, 1, 2].map((index) => (
+              <div className="form-group" key={`home-service-image-${index}`}>
+                <label>Servicio {index + 1} - Imagen (URL)</label>
+                <input
+                  value={ids.serviceImageUrls[index] || ''}
+                  onChange={(event) => handleServiceImageChange(index, event.target.value)}
+                  placeholder="https://..."
+                />
+                <div className="form-upload">
+                  <label className="btn btn--outline btn--sm">
+                    {uploadingServiceIndex === index ? 'Subiendo...' : '📎 Subir imagen'}
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(event) => handleServiceImageUpload(index, event)}
+                      style={{ display: 'none' }}
+                    />
+                  </label>
+                  {ids.serviceImageUrls[index] && (
+                    <img
+                      src={ids.serviceImageUrls[index]}
+                      alt={`Preview servicio ${index + 1}`}
+                      className="upload-preview"
+                    />
+                  )}
+                </div>
+              </div>
+            ))}
 
             <h3>Sección Sobre Nosotros</h3>
             <div className="form-group">
@@ -354,7 +417,7 @@ function AdminHome() {
             </div>
 
             <div className="form-actions">
-              <button type="submit" className="btn btn--primary" disabled={saving}>
+              <button type="submit" className="btn btn--primary" disabled={saving || uploadingServiceIndex !== null}>
                 {saving ? 'Guardando...' : 'Guardar cambios'}
               </button>
             </div>

@@ -12,18 +12,21 @@ export const HOME_DEFAULTS = {
       content: 'Intervención temprana, seguimiento familiar y plan personalizado.',
       icon: '🧠',
       className: 'service-a',
+      imageUrl: '/servicios/1.png',
     },
     {
       title: 'Neurodesarrollo',
       content: 'Estímulo cognitivo y motor con actividades guiadas por especialistas.',
       icon: '🧒',
       className: 'service-b',
+      imageUrl: '/servicios/2.png',
     },
     {
       title: 'Apoyo Escolar',
       content: 'Refuerzo de atención, autonomía y habilidades sociales en aula.',
       icon: '🎓',
       className: 'service-c',
+      imageUrl: '/servicios/3.png',
     },
   ],
   about: {

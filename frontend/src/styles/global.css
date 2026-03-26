@@ -500,6 +500,8 @@ h1, h2, h3, h4, h5, h6 {
   color: var(--public-text);
   background:
     radial-gradient(circle at 8% 10%, #fff7f2 0, #fff7f2 140px, transparent 141px),
+    radial-gradient(circle at 22% 82%, #fff2ea 0, #fff2ea 90px, transparent 91px),
+    radial-gradient(circle at 80% 18%, #eff7ff 0, #eff7ff 100px, transparent 101px),
     radial-gradient(circle at 92% 88%, #fef4ee 0, #fef4ee 180px, transparent 181px),
     var(--public-bg);
   position: relative;
@@ -539,6 +541,35 @@ h1, h2, h3, h4, h5, h6 {
   padding-top: 92px;
   position: relative;
   z-index: 1;
+}
+
+.public-site .main-content::before,
+.public-site .main-content::after {
+  content: '';
+  position: fixed;
+  border-radius: 999px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.public-site .main-content::before {
+  width: 190px;
+  height: 190px;
+  left: 8%;
+  top: 38%;
+  background: radial-gradient(circle at 40% 35%, rgba(255, 213, 183, 0.7), rgba(255, 213, 183, 0.16));
+  filter: blur(1px);
+  animation: orbitFloatA 7.6s ease-in-out infinite;
+}
+
+.public-site .main-content::after {
+  width: 160px;
+  height: 160px;
+  right: 10%;
+  top: 22%;
+  background: radial-gradient(circle at 35% 30%, rgba(182, 221, 247, 0.82), rgba(182, 221, 247, 0.2));
+  filter: blur(1px);
+  animation: orbitFloatB 6.9s ease-in-out infinite;
 }
 
 .public-site .container {
@@ -657,6 +688,45 @@ h1, h2, h3, h4, h5, h6 {
     transform: translateY(0) translateX(0) scale(1);
   }
   50% {
-    transform: translateY(18px) translateX(14px) scale(1.08);
+    transform: translateY(32px) translateX(24px) scale(1.13);
+  }
+}
+
+@keyframes orbitFloatA {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+  }
+  28% {
+    transform: translate(16px, -22px) scale(1.08);
+  }
+  56% {
+    transform: translate(42px, 8px) scale(1.14);
+  }
+  78% {
+    transform: translate(8px, 32px) scale(0.98);
+  }
+}
+
+@keyframes orbitFloatB {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+  }
+  30% {
+    transform: translate(-24px, 16px) scale(1.1);
+  }
+  62% {
+    transform: translate(12px, 38px) scale(1.18);
+  }
+  82% {
+    transform: translate(-8px, -10px) scale(0.97);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .public-site::before,
+  .public-site::after,
+  .public-site .main-content::before,
+  .public-site .main-content::after {
+    animation: none;
   }
 }

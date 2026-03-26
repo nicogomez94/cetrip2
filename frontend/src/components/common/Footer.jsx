@@ -1,8 +1,18 @@
 import { Link } from 'react-router-dom';
+import { CONTACTO_DEFAULTS } from '../../constants/publicPageDefaults';
+import usePublicSections from '../../hooks/usePublicSections';
+import { mapContactoPage } from '../../utils/publicPageMappers';
 import '../../styles/footer.css';
 
 function Footer() {
   const year = new Date().getFullYear();
+  const { sections } = usePublicSections('contacto');
+  const contacto = mapContactoPage(sections);
+
+  const address = contacto.address || CONTACTO_DEFAULTS.address;
+  const phone = contacto.phone || CONTACTO_DEFAULTS.phone;
+  const email = contacto.email || CONTACTO_DEFAULTS.email;
+  const schedule = contacto.schedule || CONTACTO_DEFAULTS.schedule;
 
   return (
     <footer className="footer">
@@ -28,10 +38,10 @@ function Footer() {
 
         <div className="footer__contact">
           <h4>Contacto</h4>
-          <p>📍 Av. Ejemplo 1234, Buenos Aires</p>
-          <p>📞 (011) 4567-8901</p>
-          <p>✉️ info@cetrip.com</p>
-          <p>🕐 Lun–Vie: 8:00 – 18:00</p>
+          <p>📍 {address}</p>
+          <p>📞 {phone}</p>
+          <p>✉️ {email}</p>
+          <p>🕐 {schedule}</p>
         </div>
       </div>
 

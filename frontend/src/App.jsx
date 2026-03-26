@@ -1,4 +1,5 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { useEffect } from 'react';
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/common/ProtectedRoute';
 import Navbar from './components/common/Navbar';
@@ -19,6 +20,71 @@ import AdminContacto from './pages/admin/AdminContacto';
 import AdminMessages from './pages/admin/AdminMessages';
 
 function PublicLayout({ children, showFooter = true }) {
+  const location = useLocation();
+
+  useEffect(() => {
+    const main = document.querySelector('.public-site .main-content');
+    if (!main) return undefined;
+
+    const revealSelector = '.home > section, .home > footer, .page-wrapper > section';
+
+    const revealAll = () => {
+      const elements = main.querySelectorAll(revealSelector);
+      elements.forEach((el) => {
+        el.classList.add('reveal-ready', 'is-visible');
+      });
+    };
+
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window)) {
+      revealAll();
+      return undefined;
+    }
+
+    let observer;
+    let mutationObserver;
+
+    const observeReveals = () => {
+      const elements = main.querySelectorAll(revealSelector);
+      elements.forEach((el, index) => {
+        el.classList.add('reveal-ready');
+        if (!el.style.getPropertyValue('--reveal-delay')) {
+          const delay = Math.min(index * 90, 460);
+          el.style.setProperty('--reveal-delay', `${delay}ms`);
+        }
+        if (!el.classList.contains('is-visible')) {
+          observer.observe(el);
+        }
+      });
+    };
+
+    observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          entry.target.classList.add('is-visible');
+          observer.unobserve(entry.target);
+        });
+      },
+      {
+        threshold: 0.2,
+        rootMargin: '0px 0px -8% 0px',
+      }
+    );
+
+    observeReveals();
+
+    mutationObserver = new MutationObserver(() => {
+      observeReveals();
+    });
+
+    mutationObserver.observe(main, { childList: true, subtree: true });
+
+    return () => {
+      if (observer) observer.disconnect();
+      if (mutationObserver) mutationObserver.disconnect();
+    };
+  }, [location.pathname]);
+
   return (
     <div className="public-site">
       <Navbar />
@@ -33,7 +99,7 @@ function App() {
     <BrowserRouter>
       <AuthProvider>
         <Routes>
-          <Route path="/" element={<PublicLayout showFooter={false}><Home /></PublicLayout>} />
+          <Route path="/" element={<PublicLayout><Home /></PublicLayout>} />
           <Route path="/quienes-somos" element={<PublicLayout><QuienesSomos /></PublicLayout>} />
           <Route path="/admision" element={<PublicLayout><Admision /></PublicLayout>} />
           <Route path="/servicios" element={<PublicLayout><Servicios /></PublicLayout>} />
