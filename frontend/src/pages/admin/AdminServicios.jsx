@@ -3,6 +3,8 @@ import AdminLayout from '../../components/admin/AdminLayout';
 import RichTextEditor from '../../components/admin/RichTextEditor';
 import Loader from '../../components/common/Loader';
 import ErrorMessage from '../../components/common/ErrorMessage';
+import Toast from '../../components/common/Toast';
+import useToast from '../../hooks/useToast';
 import { SERVICIOS_DEFAULTS } from '../../constants/publicPageDefaults';
 import { mapServiciosPage } from '../../utils/publicPageMappers';
 import { buildServiceSlugs } from '../../utils/serviceContent';
@@ -65,6 +67,7 @@ function AdminServicios() {
   const [saved, setSaved] = useState(false);
   const [uploadingIndex, setUploadingIndex] = useState(null);
   const formActionsRef = useRef(null);
+  const { toast, showToast, hideToast } = useToast();
 
   const loadData = async () => {
     setLoading(true);
@@ -124,6 +127,12 @@ function AdminServicios() {
     if (!formError) return;
     formActionsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }, [formError]);
+
+  useEffect(() => {
+    if (!saved) return;
+    showToast('success', 'Cambios guardados.');
+    setSaved(false);
+  }, [saved, showToast]);
 
   const handleFormChange = (event) => {
     const { name, value } = event.target;
@@ -317,7 +326,9 @@ function AdminServicios() {
       setSaved(true);
     } catch (err) {
       setErrorField('');
-      setFormError(err.response?.data?.message || 'No se pudo guardar Consultorios Externos.');
+      const message = err.response?.data?.message || 'No se pudo guardar Consultorios Externos.';
+      setFormError(null);
+      showToast('error', message);
     } finally {
       setSaving(false);
     }
@@ -341,9 +352,8 @@ function AdminServicios() {
 
   return (
     <AdminLayout title="Consultorios Externos">
+      <Toast toast={toast} onClose={hideToast} />
       <div className="admin-page">
-        {saved && <div className="form-alert form-alert--success">Cambios guardados.</div>}
-
         <div className="admin-form-card">
           <h3>Contenido de la página</h3>
           <form className="form admin-home-form" onSubmit={handleSubmit}>

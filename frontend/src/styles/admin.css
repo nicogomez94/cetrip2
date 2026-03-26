@@ -835,6 +835,75 @@
   border-top: 1px solid var(--color-border);
 }
 
+/* ─── Toast notifications ───────────────────────────────────────────────────── */
+.admin-toast-stack {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 1200;
+  pointer-events: none;
+}
+
+.admin-toast {
+  min-width: 280px;
+  max-width: min(430px, calc(100vw - 2rem));
+  border-radius: var(--radius-md);
+  border: 1px solid transparent;
+  box-shadow: var(--shadow-md);
+  padding: 0.8rem 0.95rem;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  pointer-events: auto;
+  animation: admin-toast-in 0.18s ease-out;
+}
+
+.admin-toast--success {
+  background-color: #e8f7ee;
+  border-color: #b9e8ca;
+  color: #0f5132;
+}
+
+.admin-toast--error {
+  background-color: #fdecec;
+  border-color: #f4c4c4;
+  color: #8f1f1f;
+}
+
+.admin-toast__message {
+  margin: 0;
+  font-size: 0.88rem;
+  font-weight: 600;
+  line-height: 1.45;
+}
+
+.admin-toast__close {
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font-size: 0.95rem;
+  line-height: 1;
+  padding: 0.15rem 0.2rem;
+  border-radius: 4px;
+}
+
+.admin-toast__close:hover {
+  background: rgba(0, 0, 0, 0.08);
+}
+
+@keyframes admin-toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 /* ─── Responsive admin ───────────────────────────────────────────────────────── */
 @media (max-width: 900px) {
   .messages-panel {
@@ -883,6 +952,17 @@
 
   .dash-summary-grid {
     grid-template-columns: 1fr;
+  }
+
+  .admin-toast-stack {
+    top: 0.75rem;
+    right: 0.75rem;
+    left: 0.75rem;
+  }
+
+  .admin-toast {
+    min-width: 0;
+    max-width: 100%;
   }
 }
 

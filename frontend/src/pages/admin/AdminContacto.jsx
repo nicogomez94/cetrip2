@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from 'react';
 import AdminLayout from '../../components/admin/AdminLayout';
 import Loader from '../../components/common/Loader';
 import ErrorMessage from '../../components/common/ErrorMessage';
+import Toast from '../../components/common/Toast';
+import useToast from '../../hooks/useToast';
 import { CONTACTO_DEFAULTS } from '../../constants/publicPageDefaults';
 import { mapContactoPage } from '../../utils/publicPageMappers';
 import { ADMIN_PLAIN_TEXT_LIMIT, exceedsAdminPlainTextLimit } from '../../utils/adminTextLimit';
@@ -36,6 +38,7 @@ function AdminContacto() {
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const formActionsRef = useRef(null);
+  const { toast, showToast, hideToast } = useToast();
 
   const loadData = async () => {
     setLoading(true);
@@ -79,6 +82,12 @@ function AdminContacto() {
     if (!formError) return;
     formActionsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }, [formError]);
+
+  useEffect(() => {
+    if (!saved) return;
+    showToast('success', 'Cambios guardados.');
+    setSaved(false);
+  }, [saved, showToast]);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -139,7 +148,9 @@ function AdminContacto() {
       setSaved(true);
     } catch (err) {
       setErrorField('');
-      setFormError(err.response?.data?.message || 'No se pudo guardar Contacto.');
+      const message = err.response?.data?.message || 'No se pudo guardar Contacto.';
+      setFormError(null);
+      showToast('error', message);
     } finally {
       setSaving(false);
     }
@@ -163,9 +174,8 @@ function AdminContacto() {
 
   return (
     <AdminLayout title="Contacto">
+      <Toast toast={toast} onClose={hideToast} />
       <div className="admin-page">
-        {saved && <div className="form-alert form-alert--success">Cambios guardados.</div>}
-
         <div className="admin-form-card">
           <h3>Contenido de la página</h3>
           <form className="form" onSubmit={handleSubmit}>
