@@ -52,7 +52,7 @@
 .form-group textarea:focus,
 .form-group select:focus {
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(27, 108, 168, 0.15);
+  box-shadow: 0 0 0 3px rgba(47, 154, 221, 0.15);
 }
 
 .form-group textarea {
@@ -181,7 +181,7 @@
 
 .rte:focus-within {
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(27, 108, 168, 0.15);
+  box-shadow: 0 0 0 3px rgba(47, 154, 221, 0.15);
 }
 
 .rte-toolbar {

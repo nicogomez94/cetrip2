@@ -110,13 +110,13 @@
   text-transform: uppercase;
   letter-spacing: 0.11em;
   font-weight: 700;
-  color: #b85c18;
+  color: #d86710;
   margin: 0 0 18px;
   display: inline-flex;
   align-items: center;
   width: fit-content;
-  background: #ffd8a8;
-  border: 1px solid #e8a060;
+  background: rgba(244, 121, 32, 0.1);
+  border: 1px solid #F47920;
   padding: 8px 12px;
   border-radius: 999px;
 }
@@ -156,7 +156,7 @@
 }
 
 .public-site .home .services-wrap {
-  background: #ffc888;
+  background: var(--public-accent);
   margin-top: 0;
   padding: 36px 0 44px;
   position: relative;
@@ -169,7 +169,7 @@
   right: 0;
   top: -29px;
   height: 30px;
-  background: #ffc888;
+  background: var(--public-accent);
   border-top-left-radius: 45% 100%;
   border-top-right-radius: 45% 100%;
 }
@@ -193,7 +193,7 @@
 
 .public-site .home .service {
   border-radius: 16px;
-  border: 1px solid #d4a070;
+  border: 1px solid #cce4f4;
   padding: 28px 24px;
   min-height: 176px;
   transition: transform 0.28s ease, box-shadow 0.28s ease;
@@ -231,15 +231,15 @@
 }
 
 .public-site .home .service-a {
-  background: #fff0dd;
+  background: #ffffff;
 }
 
 .public-site .home .service-b {
-  background: #bce0ff;
+  background: #ffffff;
 }
 
 .public-site .home .service-c {
-  background: #fef39a;
+  background: #ffffff;
 }
 
 .public-site .home .about {
@@ -256,12 +256,13 @@
 
 .public-site .home .hours-card {
   border-radius: 14px;
-  background: #b8d8f4;
+  background: #ffffff;
+  border: 2px solid #2F9ADD;
   padding: 20px 16px 14px;
   display: flex;
   flex-direction: column;
   gap: 7px;
-  box-shadow: 0 8px 25px rgba(64, 80, 98, 0.18);
+  box-shadow: 0 8px 25px rgba(47, 154, 221, 0.18);
 }
 
 .public-site .home .hours-card h4 {
@@ -300,7 +301,7 @@
   text-transform: uppercase;
   letter-spacing: 0.11em;
   font-weight: 700;
-  color: #b85c18;
+  color: #F47920;
   margin: 0 0 18px;
 }
 
@@ -318,9 +319,9 @@
 }
 
 .public-site .home .tags span {
-  background: #ffd8a8;
-  color: #a04c10;
-  border: 1px solid #e8a060;
+  background: rgba(244, 121, 32, 0.1);
+  color: #cc6010;
+  border: 1px solid #F47920;
   font-size: 0.95rem;
   font-weight: 700;
   padding: 8px 12px;
@@ -337,8 +338,8 @@
 .public-site .home blockquote {
   margin: 0 0 16px;
   padding: 20px 22px;
-  background: #d4eeff;
-  border-left: 4px solid #2aaae0;
+  background: rgba(47, 154, 221, 0.08);
+  border-left: 4px solid #2F9ADD;
   color: #4e6177;
   border-radius: 8px;
   font-style: italic;
@@ -385,7 +386,7 @@
   font-size: 0.8rem;
   letter-spacing: 0.09em;
   font-weight: 800;
-  color: #b85c18;
+  color: #F47920;
 }
 
 .public-site .home .home-contact-cta h2 {

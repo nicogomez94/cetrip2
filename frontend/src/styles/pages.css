@@ -30,10 +30,10 @@
   margin-top: 30px;
   padding: 3.3rem var(--container-padding);
   text-align: center;
-  background: linear-gradient(135deg, #1f3d58, #2f9add);
+  background: linear-gradient(135deg, #1e7ab5, #2F9ADD);
   color: #fff;
   border-radius: 22px;
-  box-shadow: 0 22px 52px rgba(31, 61, 88, 0.22);
+  box-shadow: 0 22px 52px rgba(47, 154, 221, 0.22);
 }
 
 .public-site .page-banner h1 {
@@ -50,27 +50,27 @@
 }
 
 .public-site .page-banner--quienes {
-  background: linear-gradient(135deg, #1f3d58, #2f9add);
+  background: linear-gradient(135deg, #1e7ab5, #2F9ADD);
 }
 
 .public-site .page-banner--admision {
-  background: linear-gradient(135deg, #275f7c, #5cb6ea);
+  background: linear-gradient(135deg, #1e7ab5, #2F9ADD);
 }
 
 .public-site .page-banner--servicios {
-  background: linear-gradient(135deg, #2e6f93, #6ec3ef);
+  background: linear-gradient(135deg, #1e7ab5, #2F9ADD);
 }
 
 .public-site .page-banner--contacto {
-  background: linear-gradient(135deg, #275f7c, #469fd8);
+  background: linear-gradient(135deg, #1e7ab5, #2F9ADD);
 }
 
 .public-site .page-banner--cet {
-  background: linear-gradient(135deg, #a74682, #cc5b9f);
+  background: linear-gradient(135deg, #d86710, #F47920);
 }
 
 .public-site .page-banner--saie {
-  background: linear-gradient(135deg, #2a5d7d, #4e8db8);
+  background: linear-gradient(135deg, #1e7ab5, #2F9ADD);
 }
 
 .public-site .rich-text-content > *:first-child {
@@ -116,8 +116,8 @@
 .public-site .program-gallery {
   background: #fff;
   border-radius: 20px;
-  border: 1px solid #f0dfd6;
-  box-shadow: 0 12px 28px rgba(64, 80, 98, 0.09);
+  border: 1px solid #dde8f4;
+  box-shadow: 0 12px 28px rgba(47, 154, 221, 0.08);
 }
 
 /* Quienes Somos */
@@ -130,8 +130,8 @@
 }
 
 .public-site .about-main__content {
-  background: #fff8f2;
-  border: 1px solid #f3e1d3;
+  background: #ffffff;
+  border: 1px solid #dde8f4;
   border-radius: 16px;
   padding: 1.35rem 1.45rem;
 }
@@ -152,7 +152,7 @@
   min-height: 280px;
   object-fit: cover;
   border-radius: 16px;
-  border: 1px solid #f0dfd6;
+  border: 1px solid #dde8f4;
 }
 
 .public-site .about-identity .container {
@@ -166,8 +166,8 @@
 }
 
 .public-site .identity-card {
-  background: #fdf6ef;
-  border: 1px solid #f1dfd1;
+  background: #ffffff;
+  border: 1px solid #dde8f4;
   border-radius: 14px;
   padding: 1.15rem;
 }
@@ -237,7 +237,7 @@
 }
 
 .public-site .service-card {
-  border: 1px solid #f0dfd6;
+  border: 1px solid #dde8f4;
   border-radius: 14px;
   overflow: hidden;
   background: #fff;
@@ -250,8 +250,8 @@
 .public-site .service-card-link:hover .service-card,
 .public-site .service-card-link:focus-visible .service-card {
   transform: translateY(-2px);
-  border-color: #d9c2b4;
-  box-shadow: 0 10px 20px rgba(31, 61, 88, 0.08);
+  border-color: #2F9ADD;
+  box-shadow: 0 10px 20px rgba(47, 154, 221, 0.12);
 }
 
 .public-site .service-card__media img {
@@ -340,9 +340,9 @@
 }
 
 .public-site .workflow-step {
-  border: 1px solid #e8f1f8;
+  border: 1px solid #dde8f4;
   border-radius: 14px;
-  background: #f8fbff;
+  background: #ffffff;
   padding: 1rem;
 }
 
@@ -385,7 +385,7 @@
 .public-site .program-highlight__media {
   border-radius: 16px;
   overflow: hidden;
-  border: 1px solid #efd8e6;
+  border: 1px solid #dde8f4;
 }
 
 .public-site .program-highlight__media img {
@@ -398,8 +398,8 @@
 }
 
 .public-site .program-highlight__content {
-  background: #fff8fc;
-  border: 1px solid #f2dce9;
+  background: #ffffff;
+  border: 1px solid #dde8f4;
   border-radius: 16px;
   padding: 1.1rem 1.2rem;
 }
@@ -431,7 +431,7 @@
 
 .public-site .program-gallery__item {
   margin: 0;
-  border: 1px solid #f0dfd6;
+  border: 1px solid #dde8f4;
   border-radius: 12px;
   overflow: hidden;
   background: #fff;
@@ -472,7 +472,7 @@
 }
 
 .public-site .timeline-item {
-  border: 1px solid #ebeff3;
+  border: 1px solid #dde8f4;
   border-radius: 14px;
   padding: 0.95rem 1rem;
   display: grid;
@@ -513,7 +513,7 @@
 
 .public-site .support-card {
   background: #fff;
-  border: 1px solid #ebeff3;
+  border: 1px solid #dde8f4;
   border-radius: 14px;
   padding: 1rem;
 }
@@ -584,9 +584,9 @@
 }
 
 .public-site .contact-info-panel {
-  border: 1px solid #f0dfd6;
+  border: 1px solid #dde8f4;
   border-radius: 14px;
-  background: #fff8f2;
+  background: #ffffff;
   padding: 1.1rem;
 }
 
@@ -607,7 +607,7 @@
 }
 
 .public-site .contact-info-card {
-  border: 1px solid #ebdfd6;
+  border: 1px solid #dde8f4;
   border-radius: 12px;
   background: #fff;
   padding: 0.7rem 0.75rem;
@@ -636,7 +636,7 @@
 
 .public-site .contact-form-wrapper {
   background: #fff;
-  border: 1px solid #f0dfd6;
+  border: 1px solid #dde8f4;
   border-radius: 16px;
   padding: 1.4rem;
 }

@@ -2,17 +2,17 @@
 
 /* ─── Variables ────────────────────────────────────────────────────────────── */
 :root {
-  --color-primary: #1b6ca8;
-  --color-primary-dark: #145288;
-  --color-primary-light: #e8f4fd;
-  --color-secondary: #ff6b35;
-  --color-secondary-dark: #e05a28;
+  --color-primary: #2F9ADD;
+  --color-primary-dark: #1e7ab5;
+  --color-primary-light: #e8f5fc;
+  --color-secondary: #F47920;
+  --color-secondary-dark: #d86710;
   --color-success: #27ae60;
   --color-warning: #f39c12;
   --color-danger: #e74c3c;
-  --color-info: #3498db;
+  --color-info: #2F9ADD;
 
-  --color-bg: #f8f9fa;
+  --color-bg: #ffffff;
   --color-bg-white: #ffffff;
   --color-bg-dark: #1a1a2e;
 
@@ -481,9 +481,9 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Public theme */
 .public-site {
-  --public-bg: #fff4ea;
+  /* --public-bg: #fff4ea; */
   --public-surface: #ffffff;
-  --public-peach: #ffd0a0;
+  /* --public-peach: #ffd0a0; */
   --public-soft-pink: #f9b8b5;
   --public-line: #d8a87a;
   --public-text: #313a46;
