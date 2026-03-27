@@ -8,9 +8,18 @@ const CET_PARAGRAPHS = [
 ];
 
 const CET_IMAGES = [
-  { src: '/programas/cet-1.jpg', alt: 'Profesional acompañando actividad de terapia con una niña' },
-  { src: '/programas/cet-2.png', alt: 'Actividad terapéutica grupal en el Centro Terapéutico' },
-  { src: '/programas/cet-1.jpg', alt: 'Espacio terapéutico con abordaje individualizado' },
+  {
+    src: 'https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?auto=format&fit=crop&w=1400&q=80',
+    alt: 'Profesional acompañando actividad terapéutica infantil',
+  },
+  {
+    src: 'https://images.unsplash.com/photo-1542816417-0983c9c9ad53?auto=format&fit=crop&w=1400&q=80',
+    alt: 'Niños participando de una actividad educativa guiada',
+  },
+  {
+    src: 'https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&w=1400&q=80',
+    alt: 'Espacio de apoyo al desarrollo con materiales didácticos',
+  },
 ];
 
 function CET() {

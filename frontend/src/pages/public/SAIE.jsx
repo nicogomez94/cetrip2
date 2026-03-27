@@ -9,9 +9,18 @@ const SAIE_PARAGRAPHS = [
 ];
 
 const SAIE_IMAGES = [
-  { src: '/programas/cet-2.png', alt: 'Profesional acompañando actividad de integración escolar' },
-  { src: '/programas/cet-1.jpg', alt: 'Intervención de apoyo terapéutico para aprendizaje' },
-  { src: '/programas/cet-2.png', alt: 'Trabajo articulado de apoyo escolar y terapéutico' },
+  {
+    src: 'https://images.unsplash.com/photo-1588072432904-843af37f03ed?auto=format&fit=crop&w=1400&q=80',
+    alt: 'Acompañamiento pedagógico en contexto escolar inclusivo',
+  },
+  {
+    src: 'https://images.unsplash.com/photo-1587614382346-4ec70e388b28?auto=format&fit=crop&w=1400&q=80',
+    alt: 'Trabajo en equipo entre escuela y profesionales de apoyo',
+  },
+  {
+    src: 'https://images.unsplash.com/photo-1577896851231-70ef18881754?auto=format&fit=crop&w=1400&q=80',
+    alt: 'Apoyo individual para fortalecer trayectoria escolar',
+  },
 ];
 
 function SAIE() {
