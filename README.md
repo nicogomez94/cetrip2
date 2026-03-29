@@ -69,6 +69,7 @@ Verificar el archivo `.env` (ya viene preconfigurado para desarrollo):
 DATABASE_URL="postgresql://postgres:root@localhost:5432/cetrip?schema=public"
 JWT_SECRET=cetrip_jwt_secret_super_seguro_cambiar_en_produccion
 PORT=4000
+UPLOADS_DIR=./uploads
 ```
 
 ### 4. Instalar dependencias del backend
@@ -158,6 +159,19 @@ VITE_DEBUG=true
 ```
 
 Con `VITE_DEBUG=true`, los formularios de contacto y login se autocompletarán con datos de prueba.
+
+---
+
+## Producción: imágenes con Cloudinary
+
+El endpoint `/api/admin/upload` usa Cloudinary cuando detecta estas variables:
+
+- `CLOUDINARY_CLOUD_NAME`
+- `CLOUDINARY_API_KEY`
+- `CLOUDINARY_API_SECRET`
+- `CLOUDINARY_FOLDER` (opcional, por defecto `cetrip`)
+
+Si Cloudinary no está configurado, el backend usa fallback local con `UPLOADS_DIR`.
 
 ---
 
@@ -295,6 +309,11 @@ cd frontend && npm run preview
 | `JWT_EXPIRES_IN` | Expiración del token | `7d` |
 | `FRONTEND_URL` | URL del frontend (CORS) | `http://localhost:5173` |
 | `BACKEND_URL` | URL base del backend | `http://localhost:4000` |
+| `UPLOADS_DIR` | Ruta local de uploads (fallback sin Cloudinary) | `./uploads` |
+| `CLOUDINARY_CLOUD_NAME` | Cloud name de Cloudinary | `mi-cloud` |
+| `CLOUDINARY_API_KEY` | API key de Cloudinary | `1234567890` |
+| `CLOUDINARY_API_SECRET` | API secret de Cloudinary | `xxxxxxxx` |
+| `CLOUDINARY_FOLDER` | Carpeta destino en Cloudinary | `cetrip` |
 | `DEBUG` | Modo debug | `false` |
 
 ### Frontend (`frontend/.env`)

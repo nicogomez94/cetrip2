@@ -32,7 +32,7 @@ function Navbar() {
           <img src="/sinnombre.png" alt="CETRIP" className="navbar__logo-img" />
           <span className="navbar__logo-text">
             <strong>CETRIP</strong>
-            <small>Centro de Rehabilitación Infantil</small>
+            <small>centro terapeutico integral</small>
           </span>
         </Link>
 

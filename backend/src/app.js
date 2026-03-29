@@ -2,12 +2,13 @@ const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
-const path = require('path');
 
 const authRoutes = require('./routes/auth.routes');
 const publicRoutes = require('./routes/public.routes');
 const adminRoutes = require('./routes/admin.routes');
 const { errorHandler, notFound } = require('./middleware/error.middleware');
+const { resolveUploadsDir } = require('./utils/uploads-dir');
+const { isCloudinaryEnabled } = require('./utils/cloudinary');
 
 const app = express();
 
@@ -53,7 +54,9 @@ if (process.env.NODE_ENV !== 'test') {
 }
 
 // ─── Archivos estáticos (uploads) ────────────────────────────────────────────
-app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')));
+if (!isCloudinaryEnabled()) {
+  app.use('/uploads', express.static(resolveUploadsDir()));
+}
 
 // ─── Rutas ───────────────────────────────────────────────────────────────────
 app.use('/api/auth', authRoutes);

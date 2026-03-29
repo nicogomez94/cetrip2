@@ -498,12 +498,13 @@ h1, h2, h3, h4, h5, h6 {
   flex-direction: column;
   font-family: 'Nunito', system-ui, -apple-system, sans-serif;
   color: var(--public-text);
-  background:
+  /* background:
     radial-gradient(circle at 8% 10%, #fdc898 0, #fdc898 140px, transparent 141px),
     radial-gradient(circle at 22% 82%, #f9c080 0, #f9c080 90px, transparent 91px),
     radial-gradient(circle at 80% 18%, #c8e8ff 0, #c8e8ff 100px, transparent 101px),
     radial-gradient(circle at 92% 88%, #fbc898 0, #fbc898 180px, transparent 181px),
-    var(--public-bg);
+    var(--public-bg); */
+    background: url('https://images.unsplash.com/photo-1532640331846-d2da5987c3ee?fm=jpg&q=60&w=3000&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA==');
   position: relative;
   overflow: clip;
 }
