@@ -54,4 +54,49 @@ const uploadImageToCloudinary = (buffer, mimetype) =>
     uploadStream.end(buffer);
   });
 
-module.exports = { isCloudinaryEnabled, uploadImageToCloudinary };
+const extractCloudinaryPublicId = (value) => {
+  if (!value || typeof value !== 'string') return '';
+
+  try {
+    const parsed = new URL(value);
+    if (!parsed.hostname.endsWith('res.cloudinary.com')) return '';
+
+    const marker = '/upload/';
+    const markerIndex = parsed.pathname.indexOf(marker);
+    if (markerIndex < 0) return '';
+
+    const tail = decodeURIComponent(parsed.pathname.slice(markerIndex + marker.length));
+    const segments = tail.split('/').filter(Boolean);
+    if (!segments.length) return '';
+
+    const versionIndex = segments.findIndex((segment) => /^v\d+$/.test(segment));
+    const publicSegments = versionIndex >= 0 ? segments.slice(versionIndex + 1) : segments;
+    if (!publicSegments.length) return '';
+
+    const withExt = publicSegments.join('/');
+    return withExt.replace(/\.[^/.]+$/, '');
+  } catch (_) {
+    return '';
+  }
+};
+
+const deleteImageFromCloudinary = async (value) => {
+  if (!isCloudinaryEnabled()) return false;
+
+  const publicId = extractCloudinaryPublicId(value) || value;
+  if (!publicId) return false;
+
+  const result = await cloudinary.uploader.destroy(publicId, {
+    resource_type: 'image',
+    invalidate: true,
+  });
+
+  return result?.result === 'ok' || result?.result === 'not found';
+};
+
+module.exports = {
+  isCloudinaryEnabled,
+  uploadImageToCloudinary,
+  extractCloudinaryPublicId,
+  deleteImageFromCloudinary,
+};

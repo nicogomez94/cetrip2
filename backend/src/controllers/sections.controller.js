@@ -1,6 +1,22 @@
 const prisma = require('../utils/prisma');
 const { AppError } = require('../middleware/error.middleware');
 const { normalizeSectionBlocksImageUrls } = require('../utils/media-url');
+const { normalizeImageValue, deleteManagedImageAsset } = require('../utils/media-cleanup');
+
+const cleanupSectionOrphanImages = async (images) => {
+  const uniqueImages = [...new Set(images.map((value) => normalizeImageValue(value)).filter(Boolean))];
+
+  for (const imageUrl of uniqueImages) {
+    const stillUsedCount = await prisma.block.count({ where: { imageUrl } });
+    if (stillUsedCount > 0) continue;
+
+    try {
+      await deleteManagedImageAsset(imageUrl);
+    } catch (error) {
+      console.warn('No se pudo limpiar una imagen huérfana de sección:', error?.message || error);
+    }
+  }
+};
 
 // ─── Público ──────────────────────────────────────────────────────────────────
 const getByPage = async (req, res, next) => {
@@ -134,7 +150,16 @@ const reorder = async (req, res, next) => {
 
 const remove = async (req, res, next) => {
   try {
-    await prisma.section.delete({ where: { id: parseInt(req.params.id) } });
+    const id = parseInt(req.params.id);
+    const current = await prisma.section.findUnique({
+      where: { id },
+      include: { blocks: { select: { imageUrl: true } } },
+    });
+    if (!current) return next(new AppError('Sección no encontrada.', 404));
+
+    await prisma.section.delete({ where: { id } });
+    await cleanupSectionOrphanImages(current.blocks.map((block) => block.imageUrl));
+
     res.json({ success: true, message: 'Sección eliminada.' });
   } catch (err) {
     next(err);

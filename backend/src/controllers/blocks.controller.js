@@ -1,8 +1,29 @@
 const prisma = require('../utils/prisma');
 const { AppError } = require('../middleware/error.middleware');
 const { normalizeImageUrl, normalizeBlockImageUrl } = require('../utils/media-url');
+const { normalizeImageValue, deleteManagedImageAsset } = require('../utils/media-cleanup');
 
 const VALID_TYPES = ['HERO', 'TEXT', 'IMAGE', 'VIDEO', 'CARD', 'CTA'];
+
+const cleanupImageIfOrphaned = async ({ imageUrl, excludingBlockId }) => {
+  const normalized = normalizeImageValue(imageUrl);
+  if (!normalized) return;
+
+  const stillUsedCount = await prisma.block.count({
+    where: {
+      imageUrl: normalized,
+      ...(excludingBlockId ? { id: { not: excludingBlockId } } : {}),
+    },
+  });
+
+  if (stillUsedCount > 0) return;
+
+  try {
+    await deleteManagedImageAsset(normalized);
+  } catch (error) {
+    console.warn('No se pudo limpiar una imagen huérfana:', error?.message || error);
+  }
+};
 
 const getAll = async (req, res, next) => {
   try {
@@ -147,7 +168,17 @@ const update = async (req, res, next) => {
       );
     }
 
+    const previousImageUrl = normalizeImageValue(current.imageUrl);
+    const nextImageUrl = Object.prototype.hasOwnProperty.call(data, 'imageUrl')
+      ? normalizeImageValue(data.imageUrl)
+      : previousImageUrl;
+
     const block = await prisma.block.update({ where: { id }, data });
+
+    if (previousImageUrl && previousImageUrl !== nextImageUrl) {
+      await cleanupImageIfOrphaned({ imageUrl: previousImageUrl, excludingBlockId: id });
+    }
+
     res.json({ success: true, data: normalizeBlockImageUrl(req, block) });
   } catch (err) {
     next(err);
@@ -187,7 +218,13 @@ const reorder = async (req, res, next) => {
 
 const remove = async (req, res, next) => {
   try {
-    await prisma.block.delete({ where: { id: parseInt(req.params.id) } });
+    const id = parseInt(req.params.id);
+    const current = await prisma.block.findUnique({ where: { id } });
+    if (!current) return next(new AppError('Bloque no encontrado.', 404));
+
+    await prisma.block.delete({ where: { id } });
+    await cleanupImageIfOrphaned({ imageUrl: current.imageUrl, excludingBlockId: id });
+
     res.json({ success: true, message: 'Bloque eliminado.' });
   } catch (err) {
     next(err);

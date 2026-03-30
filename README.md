@@ -173,6 +173,8 @@ El endpoint `/api/admin/upload` usa Cloudinary cuando detecta estas variables:
 
 Si Cloudinary no está configurado, el backend usa fallback local con `UPLOADS_DIR`.
 
+Además, cuando un bloque reemplaza su `imageUrl` o se elimina un bloque/sección, el backend intenta borrar la imagen vieja automáticamente si ya no está referenciada por ningún otro bloque.
+
 ---
 
 ## Comandos útiles

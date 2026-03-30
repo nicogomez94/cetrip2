@@ -504,7 +504,11 @@ h1, h2, h3, h4, h5, h6 {
     radial-gradient(circle at 80% 18%, #c8e8ff 0, #c8e8ff 100px, transparent 101px),
     radial-gradient(circle at 92% 88%, #fbc898 0, #fbc898 180px, transparent 181px),
     var(--public-bg); */
-    background: url('https://images.unsplash.com/photo-1532640331846-d2da5987c3ee?fm=jpg&q=60&w=3000&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA==');
+  background: url('https://images.unsplash.com/photo-1532640331846-d2da5987c3ee?fm=jpg&q=60&w=3000&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA==');
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-attachment: fixed;
   position: relative;
   overflow: clip;
 }
@@ -525,7 +529,10 @@ h1, h2, h3, h4, h5, h6 {
   top: -80px;
   left: -100px;
   background: radial-gradient(circle at 30% 35%, #ffe9d8, #ffcba6);
-  animation: blobFloat 9s ease-in-out infinite;
+  box-shadow:
+    42vw 56vh 0 -76px rgba(255, 220, 192, 0.5),
+    78vw 24vh 0 -88px rgba(255, 226, 206, 0.42);
+  animation: blobFloat 5s ease-in-out infinite;
 }
 
 .public-site::after {
@@ -534,7 +541,10 @@ h1, h2, h3, h4, h5, h6 {
   right: -120px;
   bottom: -100px;
   background: radial-gradient(circle at 60% 30%, #d8efff, #b6ddf7);
-  animation: blobFloat 11s ease-in-out infinite reverse;
+  box-shadow:
+    -54vw -24vh 0 -96px rgba(194, 226, 246, 0.5),
+    -72vw -62vh 0 -78px rgba(184, 220, 245, 0.42);
+  animation: blobFloat 6s ease-in-out infinite reverse;
 }
 
 .public-site .main-content {
@@ -559,12 +569,20 @@ h1, h2, h3, h4, h5, h6 {
   left: 8%;
   top: 38%;
   background: radial-gradient(circle at 40% 35%, rgba(255, 213, 183, 0.7), rgba(255, 213, 183, 0.16));
+  box-shadow: 58vw -30vh 0 -52px rgba(255, 213, 183, 0.38);
   filter: blur(1px);
-  animation: orbitFloatA 7.6s ease-in-out infinite;
+  animation: orbitFloatA 3.8s ease-in-out infinite;
 }
 
 .public-site .main-content::after {
-  display: none;
+  width: 170px;
+  height: 170px;
+  right: 10%;
+  top: 26%;
+  background: radial-gradient(circle at 50% 40%, rgba(184, 222, 246, 0.75), rgba(184, 222, 246, 0.2));
+  box-shadow: -46vw 36vh 0 -50px rgba(184, 222, 246, 0.34);
+  filter: blur(1px);
+  animation: orbitFloatB 4.2s ease-in-out infinite;
 }
 
 .public-site .container {
