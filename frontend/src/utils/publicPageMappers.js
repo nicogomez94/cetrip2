@@ -1,7 +1,9 @@
 import {
   ADMISION_DEFAULTS,
+  CET_DEFAULTS,
   CONTACTO_DEFAULTS,
   QUIENES_DEFAULTS,
+  SAIE_DEFAULTS,
   SERVICIOS_DEFAULTS,
 } from '../constants/publicPageDefaults';
 import { buildServiceSlugs, stripRichText } from './serviceContent';
@@ -350,5 +352,41 @@ export function mapContactoPage(sections = []) {
     phone: valueByKey('phone', legacy.phone),
     email: valueByKey('email', legacy.email),
     schedule: valueByKey('schedule', legacy.schedule),
+  };
+}
+
+export function mapCETPage(sections = []) {
+  const highlightBlocks = getBlocksBySectionSlug(sections, 'cet-highlight');
+  const galleryBlocks = getBlocksBySectionSlug(sections, 'cet-gallery');
+
+  const imageBlock = highlightBlocks.find((b) => b.type === 'IMAGE');
+  const textBlock = highlightBlocks.find((b) => b.type === 'TEXT');
+
+  const gallery = galleryBlocks
+    .filter((b) => b.type === 'IMAGE' && trimOrEmpty(b.imageUrl))
+    .map((b) => b.imageUrl);
+
+  return {
+    highlightImage: fallbackText(imageBlock?.imageUrl, CET_DEFAULTS.highlightImage),
+    highlightText: fallbackText(textBlock?.content, CET_DEFAULTS.highlightText),
+    gallery: gallery.length > 0 ? gallery : CET_DEFAULTS.gallery,
+  };
+}
+
+export function mapSAIEPage(sections = []) {
+  const highlightBlocks = getBlocksBySectionSlug(sections, 'saie-highlight');
+  const galleryBlocks = getBlocksBySectionSlug(sections, 'saie-gallery');
+
+  const imageBlock = highlightBlocks.find((b) => b.type === 'IMAGE');
+  const textBlock = highlightBlocks.find((b) => b.type === 'TEXT');
+
+  const gallery = galleryBlocks
+    .filter((b) => b.type === 'IMAGE' && trimOrEmpty(b.imageUrl))
+    .map((b) => b.imageUrl);
+
+  return {
+    highlightImage: fallbackText(imageBlock?.imageUrl, SAIE_DEFAULTS.highlightImage),
+    highlightText: fallbackText(textBlock?.content, SAIE_DEFAULTS.highlightText),
+    gallery: gallery.length > 0 ? gallery : SAIE_DEFAULTS.gallery,
   };
 }

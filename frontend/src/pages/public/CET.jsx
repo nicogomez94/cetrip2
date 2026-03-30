@@ -1,28 +1,18 @@
+import { useMemo } from 'react';
+import Loader from '../../components/common/Loader';
+import ErrorMessage from '../../components/common/ErrorMessage';
+import RichTextContent from '../../components/common/RichTextContent';
+import usePublicSections from '../../hooks/usePublicSections';
+import { mapCETPage } from '../../utils/publicPageMappers';
 import '../../styles/pages.css';
 
-const CET_PARAGRAPHS = [
-  'Nuestro Centro Terapéutico (CET) está destinado a niñas y niños de hasta 14 años, conformando grupos reducidos para acompañar de manera personalizada cada proceso.',
-  'El abordaje se sostiene en un Proyecto Educativo Individualizado (P.E.I.) con evaluaciones permanentes. Se trabajan áreas como comunicación, socialización, autonomía personal y habilidades cognitivas funcionales.',
-  'Este dispositivo brinda una respuesta para personas con discapacidad que, por su modalidad y tiempos de aprendizaje, requieren una propuesta específica para avanzar en sus trayectorias.',
-  'El objetivo principal es fortalecer herramientas concretas para favorecer la inclusión y la participación activa tanto en espacios educativos comunes como especiales.',
-];
-
-const CET_IMAGES = [
-  {
-    src: 'https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?auto=format&fit=crop&w=1400&q=80',
-    alt: 'Profesional acompañando actividad terapéutica infantil',
-  },
-  {
-    src: 'https://images.unsplash.com/photo-1542816417-0983c9c9ad53?auto=format&fit=crop&w=1400&q=80',
-    alt: 'Niños participando de una actividad educativa guiada',
-  },
-  {
-    src: 'https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&w=1400&q=80',
-    alt: 'Espacio de apoyo al desarrollo con materiales didácticos',
-  },
-];
-
 function CET() {
+  const { sections, loading, error, refetch } = usePublicSections('cet');
+  const pageData = useMemo(() => mapCETPage(sections), [sections]);
+
+  if (loading) return <Loader text="Cargando página..." />;
+  if (error) return <ErrorMessage message={error} onRetry={refetch} />;
+
   return (
     <div className="page-wrapper program-page">
       <section className="page-banner page-banner--cet">
@@ -38,31 +28,32 @@ function CET() {
       <section className="program-highlight">
         <div className="container program-highlight__grid">
           <div className="program-highlight__media">
-            <img src={CET_IMAGES[0].src} alt={CET_IMAGES[0].alt} />
+            <img src={pageData.highlightImage} alt="Imagen principal CET" />
           </div>
           <div className="program-highlight__content">
             <h2>Cómo trabajamos en CET</h2>
-            {CET_PARAGRAPHS.map((paragraph) => (
-              <p key={paragraph}>{paragraph}</p>
-            ))}
+            <RichTextContent content={pageData.highlightText} className="rich-text-content" />
           </div>
         </div>
       </section>
 
-      <section className="program-gallery">
-        <div className="container">
-          <h3>Actividades y espacios del centro</h3>
-          <div className="program-gallery__grid">
-            {CET_IMAGES.map((image, index) => (
-              <figure key={`${image.src}-${index}`} className="program-gallery__item">
-                <img src={image.src} alt={image.alt} />
-              </figure>
-            ))}
+      {pageData.gallery.length > 0 && (
+        <section className="program-gallery">
+          <div className="container">
+            <h3>Actividades y espacios del centro</h3>
+            <div className="program-gallery__grid">
+              {pageData.gallery.map((url, index) => (
+                <figure key={`${url}-${index}`} className="program-gallery__item">
+                  <img src={url} alt={`Actividad CET ${index + 1}`} />
+                </figure>
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
     </div>
   );
 }
 
 export default CET;
+

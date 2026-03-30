@@ -31,6 +31,14 @@ export const PAGE_SLUGS = {
     banner: 'contacto-banner',
     info: 'contacto-info',
   },
+  cet: {
+    highlight: 'cet-highlight',
+    gallery: 'cet-gallery',
+  },
+  saie: {
+    highlight: 'saie-highlight',
+    gallery: 'saie-gallery',
+  },
 };
 
 export const sortByOrder = (items = []) => [...items].sort((a, b) => (a.order || 0) - (b.order || 0));

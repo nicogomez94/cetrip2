@@ -18,6 +18,8 @@ import Login from './pages/admin/Login';
 import AdminHome from './pages/admin/AdminHome';
 import AdminQuienesSomos from './pages/admin/AdminQuienesSomos';
 import AdminServicios from './pages/admin/AdminServicios';
+import AdminCET from './pages/admin/AdminCET';
+import AdminSAIE from './pages/admin/AdminSAIE';
 import AdminAdmision from './pages/admin/AdminAdmision';
 import AdminContacto from './pages/admin/AdminContacto';
 import AdminMessages from './pages/admin/AdminMessages';
@@ -48,10 +50,11 @@ function PublicLayout({ children, showFooter = true }) {
 
     const observeReveals = () => {
       const elements = main.querySelectorAll(revealSelector);
+      const isMobile = window.matchMedia('(max-width: 640px)').matches;
       elements.forEach((el, index) => {
         el.classList.add('reveal-ready');
         if (!el.style.getPropertyValue('--reveal-delay')) {
-          const delay = Math.min(index * 90, 460);
+          const delay = isMobile ? Math.min(index * 30, 120) : Math.min(index * 90, 460);
           el.style.setProperty('--reveal-delay', `${delay}ms`);
         }
         if (!el.classList.contains('is-visible')) {
@@ -59,6 +62,8 @@ function PublicLayout({ children, showFooter = true }) {
         }
       });
     };
+
+    const isMobile = window.matchMedia('(max-width: 640px)').matches;
 
     observer = new IntersectionObserver(
       (entries) => {
@@ -69,8 +74,8 @@ function PublicLayout({ children, showFooter = true }) {
         });
       },
       {
-        threshold: 0.2,
-        rootMargin: '0px 0px -8% 0px',
+        threshold: isMobile ? 0.05 : 0.2,
+        rootMargin: isMobile ? '0px 0px 0px 0px' : '0px 0px -8% 0px',
       }
     );
 
@@ -115,6 +120,8 @@ function App() {
           <Route path="/admin/home" element={<ProtectedRoute><AdminHome /></ProtectedRoute>} />
           <Route path="/admin/quienes-somos" element={<ProtectedRoute><AdminQuienesSomos /></ProtectedRoute>} />
           <Route path="/admin/servicios" element={<ProtectedRoute><AdminServicios /></ProtectedRoute>} />
+          <Route path="/admin/cet" element={<ProtectedRoute><AdminCET /></ProtectedRoute>} />
+          <Route path="/admin/saie" element={<ProtectedRoute><AdminSAIE /></ProtectedRoute>} />
           <Route path="/admin/admision" element={<ProtectedRoute><AdminAdmision /></ProtectedRoute>} />
           <Route path="/admin/contacto" element={<ProtectedRoute><AdminContacto /></ProtectedRoute>} />
           <Route path="/admin/mensajes" element={<ProtectedRoute><AdminMessages /></ProtectedRoute>} />

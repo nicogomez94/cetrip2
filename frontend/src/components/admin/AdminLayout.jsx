@@ -7,6 +7,8 @@ const MENU = [
   { to: '/admin/home', label: 'Home', icon: '🏠' },
   { to: '/admin/quienes-somos', label: 'Quiénes Somos', icon: '🧭' },
   { to: '/admin/servicios', label: 'Consultorios Externos', icon: '🩺' },
+  { to: '/admin/cet', label: 'CET', icon: '🧩' },
+  { to: '/admin/saie', label: 'SAIE', icon: '🏫' },
   { to: '/admin/admision', label: 'Admisión', icon: '🗓️' },
   { to: '/admin/contacto', label: 'Contacto', icon: '📞' },
   { to: '/admin/mensajes', label: 'Mensajes', icon: '✉️' },

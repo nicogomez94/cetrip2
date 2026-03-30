@@ -543,6 +543,15 @@
 }
 
 @media (max-width: 640px) {
+  .public-site .home > section.reveal-ready,
+  .public-site .home > footer.reveal-ready {
+    transform: translateY(24px);
+    filter: none;
+    transition:
+      opacity 0.4s ease,
+      transform 0.45s ease;
+  }
+
   .public-site .home .hero__actions {
     flex-direction: column;
   }

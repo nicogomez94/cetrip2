@@ -129,6 +129,28 @@ export const ADMISION_DEFAULTS = {
   },
 };
 
+export const CET_DEFAULTS = {
+  highlightImage: 'https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?auto=format&fit=crop&w=1400&q=80',
+  highlightText:
+    '<p>Nuestro Centro Terapéutico (CET) está destinado a niñas y niños de hasta 14 años, conformando grupos reducidos para acompañar de manera personalizada cada proceso.</p><p>El abordaje se sostiene en un Proyecto Educativo Individualizado (P.E.I.) con evaluaciones permanentes. Se trabajan áreas como comunicación, socialización, autonomía personal y habilidades cognitivas funcionales.</p>',
+  gallery: [
+    'https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?auto=format&fit=crop&w=1400&q=80',
+    'https://images.unsplash.com/photo-1542816417-0983c9c9ad53?auto=format&fit=crop&w=1400&q=80',
+    'https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&w=1400&q=80',
+  ],
+};
+
+export const SAIE_DEFAULTS = {
+  highlightImage: 'https://images.unsplash.com/photo-1588072432904-843af37f03ed?auto=format&fit=crop&w=1400&q=80',
+  highlightText:
+    '<p>El SAIE acompaña a estudiantes que requieren apoyos específicos para sostener su participación en la escuela, articulando con docentes, directivos y equipos institucionales.</p><p>Se diseñan estrategias individualizadas para favorecer la comunicación, la organización en el aula, la autonomía y los vínculos con pares dentro de contextos educativos inclusivos.</p>',
+  gallery: [
+    'https://images.unsplash.com/photo-1588072432904-843af37f03ed?auto=format&fit=crop&w=1400&q=80',
+    'https://images.unsplash.com/photo-1587614382346-4ec70e388b28?auto=format&fit=crop&w=1400&q=80',
+    'https://images.unsplash.com/photo-1577896851231-70ef18881754?auto=format&fit=crop&w=1400&q=80',
+  ],
+};
+
 export const CONTACTO_DEFAULTS = {
   bannerTitle: 'Contacto',
   bannerSubtitle: 'Escribinos y te orientamos sobre próximos pasos',

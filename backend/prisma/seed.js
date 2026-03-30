@@ -264,10 +264,12 @@ async function main() {
   // ─── SERVICIOS ───────────────────────────────────────────────────────────────
   const sectionServicios = await prisma.section.upsert({
     where: { slug: 'servicios-lista' },
-    update: {},
+    update: {
+      title: 'Consultorios Externos',
+    },
     create: {
       slug: 'servicios-lista',
-      title: 'Nuestros Servicios',
+      title: 'Consultorios Externos',
       description: 'Listado de servicios terapéuticos disponibles',
       page: 'servicios',
       order: 1,
