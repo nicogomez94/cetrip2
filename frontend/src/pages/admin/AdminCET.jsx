@@ -6,7 +6,7 @@ import ErrorMessage from '../../components/common/ErrorMessage';
 import Toast from '../../components/common/Toast';
 import useToast from '../../hooks/useToast';
 import { CET_DEFAULTS } from '../../constants/publicPageDefaults';
-import { exceedsAdminRichTextLimit } from '../../utils/adminTextLimit';
+import { ADMIN_RICH_TEXT_LIMIT, exceedsAdminRichTextLimit } from '../../utils/adminTextLimit';
 import {
   PAGE_SLUGS,
   ensureSection,
@@ -126,7 +126,7 @@ function AdminCET() {
 
   const handleHighlightTextChange = (value) => {
     if (exceedsAdminRichTextLimit(value)) {
-      setFormError('El texto admite hasta 5000 caracteres.');
+      setFormError(`El texto admite hasta ${ADMIN_RICH_TEXT_LIMIT} caracteres.`);
       return;
     }
     setFormError(null);
@@ -136,7 +136,7 @@ function AdminCET() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (exceedsAdminRichTextLimit(highlightText)) {
-      setFormError('El texto admite hasta 5000 caracteres.');
+      setFormError(`El texto admite hasta ${ADMIN_RICH_TEXT_LIMIT} caracteres.`);
       return;
     }
     setSaving(true);

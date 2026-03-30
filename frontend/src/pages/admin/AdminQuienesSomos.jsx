@@ -9,6 +9,7 @@ import { QUIENES_DEFAULTS } from '../../constants/publicPageDefaults';
 import { mapQuienesPage } from '../../utils/publicPageMappers';
 import {
   ADMIN_PLAIN_TEXT_LIMIT,
+  ADMIN_RICH_TEXT_LIMIT,
   exceedsAdminPlainTextLimit,
   exceedsAdminRichTextLimit,
 } from '../../utils/adminTextLimit';
@@ -133,7 +134,7 @@ function AdminQuienesSomos() {
   const handleRichTextChange = (name, value) => {
     if (exceedsAdminRichTextLimit(value)) {
       setErrorField(name);
-      setFormError(`Este campo admite hasta ${ADMIN_PLAIN_TEXT_LIMIT} caracteres.`);
+      setFormError(`Este campo admite hasta ${ADMIN_RICH_TEXT_LIMIT} caracteres.`);
       return;
     }
     if (formError) {
@@ -192,7 +193,7 @@ function AdminQuienesSomos() {
     );
     if (firstInvalidRichField) {
       setErrorField(firstInvalidRichField);
-      setFormError(`Este campo admite hasta ${ADMIN_PLAIN_TEXT_LIMIT} caracteres.`);
+      setFormError(`Este campo admite hasta ${ADMIN_RICH_TEXT_LIMIT} caracteres.`);
       return;
     }
 

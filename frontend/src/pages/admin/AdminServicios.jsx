@@ -8,7 +8,12 @@ import useToast from '../../hooks/useToast';
 import { SERVICIOS_DEFAULTS } from '../../constants/publicPageDefaults';
 import { mapServiciosPage } from '../../utils/publicPageMappers';
 import { buildServiceSlugs } from '../../utils/serviceContent';
-import { ADMIN_PLAIN_TEXT_LIMIT, exceedsAdminPlainTextLimit } from '../../utils/adminTextLimit';
+import {
+  ADMIN_PLAIN_TEXT_LIMIT,
+  ADMIN_RICH_TEXT_LIMIT,
+  exceedsAdminPlainTextLimit,
+  exceedsAdminRichTextLimit,
+} from '../../utils/adminTextLimit';
 import {
   PAGE_SLUGS,
   ensureSection,
@@ -152,6 +157,11 @@ function AdminServicios() {
   };
 
   const handleRichTextChange = (name, value) => {
+    if (exceedsAdminRichTextLimit(value)) {
+      setErrorField(name);
+      setFormError(`Este campo admite hasta ${ADMIN_RICH_TEXT_LIMIT} caracteres.`);
+      return;
+    }
     if (formError) {
       setFormError(null);
       setErrorField('');
@@ -164,6 +174,11 @@ function AdminServicios() {
     if (field !== 'content' && value.length > ADMIN_PLAIN_TEXT_LIMIT) {
       setErrorField(field === 'title' ? `service${index}Title` : `service${index}ImageUrl`);
       setFormError(`Este campo admite hasta ${ADMIN_PLAIN_TEXT_LIMIT} caracteres.`);
+      return;
+    }
+    if (field === 'content' && exceedsAdminRichTextLimit(value)) {
+      setErrorField(`service${index}Content`);
+      setFormError(`Este campo admite hasta ${ADMIN_RICH_TEXT_LIMIT} caracteres.`);
       return;
     }
     if (formError) {
@@ -242,6 +257,14 @@ function AdminServicios() {
       setFormError(`Este campo admite hasta ${ADMIN_PLAIN_TEXT_LIMIT} caracteres.`);
       return;
     }
+    const firstInvalidRichFormField = SERVICES_RICH_TEXT_FIELDS.find((fieldName) =>
+      exceedsAdminRichTextLimit(form[fieldName])
+    );
+    if (firstInvalidRichFormField) {
+      setErrorField(firstInvalidRichFormField);
+      setFormError(`Este campo admite hasta ${ADMIN_RICH_TEXT_LIMIT} caracteres.`);
+      return;
+    }
     const firstInvalidService = services.findIndex(
       (service) =>
         exceedsAdminPlainTextLimit('serviceTitle', service.title) ||
@@ -254,6 +277,14 @@ function AdminServicios() {
           : `service${firstInvalidService}ImageUrl`
       );
       setFormError(`Este campo admite hasta ${ADMIN_PLAIN_TEXT_LIMIT} caracteres.`);
+      return;
+    }
+    const firstInvalidServiceRichContent = services.findIndex((service) =>
+      exceedsAdminRichTextLimit(service.content)
+    );
+    if (firstInvalidServiceRichContent !== -1) {
+      setErrorField(`service${firstInvalidServiceRichContent}Content`);
+      setFormError(`Este campo admite hasta ${ADMIN_RICH_TEXT_LIMIT} caracteres.`);
       return;
     }
 
@@ -384,7 +415,7 @@ function AdminServicios() {
                 <label>Título</label>
                 <input name="introTitle" value={form.introTitle} onChange={handleFormChange} />
               </div>
-              <div className="form-group">
+              <div className={`form-group${errorField === 'introBody' ? ' form-group--error' : ''}`}>
                 <label>Texto</label>
                 <RichTextEditor
                   value={form.introBody}
@@ -440,7 +471,7 @@ function AdminServicios() {
                       onChange={(event) => handleServiceChange(index, 'title', event.target.value)}
                     />
                   </div>
-                  <div className="form-group">
+                  <div className={`form-group${errorField === `service${index}Content` ? ' form-group--error' : ''}`}>
                     <label>Texto (contenido completo de la página detalle)</label>
                     <RichTextEditor
                       value={service.content}
@@ -500,7 +531,7 @@ function AdminServicios() {
                         onChange={handleFormChange}
                       />
                     </div>
-                    <div className="form-group">
+                    <div className={`form-group${errorField === `workflow${n}Content` ? ' form-group--error' : ''}`}>
                       <label>Texto</label>
                       <RichTextEditor
                         value={form[`workflow${n}Content`]}
@@ -520,7 +551,7 @@ function AdminServicios() {
                   <label>Título</label>
                   <input name="ctaTitle" value={form.ctaTitle} onChange={handleFormChange} />
                 </div>
-                <div className="form-group">
+                <div className={`form-group${errorField === 'ctaText' ? ' form-group--error' : ''}`}>
                   <label>Texto</label>
                   <RichTextEditor
                     value={form.ctaText}

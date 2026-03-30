@@ -9,6 +9,7 @@ import { ADMISION_DEFAULTS } from '../../constants/publicPageDefaults';
 import { mapAdmisionPage } from '../../utils/publicPageMappers';
 import {
   ADMIN_PLAIN_TEXT_LIMIT,
+  ADMIN_RICH_TEXT_LIMIT,
   exceedsAdminPlainTextLimit,
   exceedsAdminRichTextLimit,
 } from '../../utils/adminTextLimit';
@@ -171,7 +172,7 @@ function AdminAdmision() {
   const handleRichTextChange = (name, value) => {
     if (exceedsAdminRichTextLimit(value)) {
       setErrorField(name);
-      setFormError(`Este campo admite hasta ${ADMIN_PLAIN_TEXT_LIMIT} caracteres.`);
+      setFormError(`Este campo admite hasta ${ADMIN_RICH_TEXT_LIMIT} caracteres.`);
       return;
     }
     if (formError) {
@@ -190,7 +191,7 @@ function AdminAdmision() {
     }
     if (field === 'content' && exceedsAdminRichTextLimit(value)) {
       setErrorField(`step${index}Content`);
-      setFormError(`Este campo admite hasta ${ADMIN_PLAIN_TEXT_LIMIT} caracteres.`);
+      setFormError(`Este campo admite hasta ${ADMIN_RICH_TEXT_LIMIT} caracteres.`);
       return;
     }
     if (formError) {
@@ -249,7 +250,7 @@ function AdminAdmision() {
     );
     if (firstInvalidRichField) {
       setErrorField(firstInvalidRichField);
-      setFormError(`Este campo admite hasta ${ADMIN_PLAIN_TEXT_LIMIT} caracteres.`);
+      setFormError(`Este campo admite hasta ${ADMIN_RICH_TEXT_LIMIT} caracteres.`);
       return;
     }
     const firstInvalidStepIndex = steps.findIndex(
@@ -257,12 +258,15 @@ function AdminAdmision() {
         exceedsAdminPlainTextLimit('stepTitle', step.title) || exceedsAdminRichTextLimit(step.content)
     );
     if (firstInvalidStepIndex !== -1) {
+      const isInvalidStepTitle = exceedsAdminPlainTextLimit('stepTitle', steps[firstInvalidStepIndex].title);
       setErrorField(
-        exceedsAdminPlainTextLimit('stepTitle', steps[firstInvalidStepIndex].title)
-          ? `step${firstInvalidStepIndex}Title`
-          : `step${firstInvalidStepIndex}Content`
+        isInvalidStepTitle ? `step${firstInvalidStepIndex}Title` : `step${firstInvalidStepIndex}Content`
       );
-      setFormError(`Este campo admite hasta ${ADMIN_PLAIN_TEXT_LIMIT} caracteres.`);
+      setFormError(
+        `Este campo admite hasta ${
+          isInvalidStepTitle ? ADMIN_PLAIN_TEXT_LIMIT : ADMIN_RICH_TEXT_LIMIT
+        } caracteres.`
+      );
       return;
     }
 

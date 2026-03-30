@@ -10,6 +10,7 @@ import { useUpload } from '../../context/UploadContext';
 import { HOME_DEFAULTS } from '../../constants/homeDefaults';
 import {
   ADMIN_PLAIN_TEXT_LIMIT,
+  ADMIN_RICH_TEXT_LIMIT,
   exceedsAdminPlainTextLimit,
   exceedsAdminRichTextLimit,
 } from '../../utils/adminTextLimit';
@@ -207,7 +208,7 @@ function AdminHome() {
   const handleRichTextChange = (name, value) => {
     if (exceedsAdminRichTextLimit(value)) {
       setErrorField(name);
-      setFormError(`Este campo admite hasta ${ADMIN_PLAIN_TEXT_LIMIT} caracteres.`);
+      setFormError(`Este campo admite hasta ${ADMIN_RICH_TEXT_LIMIT} caracteres.`);
       return;
     }
     if (formError) {
@@ -352,7 +353,7 @@ function AdminHome() {
     );
     if (firstInvalidRichField) {
       setErrorField(firstInvalidRichField);
-      setFormError(`Este campo admite hasta ${ADMIN_PLAIN_TEXT_LIMIT} caracteres.`);
+      setFormError(`Este campo admite hasta ${ADMIN_RICH_TEXT_LIMIT} caracteres.`);
       return;
     }
     const firstInvalidServiceImage = ids.serviceImageUrls.findIndex((value) =>
