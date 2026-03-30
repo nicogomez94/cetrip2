@@ -222,6 +222,7 @@
 
   .public-site .navbar__overlay {
     display: block;
+    top: calc(var(--navbar-height) + 8px);
   }
 
   .public-site .navbar__nav {
