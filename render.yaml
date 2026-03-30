@@ -4,10 +4,6 @@ services:
     runtime: node
     rootDir: backend
     plan: free
-    disk:
-      name: cetrip-api-uploads
-      mountPath: /var/data
-      sizeGB: 1
     buildCommand: sh -c "npm ci && npx prisma generate && echo 'CREATE SCHEMA IF NOT EXISTS cetrip;' | npx prisma db execute --stdin --url \"$DATABASE_URL\" && npx prisma db push --accept-data-loss && npm run db:dedupe-blocks && npm run db:bootstrap-admin"
     startCommand: npm start
     envVars:
@@ -40,7 +36,7 @@ services:
       - key: CLOUDINARY_FOLDER
         value: cetrip
       - key: UPLOADS_DIR
-        value: /var/data/uploads
+        value: ./uploads
       - key: DEBUG
         value: "false"
       - key: RUN_FULL_SEED
