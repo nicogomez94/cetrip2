@@ -20,6 +20,7 @@ import {
   replaceSectionBlocks,
 } from '../../services/adminPageContent';
 import api from '../../services/api';
+import { useUpload } from '../../context/UploadContext';
 import '../../styles/admin.css';
 import '../../styles/forms.css';
 
@@ -58,6 +59,7 @@ function AdminQuienesSomos() {
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
+  const { setIsUploading } = useUpload();
   const formActionsRef = useRef(null);
   const { toast, showToast, hideToast } = useToast();
 
@@ -147,6 +149,7 @@ function AdminQuienesSomos() {
     if (!file) return;
 
     setUploadingImage(true);
+    setIsUploading(true);
     setFormError(null);
     try {
       const data = new FormData();
@@ -165,6 +168,7 @@ function AdminQuienesSomos() {
       setFormError(err.response?.data?.message || 'No se pudo subir la imagen.');
     } finally {
       setUploadingImage(false);
+      setIsUploading(false);
     }
   };
 

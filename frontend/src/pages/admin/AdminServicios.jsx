@@ -17,6 +17,7 @@ import {
   replaceSectionBlocks,
 } from '../../services/adminPageContent';
 import api from '../../services/api';
+import { useUpload } from '../../context/UploadContext';
 import '../../styles/admin.css';
 import '../../styles/forms.css';
 
@@ -66,6 +67,7 @@ function AdminServicios() {
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [uploadingIndex, setUploadingIndex] = useState(null);
+  const { setIsUploading } = useUpload();
   const formActionsRef = useRef(null);
   const { toast, showToast, hideToast } = useToast();
 
@@ -205,6 +207,7 @@ function AdminServicios() {
     if (!file) return;
 
     setUploadingIndex(index);
+    setIsUploading(true);
     setFormError(null);
     setErrorField('');
     try {
@@ -219,6 +222,7 @@ function AdminServicios() {
       setFormError(err.response?.data?.message || 'No se pudo subir la imagen del consultorio externo.');
     } finally {
       setUploadingIndex(null);
+      setIsUploading(false);
     }
   };
 

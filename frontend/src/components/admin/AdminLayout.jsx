@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { useUpload } from '../../context/UploadContext';
 import '../../styles/admin.css';
 
 const MENU = [
@@ -16,6 +17,7 @@ const MENU = [
 
 function AdminLayout({ children, title }) {
   const { user, logout } = useAuth();
+  const { isUploading } = useUpload();
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -26,6 +28,12 @@ function AdminLayout({ children, title }) {
 
   return (
     <div className="admin-layout">
+      {isUploading && (
+        <div className="upload-overlay">
+          <div className="upload-overlay__spinner" />
+          <span className="upload-overlay__text">Subiendo imagen...</span>
+        </div>
+      )}
       {/* Sidebar */}
       <aside className={`admin-sidebar ${sidebarOpen ? 'admin-sidebar--open' : ''}`}>
         <div className="admin-sidebar__header">

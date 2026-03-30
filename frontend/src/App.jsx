@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
+import { UploadProvider } from './context/UploadContext';
 import ProtectedRoute from './components/common/ProtectedRoute';
 import Navbar from './components/common/Navbar';
 import Footer from './components/common/Footer';
@@ -106,6 +107,7 @@ function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
+      <UploadProvider>
         <Routes>
           <Route path="/" element={<PublicLayout><Home /></PublicLayout>} />
           <Route path="/quienes-somos" element={<PublicLayout><QuienesSomos /></PublicLayout>} />
@@ -126,6 +128,7 @@ function App() {
           <Route path="/admin/contacto" element={<ProtectedRoute><AdminContacto /></ProtectedRoute>} />
           <Route path="/admin/mensajes" element={<ProtectedRoute><AdminMessages /></ProtectedRoute>} />
         </Routes>
+      </UploadProvider>
       </AuthProvider>
     </BrowserRouter>
   );

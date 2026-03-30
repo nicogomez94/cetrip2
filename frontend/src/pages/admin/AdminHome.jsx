@@ -6,6 +6,7 @@ import ErrorMessage from '../../components/common/ErrorMessage';
 import Toast from '../../components/common/Toast';
 import useToast from '../../hooks/useToast';
 import api from '../../services/api';
+import { useUpload } from '../../context/UploadContext';
 import { HOME_DEFAULTS } from '../../constants/homeDefaults';
 import {
   ADMIN_PLAIN_TEXT_LIMIT,
@@ -99,6 +100,7 @@ function AdminHome() {
   const [form, setForm] = useState(DEFAULT_FORM);
   const [uploadingServiceIndex, setUploadingServiceIndex] = useState(null);
   const [uploadingCarouselIndex, setUploadingCarouselIndex] = useState(null);
+  const { setIsUploading } = useUpload();
   const formActionsRef = useRef(null);
   const { toast, showToast, hideToast } = useToast();
 
@@ -240,6 +242,7 @@ function AdminHome() {
     if (!file) return;
 
     setUploadingServiceIndex(index);
+    setIsUploading(true);
     setFormError(null);
     setErrorField('');
     try {
@@ -254,6 +257,7 @@ function AdminHome() {
       setFormError(err.response?.data?.message || 'No se pudo subir la imagen del consultorio externo.');
     } finally {
       setUploadingServiceIndex(null);
+      setIsUploading(false);
     }
   };
 
@@ -281,6 +285,7 @@ function AdminHome() {
     if (!file) return;
 
     setUploadingCarouselIndex(index);
+    setIsUploading(true);
     setFormError(null);
     setErrorField('');
     try {
@@ -295,6 +300,7 @@ function AdminHome() {
       setFormError(err.response?.data?.message || 'No se pudo subir la imagen del carrusel.');
     } finally {
       setUploadingCarouselIndex(null);
+      setIsUploading(false);
     }
   };
 

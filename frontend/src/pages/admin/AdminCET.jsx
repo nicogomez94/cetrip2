@@ -14,6 +14,7 @@ import {
   replaceSectionBlocks,
 } from '../../services/adminPageContent';
 import api from '../../services/api';
+import { useUpload } from '../../context/UploadContext';
 import '../../styles/admin.css';
 import '../../styles/forms.css';
 
@@ -29,6 +30,7 @@ function AdminCET() {
   const [saved, setSaved] = useState(false);
   const [uploadingHighlight, setUploadingHighlight] = useState(false);
   const [uploadingGalleryIndex, setUploadingGalleryIndex] = useState(null);
+  const { setIsUploading } = useUpload();
   const formActionsRef = useRef(null);
   const { toast, showToast, hideToast } = useToast();
 
@@ -79,6 +81,7 @@ function AdminCET() {
     const file = event.target.files?.[0];
     if (!file) return;
     setUploadingHighlight(true);
+    setIsUploading(true);
     setFormError(null);
     try {
       const data = new FormData();
@@ -91,6 +94,7 @@ function AdminCET() {
       setFormError(err.response?.data?.message || 'No se pudo subir la imagen principal.');
     } finally {
       setUploadingHighlight(false);
+      setIsUploading(false);
     }
   };
 
@@ -99,6 +103,7 @@ function AdminCET() {
     if (!file) return;
     const index = galleryImages.length;
     setUploadingGalleryIndex(index);
+    setIsUploading(true);
     setFormError(null);
     try {
       const data = new FormData();
@@ -111,6 +116,7 @@ function AdminCET() {
       setFormError(err.response?.data?.message || 'No se pudo subir la imagen.');
     } finally {
       setUploadingGalleryIndex(null);
+      setIsUploading(false);
     }
   };
 
