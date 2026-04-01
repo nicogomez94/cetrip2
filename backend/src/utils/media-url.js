@@ -1,3 +1,5 @@
+const { toCloudinaryDeliveryUrl } = require('./cloudinary');
+
 const normalizeOrigin = (value) => {
   if (!value || typeof value !== 'string') return '';
   try {
@@ -60,6 +62,14 @@ const normalizeImageUrl = (req, value) => {
     }
     return raw;
   } catch (_) {
+    // Compatibilidad con valores legacy: filename local o public_id de Cloudinary.
+    const cloudinaryUrl = toCloudinaryDeliveryUrl(raw);
+    if (cloudinaryUrl) return cloudinaryUrl;
+
+    if (/^[A-Za-z0-9._-]+\.(?:jpg|jpeg|png|webp|gif|avif)$/i.test(raw)) {
+      return `${uploadsBase}/uploads/${raw}`;
+    }
+
     return raw;
   }
 };

@@ -92,25 +92,52 @@ export async function ensureSection({ sections, page, slug, title, description =
 
 export async function replaceSectionBlocks(sectionId, blocks = []) {
   const current = await api.get(`/admin/blocks?sectionId=${sectionId}`);
-  const currentBlocks = current.data.data || [];
+  const currentBlocks = sortByOrder(current.data.data || []);
+  const nextBlocks = sortByOrder(blocks || []).map((block, index) => ({
+    type: block.type,
+    title: trimText(block.title),
+    subtitle: trimText(block.subtitle),
+    content: trimText(block.content),
+    imageUrl: trimText(block.imageUrl),
+    videoUrl: trimText(block.videoUrl),
+    linkUrl: trimText(block.linkUrl),
+    linkText: trimText(block.linkText),
+    order: block.order ?? index + 1,
+    isActive: true,
+  }));
 
-  for (const block of currentBlocks) {
-    await api.delete(`/admin/blocks/${block.id}`);
+  // Evita choques de orden durante reemplazos parciales y nos permite actualizar
+  // sin borrar toda la sección (así no se limpian imágenes válidas por error).
+  if (currentBlocks.length > 0) {
+    await api.patch('/admin/blocks/reorder', {
+      items: currentBlocks.map((block, index) => ({
+        id: block.id,
+        order: 1000 + index,
+      })),
+    });
   }
 
-  for (const block of blocks) {
+  const commonLength = Math.min(currentBlocks.length, nextBlocks.length);
+  const preserveImageUrls = nextBlocks
+    .map((block) => block.imageUrl)
+    .filter((value) => notEmpty(value));
+
+  for (let index = 0; index < commonLength; index += 1) {
+    await api.put(`/admin/blocks/${currentBlocks[index].id}`, {
+      sectionId,
+      ...nextBlocks[index],
+      preserveImageUrls,
+    });
+  }
+
+  for (let index = commonLength; index < nextBlocks.length; index += 1) {
     await api.post('/admin/blocks', {
       sectionId,
-      type: block.type,
-      title: trimText(block.title),
-      subtitle: trimText(block.subtitle),
-      content: trimText(block.content),
-      imageUrl: trimText(block.imageUrl),
-      videoUrl: trimText(block.videoUrl),
-      linkUrl: trimText(block.linkUrl),
-      linkText: trimText(block.linkText),
-      order: block.order,
-      isActive: true,
+      ...nextBlocks[index],
     });
+  }
+
+  for (let index = commonLength; index < currentBlocks.length; index += 1) {
+    await api.delete(`/admin/blocks/${currentBlocks[index].id}`);
   }
 }

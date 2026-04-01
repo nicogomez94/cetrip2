@@ -19,6 +19,21 @@ const getCloudinaryConfig = () => {
   return null;
 };
 
+const getCloudinaryCloudName = () => {
+  const fromField = process.env.CLOUDINARY_CLOUD_NAME?.trim();
+  if (fromField) return fromField;
+
+  const fromUrl = process.env.CLOUDINARY_URL?.trim();
+  if (!fromUrl) return '';
+
+  try {
+    const parsed = new URL(fromUrl);
+    return parsed.hostname || '';
+  } catch (_) {
+    return '';
+  }
+};
+
 const isCloudinaryEnabled = () => {
   if (typeof isConfigured === 'boolean') return isConfigured;
 
@@ -94,9 +109,47 @@ const deleteImageFromCloudinary = async (value) => {
   return result?.result === 'ok' || result?.result === 'not found';
 };
 
+const looksLikeCloudinaryPublicId = (value) => {
+  if (!value || typeof value !== 'string') return false;
+  const raw = value.trim();
+  if (!raw || raw.startsWith('/') || raw.includes('://') || raw.startsWith('data:')) return false;
+  return /^[A-Za-z0-9/_-]+(?:\.(?:jpg|jpeg|png|webp|gif|avif))?$/i.test(raw);
+};
+
+const toCloudinaryDeliveryUrl = (value) => {
+  if (!looksLikeCloudinaryPublicId(value)) return '';
+
+  const cloudName = getCloudinaryCloudName();
+  if (!cloudName) return '';
+
+  const folder = process.env.CLOUDINARY_FOLDER?.trim();
+  const raw = value.trim();
+  const extensionMatch = raw.match(/\.(jpg|jpeg|png|webp|gif|avif)$/i);
+  const format = extensionMatch ? extensionMatch[1].toLowerCase() : '';
+  const withoutExt = raw.replace(/\.[^/.]+$/, '');
+  const basePublicId = withoutExt.replace(/^\/+|\/+$/g, '');
+  if (!basePublicId) return '';
+
+  const publicId = basePublicId.includes('/')
+    ? basePublicId
+    : folder
+      ? `${folder.replace(/^\/+|\/+$/g, '')}/${basePublicId}`
+      : basePublicId;
+
+  const encodedPublicId = publicId
+    .split('/')
+    .filter(Boolean)
+    .map((segment) => encodeURIComponent(segment))
+    .join('/');
+
+  if (!encodedPublicId) return '';
+  return `https://res.cloudinary.com/${encodeURIComponent(cloudName)}/image/upload/${encodedPublicId}${format ? `.${format}` : ''}`;
+};
+
 module.exports = {
   isCloudinaryEnabled,
   uploadImageToCloudinary,
   extractCloudinaryPublicId,
   deleteImageFromCloudinary,
+  toCloudinaryDeliveryUrl,
 };

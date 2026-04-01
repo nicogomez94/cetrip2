@@ -172,10 +172,13 @@ const update = async (req, res, next) => {
     const nextImageUrl = Object.prototype.hasOwnProperty.call(data, 'imageUrl')
       ? normalizeImageValue(data.imageUrl)
       : previousImageUrl;
+    const preserveImageUrls = Array.isArray(req.body.preserveImageUrls)
+      ? new Set(req.body.preserveImageUrls.map((value) => normalizeImageValue(value)).filter(Boolean))
+      : new Set();
 
     const block = await prisma.block.update({ where: { id }, data });
 
-    if (previousImageUrl && previousImageUrl !== nextImageUrl) {
+    if (previousImageUrl && previousImageUrl !== nextImageUrl && !preserveImageUrls.has(previousImageUrl)) {
       await cleanupImageIfOrphaned({ imageUrl: previousImageUrl, excludingBlockId: id });
     }
 
