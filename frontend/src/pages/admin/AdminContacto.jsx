@@ -26,6 +26,10 @@ const INITIAL_FORM = {
   phone: CONTACTO_DEFAULTS.phone,
   email: CONTACTO_DEFAULTS.email,
   schedule: CONTACTO_DEFAULTS.schedule,
+  facebook: CONTACTO_DEFAULTS.facebook,
+  instagram: CONTACTO_DEFAULTS.instagram,
+  whatsapp: CONTACTO_DEFAULTS.whatsapp,
+  youtube: CONTACTO_DEFAULTS.youtube,
 };
 
 function AdminContacto() {
@@ -66,6 +70,10 @@ function AdminContacto() {
         phone: getInfoValue('phone', mapped.phone),
         email: getInfoValue('email', mapped.email),
         schedule: getInfoValue('schedule', mapped.schedule),
+        facebook: getInfoValue('facebook', mapped.facebook),
+        instagram: getInfoValue('instagram', mapped.instagram),
+        whatsapp: getInfoValue('whatsapp', mapped.whatsapp),
+        youtube: getInfoValue('youtube', mapped.youtube),
       });
     } catch {
       setError('No se pudo cargar el editor de Contacto.');
@@ -142,6 +150,10 @@ function AdminContacto() {
         { type: 'TEXT', title: 'phone', content: form.phone, order: 2 },
         { type: 'TEXT', title: 'email', content: form.email, order: 3 },
         { type: 'TEXT', title: 'schedule', content: form.schedule, order: 4 },
+        { type: 'TEXT', title: 'facebook', content: form.facebook, order: 5 },
+        { type: 'TEXT', title: 'instagram', content: form.instagram, order: 6 },
+        { type: 'TEXT', title: 'whatsapp', content: form.whatsapp, order: 7 },
+        { type: 'TEXT', title: 'youtube', content: form.youtube, order: 8 },
       ]);
 
       await loadData();
@@ -215,6 +227,29 @@ function AdminContacto() {
             <div className={`form-group${errorField === 'schedule' ? ' form-group--error' : ''}`}>
               <label>Horario</label>
               <input name="schedule" value={form.schedule} onChange={handleChange} />
+            </div>
+
+            <h3>Redes sociales (Footer)</h3>
+            <div className={`form-group${errorField === 'facebook' ? ' form-group--error' : ''}`}>
+              <label>Facebook (URL)</label>
+              <input name="facebook" value={form.facebook} onChange={handleChange} placeholder="https://..." />
+            </div>
+            <div className={`form-group${errorField === 'instagram' ? ' form-group--error' : ''}`}>
+              <label>Instagram (URL)</label>
+              <input
+                name="instagram"
+                value={form.instagram}
+                onChange={handleChange}
+                placeholder="https://..."
+              />
+            </div>
+            <div className={`form-group${errorField === 'whatsapp' ? ' form-group--error' : ''}`}>
+              <label>WhatsApp (URL)</label>
+              <input name="whatsapp" value={form.whatsapp} onChange={handleChange} placeholder="https://..." />
+            </div>
+            <div className={`form-group${errorField === 'youtube' ? ' form-group--error' : ''}`}>
+              <label>YouTube (URL)</label>
+              <input name="youtube" value={form.youtube} onChange={handleChange} placeholder="https://..." />
             </div>
 
             <div className="form-actions" ref={formActionsRef}>

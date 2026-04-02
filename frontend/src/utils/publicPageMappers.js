@@ -331,6 +331,10 @@ export function mapContactoPage(sections = []) {
     phone: pickInfoByKeyword(['telefono', 'whatsapp'], defaults.phone),
     email: pickInfoByKeyword(['email', 'correo'], defaults.email),
     schedule: pickInfoByKeyword(['horario', 'atencion'], defaults.schedule),
+    facebook: pickInfoByKeyword(['facebook'], defaults.facebook),
+    instagram: pickInfoByKeyword(['instagram'], defaults.instagram),
+    whatsapp: pickInfoByKeyword(['whatsapp', 'wa.me'], defaults.whatsapp),
+    youtube: pickInfoByKeyword(['youtube', 'canal'], defaults.youtube),
   };
 
   const structuredBanner = getSectionBySlug(sections, 'contacto-banner');
@@ -352,6 +356,10 @@ export function mapContactoPage(sections = []) {
     phone: valueByKey('phone', legacy.phone),
     email: valueByKey('email', legacy.email),
     schedule: valueByKey('schedule', legacy.schedule),
+    facebook: valueByKey('facebook', legacy.facebook),
+    instagram: valueByKey('instagram', legacy.instagram),
+    whatsapp: valueByKey('whatsapp', legacy.whatsapp),
+    youtube: valueByKey('youtube', legacy.youtube),
   };
 }
 

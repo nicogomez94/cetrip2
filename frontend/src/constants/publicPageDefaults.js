@@ -161,4 +161,8 @@ export const CONTACTO_DEFAULTS = {
   phone: '(011) 4567-8901',
   email: 'info@cetrip.com',
   schedule: 'Lunes a Viernes: 8:00 – 18:00',
+  facebook: '',
+  instagram: '',
+  whatsapp: '',
+  youtube: '',
 };
