@@ -73,7 +73,7 @@ function Footer() {
         <div className="footer__contact">
           <h4>Contacto</h4>
           <p>📍 {address}</p>
-          <p>📞 {phone}</p>
+          <p><FaWhatsapp aria-hidden="true" /> {phone}</p>
           <p>✉️ {email}</p>
           <p>🕐 {schedule}</p>
           {socialLinks.length > 0 && (

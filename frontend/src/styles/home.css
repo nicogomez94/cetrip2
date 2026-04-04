@@ -112,9 +112,12 @@
   font-weight: 700;
   color: #d86710;
   margin: 0 0 18px;
-  display: inline-flex;
-  align-items: center;
+  display: inline-block;
   width: fit-content;
+  max-width: 100%;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  line-height: 1.35;
   background: rgba(244, 121, 32, 0.1);
   border: 1px solid #F47920;
   padding: 8px 12px;
@@ -550,6 +553,12 @@
     transition:
       opacity 0.4s ease,
       transform 0.45s ease;
+  }
+
+  .public-site .home .hero__eyebrow {
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    padding: 7px 10px;
   }
 
   .public-site .home .hero__actions {

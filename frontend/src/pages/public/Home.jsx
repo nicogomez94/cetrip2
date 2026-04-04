@@ -203,7 +203,7 @@ function Home() {
           <div className="hero__overlay" />
         </div>
         <div className="hero__content">
-          <p className="hero__eyebrow" style={{fontSize:"11px"}}>Servicios para Personas con Desafios de Neurodesarrollo</p>
+          <p className="hero__eyebrow">Servicios para Personas con Desafios de Neurodesarrollo</p>
           <h1 className="hero__title">{homeData.hero.title}</h1>
           <p className="hero__subtitle">{homeData.hero.subtitle}</p>
           <RichTextContent content={homeData.hero.content} className="hero__text rich-text-content" />
