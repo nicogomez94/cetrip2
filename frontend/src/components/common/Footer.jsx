@@ -98,6 +98,12 @@ function Footer() {
 
       <div className="footer__bottom">
         <p>© {year} CETRIP – Centro de Rehabilitación Infantil. Todos los derechos reservados.</p>
+        <p>
+          hecho por{' '}
+          <a href="https://zigodev.com.ar" target="_blank" rel="noopener noreferrer" className="footer__credit-link">
+            zigodev.com.ar
+          </a>
+        </p>
         <Link to="/admin/login" className="footer__admin-link">
           Panel Admin
         </Link>

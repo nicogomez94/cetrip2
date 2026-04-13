@@ -118,6 +118,15 @@
   color: #607081;
 }
 
+.public-site .footer__credit-link {
+  color: #2f9add;
+}
+
+.public-site .footer__credit-link:hover {
+  color: #1f5f86;
+  text-decoration: none;
+}
+
 .public-site .footer__admin-link {
   color: #7b8da1;
   font-size: 0.78rem;
