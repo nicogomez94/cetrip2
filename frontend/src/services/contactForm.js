@@ -1,4 +1,4 @@
-import api from './api';
+import axios from 'axios';
 
 export const CONTACT_FORM_TO = 'cetripcentro@gmail.com';
 export const CONTACT_FORM_SITE = 'https://cetrip.com.ar/';
@@ -20,14 +20,20 @@ export const resolveContactFormTo = (value) => String(value || '').trim() || CON
 export const submitContactForm = async (form, options = {}) => {
   const trimmedForm = trimContactFormValues(form);
   const to = resolveContactFormTo(options.to);
-  const response = await api.post(CONTACT_FORM_URL, {
-    name: trimmedForm.name,
-    email: trimmedForm.email,
-    to,
-    message: trimmedForm.message,
-    site: CONTACT_FORM_SITE,
-    company: '',
-  });
+  const response = await axios.post(
+    CONTACT_FORM_URL,
+    {
+      name: trimmedForm.name,
+      email: trimmedForm.email,
+      to,
+      message: trimmedForm.message,
+      site: CONTACT_FORM_SITE,
+      company: '',
+    },
+    {
+      headers: { 'Content-Type': 'application/json' },
+    }
+  );
 
   return {
     ...response.data,
