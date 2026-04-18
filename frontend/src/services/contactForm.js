@@ -1,6 +1,6 @@
 import api from './api';
 
-export const CONTACT_FORM_TO = 'cetripcentro@gmail.com';
+export const CONTACT_FORM_TO = 'nicolasgomez94@gmail.com';
 export const CONTACT_FORM_SITE = 'https://cetrip.com.ar/';
 
 const CONTACT_FORM_URL = 'https://contact-form-service-e8aa.onrender.com/api/contact';
