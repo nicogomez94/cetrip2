@@ -158,7 +158,7 @@
 .public-site .home .hero__title {
   margin: 0;
   color: #313a46;
-  font-size: clamp(2.4rem, 4vw, 4.4rem);
+  font-size: clamp(2.4rem, 3vw, 4.4rem);
   line-height: 1.04;
   letter-spacing: -0.03em;
 }
