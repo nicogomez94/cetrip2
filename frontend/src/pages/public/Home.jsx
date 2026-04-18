@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { FaWhatsapp } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import api from '../../services/api';
 import Loader from '../../components/common/Loader';
@@ -15,6 +16,16 @@ const sortByOrder = (items = []) => [...items].sort((a, b) => a.order - b.order)
 const HERO_CAROUSEL_LIMIT = 4;
 const DEFAULT_HERO_CAROUSEL_IMAGES = HOME_DEFAULTS.images.gallery.slice(0, HERO_CAROUSEL_LIMIT);
 const DEBUG = import.meta.env.VITE_DEBUG === 'true';
+const normalizeWhatsAppUrl = (value) => {
+  const trimmed = String(value || '').trim();
+  if (!trimmed) return '';
+  if (/^https?:\/\//i.test(trimmed)) return trimmed;
+  if (/^wa\.me\//i.test(trimmed)) return `https://${trimmed}`;
+
+  const digits = trimmed.replace(/\D/g, '');
+  return digits ? `https://wa.me/${digits}` : '';
+};
+
 const DEBUG_DATA = {
   name: 'María González',
   email: 'maria@example.com',
@@ -33,6 +44,10 @@ function Home() {
   const [heroSlideIndex, setHeroSlideIndex] = useState(0);
   const { sections: contactSections } = usePublicSections('contacto');
   const contactData = useMemo(() => mapContactoPage(contactSections), [contactSections]);
+  const whatsappUrl = useMemo(
+    () => normalizeWhatsAppUrl(contactData.whatsapp || contactData.phone),
+    [contactData.phone, contactData.whatsapp]
+  );
   const [form, setForm] = useState(INITIAL_FORM);
   const [formLoading, setFormLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -186,6 +201,19 @@ function Home() {
 
   return (
     <div className="home">
+      {whatsappUrl ? (
+        <a
+          href={whatsappUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="home__whatsapp-float"
+          aria-label="Abrir chat de WhatsApp"
+          title="Escribinos por WhatsApp"
+        >
+          <FaWhatsapp aria-hidden="true" />
+        </a>
+      ) : null}
+
       <section className="hero">
         <div className="hero__bg">
           <div className="hero__carousel">

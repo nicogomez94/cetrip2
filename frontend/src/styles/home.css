@@ -5,6 +5,36 @@
   padding: 8px 16px 28px;
 }
 
+.public-site .home .home__whatsapp-float {
+  position: fixed;
+  right: 22px;
+  bottom: 22px;
+  width: 62px;
+  height: 62px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #28d146, #169c37);
+  color: #fff;
+  box-shadow: 0 16px 32px rgba(22, 156, 55, 0.34);
+  z-index: 40;
+  font-size: 2rem;
+  text-decoration: none;
+  transition: transform 0.22s ease, box-shadow 0.22s ease, filter 0.22s ease;
+}
+
+.public-site .home .home__whatsapp-float:hover {
+  transform: translateY(-4px) scale(1.05);
+  box-shadow: 0 20px 36px rgba(22, 156, 55, 0.4);
+  filter: saturate(1.08);
+}
+
+.public-site .home .home__whatsapp-float:focus-visible {
+  outline: 3px solid rgba(47, 154, 221, 0.38);
+  outline-offset: 4px;
+}
+
 .public-site .home > section.reveal-ready,
 .public-site .home > footer.reveal-ready {
   opacity: 0;
@@ -100,6 +130,7 @@
   margin: 0;
   padding: 72px 58px;
   width: 100%;
+  min-width: 0;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -145,6 +176,9 @@
   font-size: 1.02rem;
   line-height: 1.7;
   max-width: 520px;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .public-site .home .hero__text.rich-text-content p {
@@ -156,6 +190,8 @@
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
+  width: 100%;
+  min-width: 0;
 }
 
 .public-site .home .services-wrap {
@@ -499,6 +535,10 @@
   .public-site .home .hero__actions {
     animation: none;
   }
+
+  .public-site .home .home__whatsapp-float {
+    transition: none;
+  }
 }
 
 @media (max-width: 1060px) {
@@ -546,6 +586,22 @@
 }
 
 @media (max-width: 640px) {
+  .public-site .home .home__whatsapp-float {
+    right: 14px;
+    bottom: 14px;
+    width: 56px;
+    height: 56px;
+    font-size: 1.8rem;
+  }
+
+  .public-site .home .hero {
+    overflow-x: clip;
+  }
+
+  .public-site .home .hero__content {
+    padding: 24px 14px;
+  }
+
   .public-site .home > section.reveal-ready,
   .public-site .home > footer.reveal-ready {
     transform: translateY(24px);
@@ -567,6 +623,11 @@
 
   .public-site .home .hero__actions .btn {
     width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    text-align: center;
   }
 
   .public-site .home .zigodev-banner {
