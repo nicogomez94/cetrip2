@@ -1,6 +1,6 @@
 import api from './api';
 
-export const CONTACT_FORM_TO = 'nicolasgomez94@gmail.com';
+export const CONTACT_FORM_TO = 'cetripcentro@gmail.com';
 export const CONTACT_FORM_SITE = 'https://cetrip.com.ar/';
 
 const CONTACT_FORM_URL = 'https://contact-form-service-e8aa.onrender.com/api/contact';
@@ -15,12 +15,15 @@ export const trimContactFormValues = (form) => ({
   message: String(form?.message || '').trim(),
 });
 
-export const submitContactForm = async (form) => {
+export const resolveContactFormTo = (value) => String(value || '').trim() || CONTACT_FORM_TO;
+
+export const submitContactForm = async (form, options = {}) => {
   const trimmedForm = trimContactFormValues(form);
+  const to = resolveContactFormTo(options.to);
   const response = await api.post(CONTACT_FORM_URL, {
     name: trimmedForm.name,
     email: trimmedForm.email,
-    to: CONTACT_FORM_TO,
+    to,
     message: trimmedForm.message,
     site: CONTACT_FORM_SITE,
     company: '',

@@ -7,6 +7,7 @@ import useToast from '../../hooks/useToast';
 import { CONTACTO_DEFAULTS } from '../../constants/publicPageDefaults';
 import { mapContactoPage } from '../../utils/publicPageMappers';
 import { ADMIN_PLAIN_TEXT_LIMIT, exceedsAdminPlainTextLimit } from '../../utils/adminTextLimit';
+import { CONTACT_FORM_EMAIL_REGEX } from '../../services/contactForm';
 import {
   PAGE_SLUGS,
   ensureSection,
@@ -25,6 +26,7 @@ const INITIAL_FORM = {
   address: CONTACTO_DEFAULTS.address,
   phone: CONTACTO_DEFAULTS.phone,
   email: CONTACTO_DEFAULTS.email,
+  contactFormTo: CONTACTO_DEFAULTS.contactFormTo,
   schedule: CONTACTO_DEFAULTS.schedule,
   facebook: CONTACTO_DEFAULTS.facebook,
   instagram: CONTACTO_DEFAULTS.instagram,
@@ -69,6 +71,7 @@ function AdminContacto() {
         address: getInfoValue('address', mapped.address),
         phone: getInfoValue('phone', mapped.phone),
         email: getInfoValue('email', mapped.email),
+        contactFormTo: getInfoValue('contactFormTo', mapped.contactFormTo),
         schedule: getInfoValue('schedule', mapped.schedule),
         facebook: getInfoValue('facebook', mapped.facebook),
         instagram: getInfoValue('instagram', mapped.instagram),
@@ -122,6 +125,11 @@ function AdminContacto() {
       setFormError(`Este campo admite hasta ${ADMIN_PLAIN_TEXT_LIMIT} caracteres.`);
       return;
     }
+    if (form.contactFormTo && !CONTACT_FORM_EMAIL_REGEX.test(form.contactFormTo.trim())) {
+      setErrorField('contactFormTo');
+      setFormError('El email receptor del formulario no es válido.');
+      return;
+    }
 
     setSaving(true);
     setFormError(null);
@@ -149,11 +157,12 @@ function AdminContacto() {
         { type: 'TEXT', title: 'address', content: form.address, order: 1 },
         { type: 'TEXT', title: 'phone', content: form.phone, order: 2 },
         { type: 'TEXT', title: 'email', content: form.email, order: 3 },
-        { type: 'TEXT', title: 'schedule', content: form.schedule, order: 4 },
-        { type: 'TEXT', title: 'facebook', content: form.facebook, order: 5 },
-        { type: 'TEXT', title: 'instagram', content: form.instagram, order: 6 },
-        { type: 'TEXT', title: 'whatsapp', content: form.whatsapp, order: 7 },
-        { type: 'TEXT', title: 'youtube', content: form.youtube, order: 8 },
+        { type: 'TEXT', title: 'contactFormTo', content: form.contactFormTo, order: 4 },
+        { type: 'TEXT', title: 'schedule', content: form.schedule, order: 5 },
+        { type: 'TEXT', title: 'facebook', content: form.facebook, order: 6 },
+        { type: 'TEXT', title: 'instagram', content: form.instagram, order: 7 },
+        { type: 'TEXT', title: 'whatsapp', content: form.whatsapp, order: 8 },
+        { type: 'TEXT', title: 'youtube', content: form.youtube, order: 9 },
       ]);
 
       await loadData();
@@ -223,6 +232,16 @@ function AdminContacto() {
             <div className={`form-group${errorField === 'email' ? ' form-group--error' : ''}`}>
               <label>Email</label>
               <input name="email" value={form.email} onChange={handleChange} />
+            </div>
+            <div className={`form-group${errorField === 'contactFormTo' ? ' form-group--error' : ''}`}>
+              <label>Email receptor del formulario</label>
+              <input
+                name="contactFormTo"
+                type="email"
+                value={form.contactFormTo}
+                onChange={handleChange}
+                placeholder="destino@cetrip.com"
+              />
             </div>
             <div className={`form-group${errorField === 'schedule' ? ' form-group--error' : ''}`}>
               <label>Horario</label>

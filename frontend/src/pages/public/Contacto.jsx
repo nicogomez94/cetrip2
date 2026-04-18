@@ -67,7 +67,7 @@ function Contacto() {
     setErrors({});
     setServerError(null);
     try {
-      const response = await submitContactForm(form);
+      const response = await submitContactForm(form, { to: pageData.contactFormTo });
       if (response?.success !== true) {
         throw new Error('unexpected_response');
       }

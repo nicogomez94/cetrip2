@@ -182,7 +182,7 @@ function Home() {
     setErrors({});
     setServerError(null);
     try {
-      const response = await submitContactForm(form);
+      const response = await submitContactForm(form, { to: contactData.contactFormTo });
       if (response?.success !== true) {
         throw new Error('unexpected_response');
       }

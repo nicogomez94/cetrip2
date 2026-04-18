@@ -160,6 +160,7 @@ export const CONTACTO_DEFAULTS = {
   address: 'Av. Ejemplo 1234, Buenos Aires',
   phone: '(011) 4567-8901',
   email: 'info@cetrip.com',
+  contactFormTo: 'cetripcentro@gmail.com',
   schedule: 'Lunes a Viernes: 8:00 – 18:00',
   facebook: '',
   instagram: '',
