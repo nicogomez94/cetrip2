@@ -3,7 +3,11 @@ import Loader from '../../components/common/Loader';
 import ErrorMessage from '../../components/common/ErrorMessage';
 import usePublicSections from '../../hooks/usePublicSections';
 import { mapContactoPage } from '../../utils/publicPageMappers';
-import api from '../../services/api';
+import {
+  CONTACT_FORM_EMAIL_REGEX,
+  submitContactForm,
+  trimContactFormValues,
+} from '../../services/contactForm';
 import '../../styles/pages.css';
 import '../../styles/forms.css';
 
@@ -17,9 +21,8 @@ const DEBUG_DATA = {
   message: 'Hola, quisiera consultar sobre la disponibilidad para kinesiología para mi hijo de 5 años. Muchas gracias.',
 };
 
-const INITIAL_FORM = DEBUG
-  ? DEBUG_DATA
-  : { name: '', email: '', phone: '', subject: '', message: '' };
+const EMPTY_FORM = { name: '', email: '', phone: '', subject: '', message: '' };
+const INITIAL_FORM = DEBUG ? DEBUG_DATA : EMPTY_FORM;
 
 function Contacto() {
   const { sections, loading: loadingContent, error: contentError, refetch } = usePublicSections('contacto');
@@ -38,18 +41,16 @@ function Contacto() {
   };
 
   const validate = () => {
+    const trimmedForm = trimContactFormValues(form);
     const errs = {};
-    if (!form.name.trim()) errs.name = 'El nombre es requerido.';
-    if (!form.email.trim()) {
+    if (!trimmedForm.name) errs.name = 'El nombre es requerido.';
+    if (!trimmedForm.email) {
       errs.email = 'El email es requerido.';
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
+    } else if (!CONTACT_FORM_EMAIL_REGEX.test(trimmedForm.email)) {
       errs.email = 'El email no es válido.';
     }
-    if (!form.subject.trim()) errs.subject = 'El asunto es requerido.';
-    if (!form.message.trim()) {
+    if (!trimmedForm.message) {
       errs.message = 'El mensaje es requerido.';
-    } else if (form.message.trim().length < 10) {
-      errs.message = 'El mensaje debe tener al menos 10 caracteres.';
     }
     return errs;
   };
@@ -63,20 +64,17 @@ function Contacto() {
     }
 
     setLoading(true);
+    setErrors({});
     setServerError(null);
     try {
-      await api.post('/public/contact', form);
-      setSuccess(true);
-      setForm(INITIAL_FORM);
-    } catch (err) {
-      const apiErrors = err.response?.data?.errors;
-      if (apiErrors) {
-        const mapped = {};
-        apiErrors.forEach((e) => (mapped[e.field] = e.message));
-        setErrors(mapped);
-      } else {
-        setServerError(err.response?.data?.message || 'Error al enviar el mensaje. Intente nuevamente.');
+      const response = await submitContactForm(form);
+      if (response?.success !== true) {
+        throw new Error('unexpected_response');
       }
+      setSuccess(true);
+      setForm(EMPTY_FORM);
+    } catch (err) {
+      setServerError(err.response?.data?.message || 'Error al enviar el mensaje. Intente nuevamente.');
     } finally {
       setLoading(false);
     }
@@ -144,7 +142,7 @@ function Contacto() {
                   className="btn btn--primary"
                   onClick={() => {
                     setSuccess(false);
-                    setForm(INITIAL_FORM);
+                    setForm(EMPTY_FORM);
                   }}
                 >
                   Enviar otro mensaje

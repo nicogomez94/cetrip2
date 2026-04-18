@@ -700,6 +700,45 @@
     border-radius: 16px;
   }
 
+  .public-site .services-list .container {
+    padding: 0.9rem;
+  }
+
+  .public-site .services-grid {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .public-site .service-card {
+    flex-direction: row;
+    align-items: stretch;
+    min-height: 112px;
+  }
+
+  .public-site .service-card__media {
+    flex: 0 0 108px;
+  }
+
+  .public-site .service-card__media img {
+    height: 100%;
+    min-height: 112px;
+  }
+
+  .public-site .service-card__body {
+    padding: 0.85rem;
+    justify-content: center;
+  }
+
+  .public-site .service-card__body h3 {
+    font-size: 1rem;
+    margin: 0;
+  }
+
+  .public-site .service-card__summary {
+    font-size: 0.9rem;
+    -webkit-line-clamp: 2;
+  }
+
   .public-site .identity-grid,
   .public-site .workflow-grid,
   .public-site .program-gallery__grid {
