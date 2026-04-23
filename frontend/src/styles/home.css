@@ -18,9 +18,10 @@
   background: linear-gradient(135deg, #28d146, #169c37);
   color: #fff;
   box-shadow: 0 16px 32px rgba(22, 156, 55, 0.34);
-  z-index: 40;
+  z-index: 1600;
   font-size: 2rem;
   text-decoration: none;
+  border: 2px solid rgba(255, 255, 255, 0.85);
   transition: transform 0.22s ease, box-shadow 0.22s ease, filter 0.22s ease;
 }
 

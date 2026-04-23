@@ -13,6 +13,7 @@ import {
 } from '../../services/contactForm';
 import { mapContactoPage } from '../../utils/publicPageMappers';
 import { HOME_DEFAULTS } from '../../constants/homeDefaults';
+import { CONTACTO_DEFAULTS } from '../../constants/publicPageDefaults';
 import '../../styles/home.css';
 import '../../styles/pages.css';
 import '../../styles/forms.css';
@@ -48,10 +49,23 @@ function Home() {
   const [heroSlideIndex, setHeroSlideIndex] = useState(0);
   const { sections: contactSections } = usePublicSections('contacto');
   const contactData = useMemo(() => mapContactoPage(contactSections), [contactSections]);
-  const whatsappUrl = useMemo(
-    () => normalizeWhatsAppUrl(contactData.whatsapp || contactData.phone),
-    [contactData.phone, contactData.whatsapp]
-  );
+  const whatsappUrl = useMemo(() => {
+    const candidates = [
+      contactData.whatsapp,
+      contactData.phone,
+      import.meta.env.VITE_WHATSAPP_URL,
+      import.meta.env.VITE_WHATSAPP_PHONE,
+      CONTACTO_DEFAULTS.whatsapp,
+      CONTACTO_DEFAULTS.phone,
+    ];
+
+    for (const candidate of candidates) {
+      const normalized = normalizeWhatsAppUrl(candidate);
+      if (normalized) return normalized;
+    }
+
+    return '';
+  }, [contactData.phone, contactData.whatsapp]);
   const [form, setForm] = useState(INITIAL_FORM);
   const [formLoading, setFormLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -200,18 +214,16 @@ function Home() {
 
   return (
     <div className="home">
-      {whatsappUrl ? (
-        <a
-          href={whatsappUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="home__whatsapp-float"
-          aria-label="Abrir chat de WhatsApp"
-          title="Escribinos por WhatsApp"
-        >
-          <FaWhatsapp aria-hidden="true" />
-        </a>
-      ) : null}
+      <a
+        href={whatsappUrl || 'https://wa.me/5491145678901'}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="home__whatsapp-float"
+        aria-label="Abrir chat de WhatsApp"
+        title="Escribinos por WhatsApp"
+      >
+        <FaWhatsapp aria-hidden="true" />
+      </a>
 
       <section className="hero">
         <div className="hero__bg">
